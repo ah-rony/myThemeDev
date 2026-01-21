@@ -1,0 +1,117 @@
+
+<div class="new_richtext text-{{ section.settings.text_alignment}}" >
+    <h1>{{section.settings.heading01}}</h1>
+    <p>{{section.settings.sub-heading01}}</p>
+    <a href="{{ section.settings.btn01_link }}" class="{% if section.settings['btn01-outline'] %}outline{% endif %}">{{ section.settings.btn01 }}</a>
+</div>
+
+<style>
+    .new_richtext a {
+  display: inline-block;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  background-color: #a1a4a7; 
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.new_richtext a:hover {
+  background-color: #436b94;
+}
+
+.new_richtext a.outline {
+  background-color: transparent;
+  color: #a1a4a7;
+  border: 2px solid #a1a4a7;
+}
+
+.new_richtext a.outline:hover {
+  background-color: #a1a4a7;
+  color: #ffffff;
+}
+
+.new_richtext.text-left {
+    text-align: left;
+}
+
+.new_richtext.text-center {
+    text-align: center;
+}
+
+.new_richtext.text-right {
+    text-align: right;
+}
+
+
+</style>
+
+{% schema %}
+{
+    "name": "RRichtext",
+
+    "settings": [
+        {
+            "type": "text",
+            "id": "heading01",
+            "label": "Heading01",
+            "default":"This is Heading field"
+        },
+        {
+            "type": "text",
+            "id": "sub-heading01",
+            "label": "Sub-Heading01",
+            "default": "Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store."
+        },
+        {
+            "type": "text",
+            "id": "btn01",
+            "label": "Button label",
+            "default":"Shop Now"
+            
+        },
+
+        {
+            "type": "url",
+            "id": "btn01_link",
+            "label": "Button link"
+        },
+        {
+            "type": "checkbox",
+            "id": "btn01-outline",
+            "label": "Outline Style",
+            "default": false
+        },
+        {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "Text Alignment",
+            "default":"center",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "left"
+                },
+                {
+                    "value": "center",
+                    "label": "center"
+                },
+                {
+                    "value": "right",
+                    "label": "right"
+                }
+            ]
+        }
+        
+        ],
+        "presets": [
+            {
+                "name": "RichText01"
+            }
+        ]
+}
+{% endschema %}
