@@ -1,0 +1,148 @@
+<section 
+  class="banner-image"
+  style="
+    background-image: url({{ section.settings.bg_image | image_url }});
+"
+>
+  <div class="banner-overlay"></div>
+
+  <div class="banner-content">
+    <h1>{{ section.settings.heading }}</h1>
+    <p>{{ section.settings.subtitle }}</p>
+
+    {% if section.settings.button_text != blank %}
+      <a href="{{ section.settings.button_link }}" class="banner-btn{% if section.settings['banner-btn-outline'] %} outline{% endif %}">
+        {{ section.settings.button_text }}
+      </a>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.banner-image {
+  position: relative;
+  width: 100%;
+  padding: 100px 20px;
+  margin: 40px 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.banner-content {
+  position: relative;
+  max-width: 900px;
+  margin: auto;
+  text-align: center;
+  color: #fff;
+}
+
+.banner-content h1 {
+  font-size: 42px;
+  margin-bottom: 12px;
+}
+
+.banner-content p {
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.banner-btn {
+  display: inline-block;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  background-color: #000000; 
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+
+.banner-btn:hover {
+  background: #e5e5e5;
+}
+
+
+
+.banner-btn.outline {
+  background: transparent;
+  color: #000;
+  border: 2px solid #898b8f;
+}
+
+.banner-btn.outline:hover {
+  background: #000;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .banner-image {
+    padding: 70px 16px;
+  }
+
+  .banner-content h1 {
+    font-size: 28px;
+  }
+
+  .banner-content p {
+    font-size: 16px;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Banner with Image",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Welcome to Our Store"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Discover our latest collection"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link",
+      "default": "/collections/all"
+    },
+    {
+        "type": "checkbox",
+        "id": "banner-btn-outline",
+        "label": "Outline Style",
+        "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner with Image"
+    }
+  ]
+}
+{% endschema %}
