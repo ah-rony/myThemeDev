@@ -5,7 +5,7 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
 {% endcomment %}
 
-<h1>{{ 'collections.title' | t }}</h1>
+<h1 class="collections-title">{{ 'collections.title' | t }}</h1>
 
 <div
   class="collections {{ section.settings.grid_item_width }}"
@@ -35,6 +35,33 @@
 </div>
 
 {% stylesheet %}
+
+h1.collections-title{
+  text-align: center;
+  margin: 20px 0;
+}
+
+
+.collection-card__content {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.collection-card__content p,
+.collection-card__content p a {
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 800;
+  color: #000;
+}
+
+.collection-card,
+.collection-card a {
+  text-decoration: none;
+  
+}
+
+
   .collections {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));

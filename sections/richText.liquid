@@ -1,12 +1,12 @@
 
-<div class="new_richtext text-{{ section.settings.text_alignment}}" >
+<div class="richtext01 text-{{ section.settings.text_alignment}}" >
     <h1>{{section.settings.heading01}}</h1>
     <p>{{section.settings.sub-heading01}}</p>
     <a href="{{ section.settings.btn01_link }}" class="{% if section.settings['btn01-outline'] %}outline{% endif %}">{{ section.settings.btn01 }}</a>
 </div>
 
 <style>
-    .new_richtext a {
+    .richtext01 a {
   display: inline-block;
   padding: 12px 30px;
   font-size: 16px;
@@ -20,43 +20,45 @@
   transition: all 0.3s ease;
 }
 
-.new_richtext a:hover {
-  background-color: #000000;
-  color: #ffffff;
+.richtext01 a:hover {
+  background: #e5e5e5;
+  color: #000;
 }
 
-.new_richtext a.outline {
+.richtext01 a.outline {
   background-color: transparent;
   color: #000000;
   border: 2px solid #898b8f;
 }
 
-.new_richtext a.outline:hover {
-  background-color: #000000;
+.richtext01 a.outline:hov
+  backg01round-color: #000000;
   color: #ffffff;
 }
 
-.new_richtext.text-left {
+.richtext01.text-left {
     text-align: left;
 }
 
-.new_richtext.text-center {
+.richtext01.text-center {
     text-align: center;
 }
 
-.new_richtext.text-right {
+.richtext01.text-right {
     text-align: right;
 }
 
-.new_richtext h1{
+.richtext01 h1{
+    font-size: 42px;
    margin-bottom: 12px;
 }
 
-.new_richtext p{
+.richtext01 p{
+    font-size: 18px;
     margin-bottom: 24px;
 }
 
-.new_richtext{
+.richtext01{
     margin: 40px 0;
 }
 
@@ -65,7 +67,7 @@
 
 {% schema %}
 {
-    "name": "RRichtext",
+    "name": "Richtext01",
 
     "settings": [
         {
@@ -91,7 +93,8 @@
         {
             "type": "url",
             "id": "btn01_link",
-            "label": "Button link"
+            "label": "Button link",
+            "default":"/collections/all"
         },
         {
             "type": "checkbox",
@@ -123,7 +126,7 @@
         ],
         "presets": [
             {
-                "name": "RichText01"
+                "name": "Richtext01"
             }
         ]
 }

@@ -5,11 +5,18 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/product
 {% endcomment %}
 
+
+<div class="product-page">
+
 <div class="product-images">
   {% for image in product.images %}
     {% render 'image', class: 'product-image', image: image %}
   {% endfor %}
 </div>
+
+
+
+<div class="product-content">
 
 <div class="product-info">
   <h1>{{ product.title }}</h1>
@@ -40,6 +47,73 @@
     {{ form | payment_button }}
   {% endform %}
 </div>
+</div>
+
+</div>
+
+<style>
+ .product-page {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -20px; 
+}
+
+.product-images,
+.product-content {
+  flex: 0 0 50%;
+  max-width: 50%;
+  padding: 20px; 
+  box-sizing: border-box; 
+}
+
+.product-images .product-image {
+  width: 100%;
+  margin-bottom: 10px;
+  object-fit: cover;
+}
+
+.product-info h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.product-info p {
+  margin-bottom: 10px;
+}
+
+.product-form select,
+.product-form input[type="text"],
+.product-form input[type="submit"] {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.product-form {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.shopify-payment-button__button {
+  max-width: 300px;
+  border-radius: 4px;
+}
+
+
+
+@media (max-width: 768px) {
+  .product-images,
+  .product-content {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 10px;
+  }
+}
+
+
+</style>
 
 {% schema %}
 {

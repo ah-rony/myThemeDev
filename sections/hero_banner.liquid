@@ -1,17 +1,23 @@
 <section 
-  class="banner-image"
+  class="hero-banner"
   style="
     background-image: url({{ section.settings.bg_image | image_url }});
-"
+    min-height: {{ section.settings.banner_height }}px;
+  "
 >
-  <div class="banner-overlay"></div>
+  <div class="hero-banner-overlay"></div>
 
-  <div class="banner-content">
-    <h1>{{ section.settings.heading }}</h1>
-    <p>{{ section.settings.subtitle }}</p>
+  <div class="hero-banner-content">
+    {% if section.settings.heading != blank %}
+      <h1>{{ section.settings.heading }}</h1>
+    {% endif %}
+    
+    {% if section.settings.subtitle != blank %}
+      <p>{{ section.settings.subtitle }}</p>
+    {% endif %}
 
     {% if section.settings.button_text != blank %}
-      <a href="{{ section.settings.button_link }}" class="banner-btn{% if section.settings['banner-btn-outline'] %} outline{% endif %}">
+      <a href="{{ section.settings.button_link }}" class="hero-banner-btn{% if section.settings.hero_banner_btn_outline %} outline{% endif %}">
         {{ section.settings.button_text }}
       </a>
     {% endif %}
@@ -19,94 +25,172 @@
 </section>
 
 <style>
-.banner-image {
+.hero-banner {
   position: relative;
   width: 100%;
-  padding: 100px 20px;
-  margin: 40px 0;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
 }
 
-.banner-overlay {
+.hero-banner-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0,0,0,0.45);
+  z-index: 1;
 }
 
-.banner-content {
+.hero-banner-content {
   position: relative;
-  max-width: 900px;
+  z-index: 2;
+  max-width: 1200px;
   margin: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
+  padding: 20px;
   color: #fff;
 }
 
-.banner-content h1 {
-  font-size: 42px;
-  margin-bottom: 12px;
+.hero-banner-content h1 {
+  font-size: 48px;
+  margin-bottom: 16px;
 }
 
-.banner-content p {
-  font-size: 18px;
+.hero-banner-content p {
+  font-size: 20px;
   margin-bottom: 24px;
+  max-width: 800px;
 }
 
-.banner-btn {
+.hero-banner-btn {
   display: inline-block;
-  padding: 12px 30px;
-  font-size: 16px;
+  padding: 14px 40px;
+  font-size: 18px;
   font-weight: 500;
-  text-align: center;
   text-decoration: none;
   border: none;
   cursor: pointer;
-  background-color: #000000; 
-  color: #ffffff;
+  background-color: #000;
+  color: #fff;
   transition: all 0.3s ease;
 }
 
-
-.banner-btn:hover {
-  background: #e5e5e5;
+.hero-banner-btn:hover {
+  background-color: #e5e5e5;
+  color: #000;
 }
 
-
-
-.banner-btn.outline {
+.hero-banner-btn.outline {
   background: transparent;
   color: #000;
   border: 2px solid #898b8f;
 }
 
-.banner-btn.outline:hover {
+.hero-banner-btn.outline:hover {
   background: #000;
   color: #fff;
 }
 
-@media (max-width: 768px) {
-  .banner-image {
-    padding: 70px 16px;
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .hero-banner-content h1 {
+    font-size: 36px;
   }
 
-  .banner-content h1 {
-    font-size: 28px;
+  .hero-banner-content p {
+    font-size: 18px;
   }
 
-  .banner-content p {
+  .hero-banner-btn {
     font-size: 16px;
+    padding: 12px 30px;
   }
 }
+
+
+ @media (max-width: 768px) {
+  .hero-banner {
+    display: block; 
+  }
+
+  .hero-banner-image-wrapper {
+    position: relative; 
+    width: 100%;
+    height: auto;
+  }
+
+  .hero-banner-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  .hero-banner-content {
+    position: static;   
+    background: none;  
+    color: #000;       
+    text-align: center;
+    padding: 20px 15px;
+  }
+
+  .hero-banner-content h1 {
+    font-size: 28px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
+
+  .hero-banner-content p {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  .hero-banner-btn {
+    display: inline-block;
+    font-size: 14px;
+    padding: 10px 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-banner-content h1 {
+    font-size: 22px;
+  }
+
+  .hero-banner-content p {
+    font-size: 14px;
+  }
+
+  .hero-banner-btn {
+    font-size: 14px;
+    padding: 8px 20px;
+  }
+}
+
 </style>
 
 {% schema %}
 {
-  "name": "Banner with Image",
+  "name": "Hero Banner",
   "settings": [
     {
       "type": "image_picker",
       "id": "bg_image",
       "label": "Background Image"
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "label": "Banner Height (px)",
+      "min": 100,
+      "max": 800,
+      "step": 10,
+      "default": 400
     },
     {
       "type": "text",
@@ -133,15 +217,15 @@
       "default": "/collections/all"
     },
     {
-        "type": "checkbox",
-        "id": "banner-btn-outline",
-        "label": "Outline Style",
-        "default": false
+      "type": "checkbox",
+      "id": "hero_banner_btn_outline",
+      "label": "Outline Button",
+      "default": false
     }
   ],
   "presets": [
     {
-      "name": "Banner with Image"
+      "name": "Hero Banner"
     }
   ]
 }

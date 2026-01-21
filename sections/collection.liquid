@@ -5,7 +5,7 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
 {% endcomment %}
 
-<h1>{{ collection.title }}</h1>
+<h1 class="collection-title">{{ collection.title }}</h1>
 
 <div class="collection-products">
   {% paginate collection.products by 20 %}
@@ -33,10 +33,70 @@
 </div>
 
 {% stylesheet %}
-  .collection-products {
+  /* .collection-products {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  } */
+
+  .collection-products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
   }
+
+  .collection-product {
+    background-color: #fff;
+    border: 1px solid #eee;
+    padding: 10px;
+    text-align: center;
+  }
+
+
+  @media screen and (max-width: 1024px) {
+    .collection-products {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .collection-products {
+      grid-template-columns: 1fr; 
+    }
+  }
+
+
+
+  .collection-title {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 40px;
+}
+
+  .collection-product__content {
+  text-align: center;
+  padding: 10px 5px;
+}
+
+.collection-product__content p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.collection-product__content p:first-child a {
+  font-weight: 600;
+  font-size: 18px;
+  color: #000;
+  text-decoration: none;
+}
+
+.collection-product__content p:last-child {
+  font-weight: 500;
+  color: #000;
+  text-decoration: none;
+}
+
+
+
 {% endstylesheet %}
 
 {% schema %}
