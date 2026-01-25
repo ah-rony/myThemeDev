@@ -1,0 +1,339 @@
+<div class="{% if section.settings.container_type == 'container_box' %}container_box{% else %}full-width{% endif %}">
+  <section
+    class="hero-video"
+    style="min-height: {{ section.settings.banner_height }}px; padding-top: {{ section.settings.padding_top }}px; padding-bottom:{{ section.settings.padding_bottom }}px"
+  >
+
+    {% if section.settings.desktop_video != blank %}
+      {{ section.settings.desktop_video | video_tag:
+        autoplay: true,
+        muted: true,
+        loop: true,
+        playsinline: true,
+        class: 'hero-video-media desktop-video'
+      }}
+    {% endif %}
+
+    {% if section.settings.mobile_video != blank %}
+      {{ section.settings.mobile_video | video_tag:
+        autoplay: true,
+        muted: true,
+        loop: true,
+        playsinline: true,
+        class: 'hero-video-media mobile-video'
+      }}
+    {% endif %}
+
+    {% if section.settings.show_overlay %}
+      <div class="hero-video-overlay"></div>
+    {% endif %}
+
+    <div class="hero-video-content">
+
+      {% if section.settings.subtitle != blank %}
+        <p>{{ section.settings.subtitle }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h1>{{ section.settings.heading }}</h1>
+      {% endif %}
+
+      {% if section.settings.show_buttons %}
+        <div class="hero-video-buttons">
+          {% if section.settings.button_1_text != blank %}
+            <a href="{{ section.settings.button_1_link }}" class="hero-btn">
+              {{ section.settings.button_1_text }}
+            </a>
+          {% endif %}
+
+          {% if section.settings.button_2_text != blank %}
+            <a href="{{ section.settings.button_2_link }}" class="hero-btn outline">
+              {{ section.settings.button_2_text }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+    </div>
+  </section>
+</div>
+
+<style>
+
+.hero-video {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hero-video-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+
+.desktop-video { display: block; }
+.mobile-video { display: none; }
+
+
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1;
+}
+
+.full_width {
+  width: 100%;
+}
+
+.container_box {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.container_box .hero-video-content {
+  padding-top: 0;  
+  padding-bottom: 0; 
+}
+
+
+.hero-video-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin: auto;
+  min-height: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  color: #fff;
+}
+
+.hero-video-content h1 {
+  font-size: 42px;
+  margin-bottom: 14px;
+}
+
+.hero-video-content p {
+  font-size: 20px;
+  margin-bottom: 26px;
+  max-width: 800px;
+}
+
+
+.hero-video-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.hero-btn {
+  padding: 12px 30px;
+  font-size: 16px;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.hero-btn:hover {
+  background: #fff;
+  color: #000;
+}
+
+.hero-btn.outline {
+  background: transparent;
+  border: 2px solid #bf2121;
+  color: #bf2121;
+}
+
+.hero-btn.outline:hover {
+  background: #bf2121;
+  color: #ffffff;
+}
+
+
+@media (max-width: 1024px) {
+  .hero-video-content h1 { font-size: 34px; }
+  .hero-video-content p { font-size: 18px; }
+}
+
+
+
+@media (max-width: 768px) {
+  .desktop-video { display: none; }
+  .mobile-video { display: block; }
+
+  .hero-video {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  .hero-video-media {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: auto;
+  }
+
+ 
+  .hero-video-overlay {
+    display: none;
+  }
+
+ 
+  .hero-video-content {
+    position: relative;
+    color: #000;
+    padding: 20px 15px;
+  }
+
+  .hero-video-content h1 {
+    font-size: 26px;
+  }
+
+  .hero-video-content p {
+    font-size: 16px;
+  }
+
+  .hero-btn {
+    font-size: 14px;
+    padding: 10px 22px;
+  }
+  .hero-video-buttons{
+    flex-direction: column;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .hero-video-content h1 { font-size: 22px; }
+  .hero-video-content p { font-size: 14px; }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Hero Video",
+  "settings": [
+    {
+       "type": "select",
+       "id": "container_type",
+       "label": "Container type",
+       "default": "full_width",
+       "options": [
+        {
+            "label":"full-width",
+            "value": "full_width"
+        },
+        {
+            "label":"container box",
+            "value": "container_box"
+        }
+       ]
+    },
+    {
+      "type": "video",
+      "id": "desktop_video",
+      "label": "Desktop Video"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video",
+      "label": "Mobile Video"
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "label": "Desktop Height (px)",
+      "min": 300,
+      "max": 900,
+      "step": 10,
+      "default": 500
+    },
+    {
+      "type":"checkbox",
+      "id":"show_overlay",
+      "label":"Show overlay",
+      "default": true  
+    },
+    {
+        "type": "range",
+        "id": "padding_top",
+        "label": "Padding top",
+        "min":0,
+        "max":100,
+        "step": 5,
+        "default": 60
+
+    },
+    {
+        "type": "range",
+        "id": "padding_bottom",
+        "label":"Padding bottom",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "default": 60
+
+    },
+
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Welcome to Our Store"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Discover our latest collection"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_buttons",
+      "label": "Show Buttons",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_1_text",
+      "label": "Button 1 Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Button 1 Link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_text",
+      "label": "Button 2 Text",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Button 2 Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Video"
+    }
+  ]
+}
+{% endschema %}

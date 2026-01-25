@@ -29,6 +29,95 @@
   <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
 </form>
 
+
+
+
+
+<style>
+form[action="/cart"] {
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+  padding: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+tr {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+td {
+  display: flex;
+  align-items: center;
+}
+
+td:first-child {
+  width: 80px;
+  flex-shrink: 0;
+}
+
+td:first-child img {
+  width: 100%;
+  display: block;
+}
+
+td:nth-child(2) {
+  flex: 1;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+td:nth-child(2) a{
+  text-decoration: none;
+}
+
+td:nth-child(3) {
+  gap: 10px;
+}
+
+td:nth-child(3) input[type="text"] {
+  width: 60px;
+  padding: 6px;
+  text-align: center;
+}
+
+td:nth-child(3) input[type="submit"] {
+  padding: 6px 12px;
+}
+
+input[name="checkout"] {
+  margin-top: 24px;
+  float: right;
+  padding: 14px 36px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  tr {
+    flex-wrap: wrap;
+  }
+
+  td:nth-child(3),
+  input[name="checkout"] {
+    width: 100%;
+  }
+
+  input[name="checkout"] {
+    float: none;
+  }
+}
+
+</style>
+
 {% schema %}
 {
   "name": "t:general.cart",
