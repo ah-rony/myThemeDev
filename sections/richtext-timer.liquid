@@ -1,0 +1,269 @@
+<div class="richtext-timer">
+<div class="{{ section.settings.container_type }}">
+  <div class="timer_inner {% if section.settings.text_align_mobile == 'center' %}center-on-mobile{% endif %}">
+    <div class="richtext-content">
+      {% if section.settings.richtext_heading != blank %}
+        <h2>{{ section.settings.richtext_heading }}</h2>
+      {% endif %}
+      {% if section.settings.richtext_button_text != blank %}
+        <div class="timer-btn">
+        <a href="{{ section.settings.richtext_button_link }}">
+          {{ section.settings.richtext_button_text }}
+        </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="timer-box">
+      <div class="timer">
+        <div class="days">
+          <span class="days_left">0</span>
+          Days
+        </div>
+        <div class="hours">
+          <span class="hours_left">0</span>
+          Hours
+        </div>
+        <div class="mins">
+          <span class="mins_left">0</span>
+          Min
+        </div>
+        <div class="secs">
+          <span class="secs_left">0</span>
+          Sec
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.richtext-timer').forEach(section => {
+    const endDate = new Date("2026-02-01T00:00:00").getTime();
+    const daysEl  = section.querySelector('.days_left');
+    const hoursEl = section.querySelector('.hours_left');
+    const minsEl  = section.querySelector('.mins_left');
+    const secsEl  = section.querySelector('.secs_left');
+    if (!daysEl) return;
+
+    setInterval(() => {
+      const now = new Date().getTime();
+      const diff = endDate - now;
+      if (diff <= 0) return;
+      daysEl.textContent  = Math.floor(diff / (1000*60*60*24));
+      hoursEl.textContent = Math.floor((diff / (1000*60*60)) % 24);
+      minsEl.textContent  = Math.floor((diff / (1000*60)) % 60);
+      secsEl.textContent  = Math.floor((diff / 1000) % 60);
+    }, 1000);
+  });
+});
+</script>
+
+<style>
+
+.richtext-timer { 
+    width: 100%; 
+    margin-top: 0; 
+}
+
+.timer_inner { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    gap: 40px; 
+    flex-wrap: nowrap; 
+    max-width: 1400px; 
+    margin: 0 auto; 
+}
+
+.timer-box { 
+    display: flex; 
+    flex-wrap: nowrap; 
+    gap: 20px; 
+    padding-top: 55px;
+    padding-bottom: 54px;
+}
+
+.timer {
+    display: flex;
+    gap: 20px; 
+}
+
+.timer > div { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    background: #fbe6d7; 
+    color: #404C5C;
+    width: 120px; 
+    min-height: 120px; 
+    font-size: 24px; 
+    font-weight: 400; 
+    line-height: 140%;
+}
+
+.timer > div span { 
+    font-size: 50px; 
+    font-weight: 500; 
+    margin-bottom: 6px; 
+    color: #242A33;
+    line-height: 100%;
+}
+
+.richtext-content { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 27px; 
+    padding-top: 52px;
+    padding-bottom: 50px;
+}
+
+.richtext-content h2 { 
+    font-family: "Instrument Serif", serif;
+    font-size: 40px; 
+    font-weight: 400;
+    color: #242A33;
+}
+
+.timer-btn a { 
+    padding: 14px 24px; 
+    font-size: 14px;
+    font-weight: 500; 
+    background: #FFB686; 
+    color: #242A33; 
+    text-decoration: none; 
+    transition: all 0.3s ease; 
+    line-height: 140%;
+}
+
+@media (max-width: 1024px) {
+    .timer_inner {
+        margin: 0 20px;
+    }
+
+    .timer > div {
+        width: 110px; 
+        min-height: 105px; 
+    }
+
+    .timer > div span {
+        font-size: 34px; 
+    }
+}
+
+@media (max-width: 768px) {
+    .timer_inner { 
+        flex-direction: column; 
+        text-align: center; 
+        gap: 20px;
+        padding: 10px 20px;
+    }
+
+  
+    .timer-box { 
+        order: 1; 
+        justify-content: center;
+        padding: 0; 
+    }
+
+    .richtext-content { 
+        order: 2; 
+        text-align: center; 
+        align-items: center;
+        padding-top: 0;
+    }
+
+    .timer > div { 
+        width: 70px; 
+        min-height: 80px; 
+        padding: 10px; 
+        font-size: 12px; 
+    }
+
+    .timer > div span { 
+        font-size: 24px; 
+    }
+}
+
+
+@media (max-width: 480px) {
+    .timer > div { 
+        width: 70px; 
+        min-height: 80px; 
+        padding: 8px; 
+        font-size: 11px; 
+    }
+
+    .timer > div span { 
+        font-size: 22px; 
+    }
+}
+
+.full_width {
+    width: 100vw; 
+    max-width: 100vw; 
+    margin-left: calc(-50vw + 50%); 
+    margin-right: calc(-50vw + 50%); 
+}
+
+.container_box { 
+    max-width: 1400px; 
+    width: 100%; 
+    margin: 0 auto; 
+    padding: 0 20px; 
+}
+
+</style>
+
+{% schema %}
+{
+  "name": "Richtext Timer",
+  "settings": [
+    {
+    "type": "select",
+    "id": "container_type",
+    "label": "Section Container Type",
+    "default": "full_width",
+    "options": [
+    { "label": "Full Width", "value": "full_width" },
+    { "label": "Container Box", "value": "container_box" }
+    ]
+    },
+
+    {
+      "type": "text",
+      "id": "richtext_heading",
+      "label": "Timer Heading",
+      "default": "Archive Sale Is On!"
+    },
+    {
+      "type": "text",
+      "id": "richtext_button_text",
+      "label": "Timer Button Text",
+      "default": "EXPLORE ALL"
+    },
+    {
+      "type": "url",
+      "id": "richtext_button_link",
+      "label": "Timer Button Link"
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Text Align on Mobile",
+      "default": "center",
+      "options": [
+        { "label": "Left", "value": "left" },
+        { "label": "Center", "value": "center" },
+        { "label": "Right", "value": "right" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Richtext Timer" }
+  ]
+}
+{% endschema %}

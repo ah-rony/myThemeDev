@@ -1,0 +1,359 @@
+<div class="video-with-text-overlay">
+    <div class="video-with-overlay" style="min-height: {{ section.settings.video_height }}px;">
+
+    {% if section.settings.desktop_video != blank %}
+        {{ section.settings.desktop_video |  video_tag:
+        autoplay: true,
+        muted: true,
+        loop: true,
+        playsinline: true,
+        class: 'video-media desktop-video'
+         }}
+    {% endif %}
+
+
+    {% if section.settings.mobile_video != blank %}
+        {{ section.settings.mobile_video |  video_tag:
+        autoplay: true,
+        muted: true,
+        loop: true,
+        playsinline: true,
+        class: 'text-video-media mobile-video'
+         }}
+
+        
+    {% endif %}
+
+
+    {% if section.settings.video_overlay %}
+        <div class="video-overlay"></div>
+    {% endif %}
+        
+
+    <div class="video-text-content">
+        {% if section.settings.video_sub_heading != blank %}
+            <p>{{ section.settings.video_sub_heading }}</p>
+        {% endif %}
+
+        {% if section.settings.video_heading != blank %}
+            <h1>{{ section.settings.video_heading }}</h1>
+        {% endif %}
+
+
+        {% if section.settings.show_video_buttons %}
+        <div class="video-buttons">
+
+          {% if section.settings.video_btn_1 != blank %}
+            <div class="video-btn">
+            <a href="{{ section.settings.button_1_link }}">
+              {{ section.settings.video_btn_1 }}
+            </a>
+            </div>
+          {% endif %}
+
+          {% if section.settings.video_btn_2 != blank %}
+            <div class="video-btn-outline">
+            <a href="{{ section.settings.button_2_link }}">
+              {{ section.settings.video_btn_2 }}
+            </a>
+            </div>
+          {% endif %}
+
+        </div>
+      {% endif %}
+
+
+
+    </div>
+
+            
+    </div>
+</div>
+
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Instrument+Serif:ital@0;1&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Instrument+Serif:ital@0;1&family=Outfit:wght@100..900&display=swap');
+
+    *{
+         font-family: "Outfit", sans-serif;
+    }
+
+    .video-media { 
+        position: absolute; 
+        inset: 0; 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+        z-index: 0; 
+    }
+    .desktop-video { 
+        display: block; 
+    } 
+    .mobile-video { 
+        display: none; 
+    }
+    .video-overlay { 
+        position: absolute; 
+        inset: 0; 
+        background: rgba(0,0,0,0.45); 
+        z-index: 1; 
+    }
+
+
+
+    .video-text-content {
+        position: absolute;
+        top: {{ section.settings.video_text_content_offset_top }}px;;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 2;
+        padding: 20px;
+        color: #fff;
+        text-align: center;
+    }
+
+    .video-text-content h1 {
+        font-family: "Instrument Serif", serif;
+        color: #ffffff;
+        font-size: 72px; 
+        font-weight: 400;
+        line-height: 120%;
+        margin-bottom: 26px; 
+    }
+    .video-text-content p { 
+        color: #ffffff;
+        font-size: 24px; 
+        font-weight: 400;
+        line-height: 140%;
+        letter-spacing: 6px;
+        max-width: 800px; 
+    }
+
+    .video-buttons { 
+        display: flex; 
+        gap: 24px; 
+        flex-wrap: wrap; 
+        justify-content: center; 
+    }
+
+    .video-btn a{ 
+    padding: 14px 24px; 
+    font-size: 14px;
+    font-weight: 500; 
+    background: #FFB686; 
+    color: #242A33; 
+    text-decoration: none; 
+    transition: all 0.3s ease; 
+    line-height: 140%;
+    }
+
+    .video-btn:hover { 
+    background: #FFB686; 
+    color: #242A33; 
+    }
+
+    .video-btn-outline a { 
+        padding: 14px 24px; 
+        font-size: 14px;
+        font-weight: 500; 
+        background: transparent; 
+        color: #ffffff; 
+        border: 1px solid #FFB686;
+        text-decoration: none; 
+        transition: all 0.3s ease; 
+        line-height: 140%; 
+    }
+    .video-btn-outline a:hover { 
+        background: #FFB686; 
+        color: #ffffff; 
+    }
+
+
+    @media (max-width: 1024px) {
+    .video-text-content h1 {
+         font-size: 56px; 
+        }
+    .video-text-content p { 
+        font-size: 18px; 
+    }
+    }
+
+
+
+    @media (max-width: 768px) {
+    .desktop-video { 
+        display: none; 
+    } 
+    .mobile-video { 
+        display: block; 
+        margin: 0 auto;
+    }
+    .video-media { 
+        position: relative; 
+        height: auto; 
+    }
+    .video-overlay { 
+        display: none; 
+    } 
+
+   
+    .video-text-content {
+        position: relative;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        justify-content: center; 
+        height: auto;
+        color: #000;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    .video-text-buttons {
+        flex-direction: column; 
+        align-items: center;    
+    }
+
+    .video-buttons {
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+    }
+
+    
+    .video-btn a,
+    .video-btn-outline a {
+        display: inline-block;
+    }
+    
+    .video-btn-outline a {
+        color: #242A33;
+    }
+
+    .video-btn,
+    .video-btn.outline {
+        width: auto; 
+        max-width: 100%; 
+        color: #242A33;
+    }
+
+    .video-text-content h1 { 
+        font-size: 40px;
+        color:#242A33 ; 
+    } 
+    .video-text-content p { 
+        font-size: 16px; 
+        color: #242A33;
+    }
+    }
+
+    @media (max-width: 480px) {
+    .text-video-content h1 { 
+        font-size: 36px; 
+    }
+    }
+
+
+
+
+
+
+</style>
+
+
+
+{% schema %}
+{
+    "name": "Video with text overlay",
+    "settings": [
+        {
+            "type": "video",
+            "id": "desktop_video",
+            "label": "Desktop video"
+        },
+        {
+            "type": "video",
+            "id": "mobile_video",
+            "label": "Mobile video"
+        },
+        {
+            "type": "range",
+            "id": "video_height",
+            "label": "Video Height (px)",
+            "min": 450,
+            "max": 900,
+            "step":10,
+            "default":750
+        },
+        { 
+        "type": "range", 
+        "id": "video_text_content_offset_top", 
+        "label": "Video Content Offset from Top (px)", 
+        "min": 0,
+        "max": 400,
+        "step": 5,
+        "default": 350
+        },
+        {
+            "type": "checkbox",
+            "id": "video_overlay",
+            "label": "Show Overlay",
+            "default":true
+        },
+        {
+            "type": "text",
+            "id": "video_sub_heading",
+            "label": "Sub Heading",
+            "default": "New Arrivals"
+        },
+        {
+            "type": "text",
+            "id": "video_heading",
+            "label": "Heading",
+            "default": "Switch up style this season!"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_video_buttons",
+            "label": "Show Buttons",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "video_btn_1",
+            "label": "Button 1",
+            "default":"SHOP NOW"
+        },
+        {
+            "type": "url",
+            "id": "button_1_link",
+            "label": "Button 1 Link"
+        },
+        {
+            "type": "text",
+            "id": "video_btn_2",
+            "label": "Button 2",
+            "default":"EXPLORE"
+        },
+        {
+            "type": "url",
+            "id": "button_2_link",
+            "label": "Button 2 Link"
+        }
+
+        
+
+        ],
+        "presets": [
+            {
+                "name": "Video with text overlay"
+            }
+        ]
+}
+{% endschema %}

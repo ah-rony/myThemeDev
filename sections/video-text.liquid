@@ -1,0 +1,199 @@
+<div class="video-with-text-overlay">
+    <div class="video-with-overlay" style="min-height: {{ section.settings.video_height }}px;">
+
+    {% if section.settings.desktop_video != blank %}
+        {{ section.settings.desktop_video |  video_tag:
+        autoplay: true,
+        muted: true,
+        loop: true,
+        playsinline: true,
+        class: 'video-media desktop-video'
+         }}
+    {% endif %}
+
+
+    {% if section.settings.mobile_video != blank %}
+        {{ section.settings.mobile_video |  video_tag:
+        autoplay: true,
+        muted: true,
+        loop: true,
+        playsinline: true,
+        class: 'text-video-media mobile-video'
+         }}
+
+        
+    {% endif %}
+
+
+    {% if section.settings.video_overlay %}
+        <div class="video-overlay"></div>
+    {% endif %}
+        
+
+    <div class="video-text-content">
+        {% if section.settings.video_sub_heading != blank %}
+            <p>{{ section.settings.video_sub_heading }}</p>
+        {% endif %}
+
+        {% if section.settings.video_heading != blank %}
+            <h1>{{ section.settings.video_heading }}</h1>
+        {% endif %}
+
+
+        {% if section.settings.show_video_buttons %}
+        <div class="video-buttons">
+          {% if section.settings.video_btn_1 != blank %}
+            <a href="{{ section.settings.button_1_link }}" class="hero-btn">
+              {{ section.settings.video_btn_1 }}
+            </a>
+          {% endif %}
+          {% if section.settings.video_btn_2 != blank %}
+            <a href="{{ section.settings.button_2_link }}" class="hero-btn outline">
+              {{ section.settings.video_btn_2 }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+
+
+    </div>
+
+            
+    </div>
+</div>
+
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Instrument+Serif:ital@0;1&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Instrument+Serif:ital@0;1&family=Outfit:wght@100..900&display=swap');
+
+    *{
+         font-family: "Outfit", sans-serif;
+    }
+
+      .text-video-media { 
+    position: absolute; 
+    inset: 0; 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    z-index: 0; 
+    }
+    .desktop-video { 
+        display: block; 
+    } 
+    .mobile-video { 
+        display: none; 
+    }
+    .video-overlay { 
+        position: absolute; 
+        inset: 0; 
+        background: rgba(0,0,0,0.45); 
+        z-index: 1; 
+    }
+
+
+
+    .video-text-content {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 2;
+        padding: 20px;
+        color: #fff;
+        text-align: center;
+    }
+
+
+
+
+</style>
+
+
+
+{% schema %}
+{
+    "name": "Video with text overlay",
+    "settings": [
+        {
+            "type": "video",
+            "id": "desktop_video",
+            "label": "Desktop video"
+        },
+        {
+            "type": "video",
+            "id": "mobile_video",
+            "label": "Mobile video"
+        },
+        {
+            "type": "range",
+            "id": "video_height",
+            "label": "Video Height (px)",
+            "min": 450,
+            "max": 900,
+            "step":10,
+            "default":750
+        },
+        {
+            "type": "checkbox",
+            "id": "video_overlay",
+            "label": "Show Overlay",
+            "default":true
+        },
+        {
+            "type": "text",
+            "id": "video_sub_heading",
+            "label": "Sub Heading",
+            "default": "New Arrivals"
+        },
+        {
+            "type": "text",
+            "id": "video_heading",
+            "label": "Heading",
+            "default": "Switch up style this season!"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_video_buttons",
+            "label": "Show Buttons",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "video_btn_1",
+            "label": "Button 1",
+            "default":"SHOP NOW"
+        },
+        {
+            "type": "url",
+            "id": "button_1_link",
+            "label": "Button 1 Link"
+        },
+        {
+            "type": "text",
+            "id": "video_btn_2",
+            "label": "Button 2",
+            "default":"EXPLORE"
+        },
+        {
+            "type": "url",
+            "id": "button_2_link",
+            "label": "Button 2 Link"
+        }
+
+        
+
+        ],
+        "presets": [
+            {
+                "name": "Video with text overlay"
+            }
+        ]
+}
+{% endschema %}
