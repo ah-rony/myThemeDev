@@ -1,0 +1,126 @@
+<div class="animated-wave" style="position: relative; width: 100vw; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; overflow: hidden;">
+  <svg id="wave-svg" viewBox="0 0 1320 500" preserveAspectRatio="none" style="width: 100%; height: 300px; display: block;">
+    
+  {% for i in (1..4) %}
+  {% assign wave_color_id = "wave_color_" | append: i %}
+  {% assign wave_color = section.settings[wave_color_id] %}
+
+  <path class="wave-layer" fill="{{ wave_color }}" fill-opacity="{{ section.settings.wave_opacity }}"></path>
+{% endfor %}
+
+  </svg>
+</div>
+
+<style>
+.wave-layer {
+  transition: d 0.1s linear;
+}
+</style>
+
+<script>
+(function() {
+  const svg = document.getElementById('wave-svg');
+  const paths = svg.querySelectorAll('.wave-layer');
+  const waveCount = paths.length;
+  const width = 1320; // SVG coordinate width
+  const height = 500; // SVG coordinate height
+
+  // Settings from Shopify
+  const duration = {{ section.settings.animation_duration | default: 7 }} * 1000; // convert to ms
+
+  // Wave parameters (can customize for more variation)
+  const waves = [];
+  for (let i = 0; i < waveCount; i++) {
+    waves.push({
+      offset: i * 50, // vertical offset
+      speed: 0.002 + 0.001 * i, // wave speed
+      amplitude: 50 + 20 * i, // height of wave
+      phase: 0
+    });
+  }
+
+  function generateWavePath(amplitude, phase, offset) {
+    const points = [];
+    const step = 20; // more step = smoother
+    for (let x = 0; x <= width; x += step) {
+      const y = Math.sin((x / width) * 2 * Math.PI + phase) * amplitude + offset;
+      points.push([x, y]);
+    }
+
+    let path = `M0,${height} `;
+    path += `L${points[0][0]},${points[0][1]}`;
+    for (let i = 1; i < points.length; i++) {
+      const [x, y] = points[i];
+      path += ` L${x},${y}`;
+    }
+    path += ` L${width},${height} Z`; // close path at bottom
+    return path;
+  }
+
+  function animate(time) {
+    paths.forEach((path, i) => {
+      const wave = waves[i];
+      wave.phase += wave.speed * duration / 1000;
+      path.setAttribute('d', generateWavePath(wave.amplitude, wave.phase, 200 + wave.offset));
+    });
+    requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Animated Wave",
+  "settings": [
+    {
+      "type": "color",
+      "id": "wave_color_1",
+      "label": "Wave Color 1",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "wave_color_2",
+      "label": "Wave Color 2",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "wave_color_3",
+      "label": "Wave Color 3",
+      "default": "#ee5253"
+    },
+    {
+      "type": "color",
+      "id": "wave_color_4",
+      "label": "Wave Color 4",
+      "default": "#00d2d3"
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "label": "Animation Duration (seconds)",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 7
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity",
+      "label": "Wave Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.5
+    }
+  ],
+  "presets": [
+    {
+        "name": "Animated wave"
+    }
+  ]
+}
+{% endschema %}

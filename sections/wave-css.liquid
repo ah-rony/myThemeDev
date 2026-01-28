@@ -1,0 +1,131 @@
+<div class="animated-wave" style="position: relative; width: 100vw; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; overflow: hidden;">
+  <svg viewBox="0 0 1320 {{ section.settings.viewbox_height }}" preserveAspectRatio="none" style="width: 100%; height: {{ section.settings.svg_height }}px; display: block;">
+    {% for i in (1..4) %}
+      {% if i == 1 %}
+        {% assign wave_color = section.settings.wave_color_1 %}
+      {% elsif i == 2 %}
+        {% assign wave_color = section.settings.wave_color_2 %}
+      {% elsif i == 3 %}
+        {% assign wave_color = section.settings.wave_color_3 %}
+      {% else %}
+        {% assign wave_color = section.settings.wave_color_4 %}
+      {% endif %}
+
+      <path fill-opacity="{{ section.settings.wave_opacity }}" 
+            fill="{{ wave_color }}"
+            d="M0, 192
+               C220, 100, 440, 100, 660, 192
+               C880, 290, 1100, 290, 1320, 192
+               L1320 500
+               L0 500"/>
+    {% endfor %}
+  </svg>
+</div>
+
+<style>
+.animated-wave svg path {
+  animation: pathAnim {{ section.settings.animation_duration }}s linear infinite;
+}
+
+.animated-wave svg path:nth-child(2) {
+  animation-delay: 1s;
+}
+.animated-wave svg path:nth-child(3) {
+  animation-delay: 3s;
+}
+.animated-wave svg path:nth-child(4) {
+  animation-play-state: paused;
+}
+
+@keyframes pathAnim {
+  0% {
+    d: path("M0, 192 C220, 100, 440, 100, 660, 192 C880, 290, 1100, 290, 1320, 192 L1320 500 L0 500");
+  }
+  25% {
+    d: path("M0, 100 C220, 100, 440, 292, 660, 292 C880, 292, 1100, 100, 1320, 102 L1320 500 L0 500");
+  }
+  50% {
+    d: path("M0, 192 C220, 290, 440, 290, 660, 192 C880, 100, 1100, 100, 1320, 192 L1320 500 L0 500");
+  }
+  75% {
+    d: path("M0, 292 C220, 292, 440, 100, 660, 100 C880, 100, 1100, 292, 1320, 192 L1320 500 L0 500");
+  }
+  100% {
+    d: path("M0, 192 C220, 100, 440, 100, 660, 192 C880, 290, 1100, 290, 1320, 192 L1320 500 L0 500");
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Animated Wave",
+  "settings": [
+    {
+      "type": "color",
+      "id": "wave_color_1",
+      "label": "Wave Color 1",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "wave_color_2",
+      "label": "Wave Color 2",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "wave_color_3",
+      "label": "Wave Color 3",
+      "default": "#ee5253"
+    },
+    {
+      "type": "color",
+      "id": "wave_color_4",
+      "label": "Wave Color 4",
+      "default": "#00d2d3"
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "label": "Animation Duration (seconds)",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 7
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity",
+      "label": "Wave Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.5
+    },
+    {
+      "type": "range",
+      "id": "svg_height",
+      "label": "SVG Height (px)",
+      "min": 100,
+      "max": 800,
+      "step": 10,
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "viewbox_height",
+      "label": "ViewBox Height",
+      "min": 100,
+      "max": 800,
+      "step": 10,
+      "default": 500
+    }
+
+  ],
+  "presets": [
+    {
+        "name": "wave"
+    }
+  ]
+}
+{% endschema %}
