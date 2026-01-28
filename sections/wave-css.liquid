@@ -54,6 +54,40 @@
     d: path("M0, 192 C220, 100, 440, 100, 660, 192 C880, 290, 1100, 290, 1320, 192 L1320 500 L0 500");
   }
 }
+
+
+
+
+/* ========entire wave group to slowly spin ==========*/
+
+/* .wave-group {
+  transform-origin: center center;
+  animation: waveMove {{ section.settings.animation_duration }}s linear infinite alternate,
+             waveRotate 30s linear infinite; 
+}
+
+@keyframes waveRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+} */
+
+
+
+
+/* ======smooth left-right sliding========== */
+
+.wave-group {
+  transform-origin: center bottom;
+  animation: waveMove 3s linear infinite alternate; /* back-and-forth */
+}
+
+@keyframes waveMove {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100px); } /* how far it moves left */
+}
+
+
+
 </style>
 
 {% schema %}
