@@ -1,109 +1,259 @@
-<div class="devfooter">
-  <svg class="devfooter-svg" viewBox="0 0 120 28">
-    <defs> 
-      <filter id="devfooter-goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
-        <feColorMatrix in="blur" mode="matrix" values="
-             1 0 0 0 0  
-             0 1 0 0 0  
-             0 0 1 0 0  
-             0 0 0 13 -9" result="goo" />
-        <feBlend in="SourceGraphic" in2="goo" />
-      </filter>
-      
-      <path id="devfooter-wave" d="M 0,10 C 30,10 30,15 60,15 90,15 90,10 120,10 150,10 150,15 180,15 210,15 210,10 240,10 v 28 h -240 z" />
-    </defs> 
-
-    <g class="devfooter-gooeff">
-      <circle class="devfooter-drop1" cx="20" cy="2" r="1.8"  />
-      <circle class="devfooter-drop2" cx="25" cy="2.5" r="1.5"  />
-      <circle class="devfooter-drop3" cx="16" cy="2.8" r="1.2"  />
-      <use id="devfooter-wave1" class="devfooter-wave" xlink:href="#devfooter-wave" x="0" y="1" />
-      <use id="devfooter-wave2" class="devfooter-wave" xlink:href="#devfooter-wave" x="0" y="0" />
-      <use id="devfooter-wave3" class="devfooter-wave" xlink:href="#devfooter-wave" x="0" y="-2" />
-    </g>
-  </svg>
-
-  
+<div class="wave-container" 
+     style="position: relative; 
+            width: 100%; 
+            height: {{ section.settings.container_height }}px; 
+            overflow: hidden;">
+  <canvas id="waveCanvas"></canvas>
 </div>
 
 <style>
-  
-  .devfooter {
-    width: 100vw;
-    position: fixed;
-    bottom: 0;
-    font-family: Lato, sans-serif;
-  }
+.wave-container {
+  position: relative;
+  width: 100%;
+  height: {{ section.settings.container_height }}px;
+  overflow: hidden;
+}
 
-  
-  .devfooter-svg {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .devfooter-wave {
-    animation: devfooter-wave 3s linear infinite;
-    fill: {{ section.settings.devfooter_wave_color }};
-  }
-
-  
-
-  .devfooter-gooeff { filter: url(#devfooter-goo); }
-
-  #devfooter-wave2 { animation-duration: 5s; animation-direction: reverse; opacity: 0.6; }
-  #devfooter-wave3 { animation-duration: 7s; opacity: 0.3; }
-
- 
-
-  @keyframes devfooter-wave { to { transform: translateX(-100%); } }
+canvas#waveCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 </style>
 
+<script>
+(function() {
 
+  const canvas = document.getElementById('waveCanvas');
+  const ctx = canvas.getContext('2d');
 
+  function resizeCanvas() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
 
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  const waves = [
+    {
+      color: '{{ section.settings.wave_color_1 }}',
+      amplitude: {{ section.settings.wave_amplitude_1 }},
+      wavelength: {{ section.settings.wave_wavelength_1 }},
+      speed: {{ section.settings.wave_speed_1 }} / 100,
+      direction: 1
+    },
+    {
+      color: '{{ section.settings.wave_color_2 }}',
+      amplitude: {{ section.settings.wave_amplitude_2 }},
+      wavelength: {{ section.settings.wave_wavelength_2 }},
+      speed: {{ section.settings.wave_speed_2 }} / 100,
+      direction: -1
+    },
+    {
+      color: '{{ section.settings.wave_color_3 }}',
+      amplitude: {{ section.settings.wave_amplitude_3 }},
+      wavelength: {{ section.settings.wave_wavelength_3 }},
+      speed: {{ section.settings.wave_speed_3 }} / 100,
+      direction: 1
+    },
+    {
+      color: '{{ section.settings.wave_color_4 }}',
+      amplitude: {{ section.settings.wave_amplitude_4 }},
+      wavelength: {{ section.settings.wave_wavelength_4 }},
+      speed: {{ section.settings.wave_speed_4 }} / 100,
+      direction: -1
+    }
+  ];
+
+  let t = 0;
+
+  function drawWaves() {
+    const width  = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    waves.forEach((wave) => {
+      ctx.beginPath();
+
+      for (let x = 0; x <= width; x++) {
+        const y = height / 2 
+                + wave.amplitude * Math.sin((x / wave.wavelength * 2 * Math.PI) + t * wave.speed * wave.direction)
+                + Math.sin(x / 100 + t * 0.01) * wave.amplitude * 0.3; // secondary ripple
+
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+
+      ctx.lineTo(width, height);
+      ctx.lineTo(0, height);
+      ctx.closePath();
+      ctx.fillStyle = wave.color;
+      ctx.fill();
+    });
+
+    t += 1;
+    requestAnimationFrame(drawWaves);
+  }
+
+  drawWaves();
+
+})();
+</script>
 
 {% schema %}
 {
-  "name": "Animated DevFooter",
+  "name": "Animated Waves Canvas",
   "settings": [
     {
-      "type": "color",
-      "id": "devfooter_bg_color",
-      "label": "DevFooter Background Color",
-      "default": "#4478e3"
+      "type": "range",
+      "id": "container_height",
+      "label": "Container Height (px)",
+      "min": 100,
+      "max": 800,
+      "step": 10,
+      "default": 300
     },
+
     {
       "type": "color",
-      "id": "devfooter_wave_color",
-      "label": "Wave Color",
-      "default": "#4478e3"
+      "id": "wave_color_1",
+      "label": "Wave Color 1",
+      "default": "#00c8ff"
     },
+    {
+      "type": "range",
+      "id": "wave_amplitude_1",
+      "label": "Wave 1 Amplitude",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "wave_wavelength_1",
+      "label": "Wave 1 Wavelength",
+      "min": 100,
+      "max": 1000,
+      "step": 10,
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "wave_speed_1",
+      "label": "Wave 1 Speed x100",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 2
+    },
+
     {
       "type": "color",
-      "id": "devfooter_drop_color",
-      "label": "Drop Color",
-      "default": "#4478e3"
+      "id": "wave_color_2",
+      "label": "Wave Color 2",
+      "default": "rgba(255,100,100,0.3)"
     },
+    {
+      "type": "range",
+      "id": "wave_amplitude_2",
+      "label": "Wave 2 Amplitude",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "wave_wavelength_2",
+      "label": "Wave 2 Wavelength",
+      "min": 100,
+      "max": 1000,
+      "step": 10,
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "wave_speed_2",
+      "label": "Wave 2 Speed x100",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 2
+    },
+
     {
       "type": "color",
-      "id": "devfooter_text_color",
-      "label": "Text Color",
-      "default": "#ffffff"
+      "id": "wave_color_3",
+      "label": "Wave Color 3",
+      "default": "rgba(50,50,50,0.2)"
     },
     {
-      "type": "text",
-      "id": "devfooter_text",
-      "label": "DevFooter Text",
-      "default": "done with fun - by Uwe Chardon"
+      "type": "range",
+      "id": "wave_amplitude_3",
+      "label": "Wave 3 Amplitude",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "wave_wavelength_3",
+      "label": "Wave 3 Wavelength",
+      "min": 100,
+      "max": 1000,
+      "step": 10,
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "wave_speed_3",
+      "label": "Wave 3 Speed x100",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+
+    {
+      "type": "color",
+      "id": "wave_color_4",
+      "label": "Wave Color 4",
+      "default": "rgba(0,255,200,0.2)"
+    },
+    {
+      "type": "range",
+      "id": "wave_amplitude_4",
+      "label": "Wave 4 Amplitude",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "wave_wavelength_4",
+      "label": "Wave 4 Wavelength",
+      "min": 100,
+      "max": 1000,
+      "step": 10,
+      "default": 350
+    },
+    {
+      "type": "range",
+      "id": "wave_speed_4",
+      "label": "Wave 4 Speed x100",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3
     }
   ],
   "presets": [
-    {
-      "name": "Animated DevFooter"
-    }
+    { "name": "Canvas Waves: Multi-options" }
   ]
 }
 {% endschema %}
-

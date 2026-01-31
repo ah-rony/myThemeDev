@@ -1,6 +1,11 @@
-<div class="richtext-timer">
-<div class="{{ section.settings.container_type }}">
-  <div class="timer_inner {% if section.settings.text_align_mobile == 'center' %}center-on-mobile{% endif %}">
+<div class="richtext-timer" 
+style="margin-top: {{ section.settings.section_margin_top }}px; 
+           margin-bottom: {{ section.settings.section_margin_bottom }}px;">
+           
+<div class="{{ section.settings.container_type }}" style="position: relative; padding-top: {{ section.settings.section_padding_top }}px; 
+               padding-bottom: {{ section.settings.section_padding_bottom }}px;">
+  
+  <div class="timer_inner">
     <div class="richtext-content">
       {% if section.settings.richtext_heading != blank %}
         <h2>{{ section.settings.richtext_heading }}</h2>
@@ -239,6 +244,44 @@ document.addEventListener('DOMContentLoaded', function () {
     { "label": "Container Box", "value": "container_box" }
     ]
     },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default":0
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default":0
+
+    },
+
+    {
+      "type": "range",
+      "id": "section_margin_top",
+      "label": "Margin Top",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_margin_bottom",
+      "label": "Margin Bottom",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 0
+    },
 
     {
       "type": "text",
@@ -256,17 +299,6 @@ document.addEventListener('DOMContentLoaded', function () {
       "type": "url",
       "id": "richtext_button_link",
       "label": "Timer Button Link"
-    },
-    {
-      "type": "select",
-      "id": "text_align_mobile",
-      "label": "Text Align on Mobile",
-      "default": "center",
-      "options": [
-        { "label": "Left", "value": "left" },
-        { "label": "Center", "value": "center" },
-        { "label": "Right", "value": "right" }
-      ]
     }
   ],
   "presets": [

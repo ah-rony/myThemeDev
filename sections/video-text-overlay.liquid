@@ -1,5 +1,24 @@
-<div class="video-with-text-overlay">
-    <div class="video-with-overlay" style="min-height: {{ section.settings.video_height }}px;">
+
+
+
+<div class="video-with-text-overlay {% if section.settings.container_type == 'container_box' %}container_box{% else %}full_width{% endif %}"
+
+        style=" 
+        margin-top: {{ section.settings.section_margin_top }}px; 
+        margin-bottom: {{ section.settings.section_margin_bottom }}px;"
+
+
+>
+
+<div class="video-with-text"
+    style=" position: relative; padding-top: {{ section.settings.section_padding_top }}px; 
+        padding-bottom: {{ section.settings.section_padding_bottom }}px;"
+
+>
+
+    <div class="video-with-overlay" 
+    style="min-height: {{ section.settings.video_height }}px;"
+    >
 
     {% if section.settings.desktop_video != blank %}
         {{ section.settings.desktop_video |  video_tag:
@@ -66,6 +85,8 @@
 
     </div>
 
+    </div>
+
             
     </div>
 </div>
@@ -77,6 +98,20 @@
 
     *{
          font-family: "Outfit", sans-serif;
+    }
+
+
+    .full_width {
+        width: 100vw; 
+        max-width: 100vw; 
+        margin-left: calc(-50vw + 50%); 
+        margin-right: calc(-50vw + 50%); 
+    }
+    .container_box { 
+        max-width: 1400px; 
+        width: 100%; 
+        margin: 0 auto; 
+        padding: 0 20px; 
     }
 
     .video-media { 
@@ -272,6 +307,52 @@
 {
     "name": "Video with text overlay",
     "settings": [
+        { 
+        "type": "select", 
+        "id": "container_type", 
+        "label": "Section Container Type", 
+        "default": "full_width", 
+        "options": [
+            { "label": "Full Width", "value": "full_width" },
+            { "label": "Container Box", "value": "container_box" }
+        ] 
+        },
+        {
+            "type": "range",
+            "id": "section_padding_top",
+            "label": "Padding Top",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "default": 0
+        },
+        {
+            "type": "range",
+            "id": "section_padding_bottom",
+            "label": "Padding Bottom",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "default": 0
+        },
+        {
+            "type": "range",
+            "id": "section_margin_top",
+            "label": "Margin Top",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "default": 0
+        },
+        {
+            "type": "range",
+            "id": "section_margin_bottom",
+            "label": "Margin Bottom",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "default": 0
+        },
         {
             "type": "video",
             "id": "desktop_video",
@@ -346,6 +427,10 @@
             "id": "button_2_link",
             "label": "Button 2 Link"
         }
+
+        
+        
+
 
         
 

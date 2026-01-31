@@ -1,0 +1,156 @@
+<div class="wave-container" style="position: relative; width: 100vw; left: 50%; margin-left: -50vw; height: {{ section.settings.container_height }}px; overflow: hidden;">
+  <canvas id="waveCanvas"></canvas>
+</div>
+
+<style>
+.wave-container {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  margin-left: -50vw;
+  height: {{ section.settings.container_height }}px;
+  overflow: hidden;
+}
+canvas#waveCanvas {
+  display: block;
+  width: 100vw;
+  height: 100%;
+}
+</style>
+
+<script>
+(function(){
+  const canvas = document.getElementById('waveCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = canvas.parentElement.offsetHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // Wave layers with colors and directions
+  const waves = [
+    { color: '{{ section.settings.wave_color_1 }}', direction: 1 },
+    { color: '{{ section.settings.wave_color_2 }}', direction: -1 },
+    { color: '{{ section.settings.wave_color_3 }}', direction: 1 },
+    { color: '{{ section.settings.wave_color_4 }}', direction: -1 }
+  ];
+
+  const baseSettings = {
+    amplitude: {{ section.settings.wave_amplitude }},
+    wavelength: {{ section.settings.wave_wavelength }},
+    speed: {{ section.settings.wave_speed }}/100
+  };
+
+  // Apply small variation for natural multicolor look
+  waves.forEach((wave) => {
+    wave.amplitude = baseSettings.amplitude * (0.8 + Math.random() * 0.4); // 80% - 120%
+    wave.wavelength = baseSettings.wavelength * (0.8 + Math.random() * 0.4);
+    wave.speed = baseSettings.speed;
+  });
+
+  let t = 0;
+
+  function drawWaves() {
+    const width = canvas.width;
+    const height = canvas.height;
+    ctx.clearRect(0, 0, width, height);
+
+    waves.forEach(wave => {
+      ctx.beginPath();
+      for (let x = 0; x <= width; x++) {
+        const y = height / 2
+                  + wave.amplitude * Math.sin((x / wave.wavelength * 2 * Math.PI) + t * wave.speed * wave.direction)
+                  + Math.sin(x / 100 + t * 0.01) * wave.amplitude * 0.3;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.lineTo(width, height);
+      ctx.lineTo(0, height);
+      ctx.closePath();
+      ctx.fillStyle = wave.color;
+      ctx.fill();
+    });
+
+    t += 1;
+    requestAnimationFrame(drawWaves);
+  }
+
+  drawWaves();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Canvas Wave",
+  "settings": [
+    {
+      "type": "range",
+      "id": "container_height",
+      "label": "Container Height (px)",
+      "min": 100,
+      "max": 800,
+      "step": 10,
+      "default": 300
+    },
+    {
+      "type": "color",
+      "id": "wave_color_1",
+      "label": "Wave Color 1",
+      "default": "#00c8ff"
+    },
+    {
+      "type": "color",
+      "id": "wave_color_2",
+      "label": "Wave Color 2",
+      "default": "rgba(255,100,100,0.3)"
+    },
+    {
+      "type": "color",
+      "id": "wave_color_3",
+      "label": "Wave Color 3",
+      "default": "rgba(50,50,50,0.2)"
+    },
+    {
+      "type": "color",
+      "id": "wave_color_4",
+      "label": "Wave Color 4",
+      "default": "rgba(0,255,200,0.2)"
+    },
+    {
+      "type": "range",
+      "id": "wave_amplitude",
+      "label": "Wave Amplitude",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "wave_wavelength",
+      "label": "Wave Wavelength",
+      "min": 100,
+      "max": 1000,
+      "step": 10,
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "wave_speed",
+      "label": "Wave Speed x100",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 2
+    }
+  ],
+  "presets": [
+    {
+      "name": "Canvas Waves"
+    }
+  ]
+}
+{% endschema %}
