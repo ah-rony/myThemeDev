@@ -45,11 +45,19 @@ canvas#waveCanvas {
   };
 
   // Apply small variation for natural multicolor look
+  // waves.forEach((wave) => {
+  //   wave.amplitude = baseSettings.amplitude * (0.8 + Math.random() * 0.4); // 80% - 120%
+  //   wave.wavelength = baseSettings.wavelength * (0.8 + Math.random() * 0.4);
+  //   wave.speed = baseSettings.speed;
+  // });
+
   waves.forEach((wave) => {
-    wave.amplitude = baseSettings.amplitude * (0.8 + Math.random() * 0.4); // 80% - 120%
-    wave.wavelength = baseSettings.wavelength * (0.8 + Math.random() * 0.4);
-    wave.speed = baseSettings.speed;
-  });
+  wave.amplitude = baseSettings.amplitude * (0.8 + Math.random() * 0.4);
+  wave.wavelength = baseSettings.wavelength * (0.8 + Math.random() * 0.4);
+  wave.speed = baseSettings.speed * (0.8 + Math.random() * 0.4); // optional random speed
+  wave.phase = Math.random() * 2 * Math.PI; // random phase so waves start at different positions
+});
+
 
   let t = 0;
 
@@ -61,9 +69,20 @@ canvas#waveCanvas {
     waves.forEach(wave => {
       ctx.beginPath();
       for (let x = 0; x <= width; x++) {
+        // const y = height / 2
+        //           + wave.amplitude * Math.sin((x / wave.wavelength * 2 * Math.PI) + t * wave.speed * wave.direction)
+        //           + Math.sin(x / 100 + t * 0.01) * wave.amplitude * 0.3;
+
+
         const y = height / 2
-                  + wave.amplitude * Math.sin((x / wave.wavelength * 2 * Math.PI) + t * wave.speed * wave.direction)
-                  + Math.sin(x / 100 + t * 0.01) * wave.amplitude * 0.3;
+          + wave.amplitude * Math.sin((x / wave.wavelength * 2 * Math.PI) + t * wave.speed * wave.direction + wave.phase)
+          + Math.sin(x / 100 + t * 0.01) * wave.amplitude * 0.3;
+
+
+
+
+
+          
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
@@ -131,7 +150,7 @@ canvas#waveCanvas {
     {
       "type": "range",
       "id": "wave_wavelength",
-      "label": "Wave Wavelength",
+      "label": "Wavelength",
       "min": 100,
       "max": 1000,
       "step": 10,
@@ -140,7 +159,7 @@ canvas#waveCanvas {
     {
       "type": "range",
       "id": "wave_speed",
-      "label": "Wave Speed x100",
+      "label": "Wave Speed",
       "min": 1,
       "max": 10,
       "step": 1,
