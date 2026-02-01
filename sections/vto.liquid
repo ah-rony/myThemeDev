@@ -1,0 +1,380 @@
+<div
+  class="vto-section {% if section.settings.container_type == 'container_box' %}vto-container{% else %}vto-full{% endif %}"
+
+  
+  style="
+    margin-top: {{ section.settings.section_margin_top }}px;
+    margin-bottom: {{ section.settings.section_margin_bottom }}px;
+  "
+>
+
+  <div class="vto-inner">
+
+    <div class="vto-video-wrap">
+
+      <div class="vto-video-inner">
+       
+        {% if section.settings.desktop_video == blank and section.settings.mobile_video == blank %}
+          <div class="vto-fallback-bg"></div>
+        {% endif %}
+
+        {% if section.settings.desktop_video != blank %}
+          <div class="vto-video-desktop-wrap">
+            {{ section.settings.desktop_video | video_tag:
+              autoplay: true,
+              muted: true,
+              loop: true,
+              playsinline: true,
+              class: 'vto-video vto-video-desktop'
+            }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.mobile_video != blank %}
+          <div class="vto-video-mobile-wrap">
+            {{ section.settings.mobile_video | video_tag:
+              autoplay: true,
+              muted: true,
+              loop: true,
+              playsinline: true,
+              class: 'vto-video vto-video-mobile'
+            }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.video_overlay %}
+          <div class="vto-overlay"></div>
+        {% endif %}
+
+        <div
+          class="vto-content"
+          style="
+            padding-top: {{ section.settings.content_padding_top }}px;
+            padding-bottom: {{ section.settings.content_padding_bottom }}px;
+          "
+        >
+
+          {% if section.settings.video_sub_heading != blank %}
+            <p class="vto-subheading">
+              {{ section.settings.video_sub_heading }}
+            </p>
+          {% endif %}
+
+          {% if section.settings.video_heading != blank %}
+            <h1 class="vto-heading">
+              {{ section.settings.video_heading }}
+            </h1>
+          {% endif %}
+
+          {% if section.settings.show_video_buttons %}
+            <div class="vto-buttons">
+
+              {% if section.settings.video_btn_1 != blank %}
+                <a
+                  class="vto-btn-primary"
+                  href="{{ section.settings.button_1_link }}"
+                >
+                  {{ section.settings.video_btn_1 }}
+                </a>
+              {% endif %}
+
+              {% if section.settings.video_btn_2 != blank %}
+                <a
+                  class="vto-btn-outline"
+                  href="{{ section.settings.button_2_link }}"
+                >
+                  {{ section.settings.video_btn_2 }}
+                </a>
+              {% endif %}
+
+            </div>
+          {% endif %}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Instrument+Serif:ital@0;1&display=swap');
+
+.vto-full {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+.vto-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.vto-section {
+  font-family: "Outfit", sans-serif;
+}
+
+.vto-video-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.vto-fallback-bg {
+  width: 100%;
+  min-height: 420px;
+  background: #8c8c8d;
+}
+
+.vto-video-inner {
+  width: 100%;
+  height: auto;
+  box-sizing: border-box; 
+}
+
+.vto-video {
+  width: 100%;
+  height: auto;
+  object-fit: contain; 
+  display: block;
+} 
+
+
+
+
+
+.vto-video-desktop-wrap {
+  display: block;
+}
+.vto-video-mobile-wrap {
+  display: none;
+}
+
+.vto-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.342);
+  pointer-events: none;
+}
+
+.vto-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #ffffff;
+  z-index: 2;
+  padding: 20px;
+}
+
+.vto-heading {
+  font-family: "Instrument Serif", serif;
+  font-size: 72px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 26px;
+}
+
+.vto-subheading {
+  font-size: 24px;
+  letter-spacing: 6px;
+  margin-bottom: 12px;
+}
+
+.vto-buttons {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.vto-btn-primary {
+  padding: 14px 24px;
+  background: #FFB686;
+  color: #242A33;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.vto-btn-outline {
+  padding: 14px 24px;
+  border: 1px solid #FFB686;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 1024px) {
+  .vto-heading {
+    font-size: 56px;
+  }
+
+  .vto-subheading {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+
+ 
+  .vto-video-desktop-wrap {
+    display: none;
+  }
+  .vto-video-mobile-wrap {
+    display: block;
+  }
+
+  .vto-overlay {
+    display: none;
+  }
+
+  .vto-content {
+    position: relative;
+    color: #242A33;
+    padding: 30px 0 !important;
+  }
+
+  .vto-heading {
+    font-size: 40px;
+    color: #242A33;
+  }
+
+  .vto-subheading {
+    font-size: 16px;
+    color: #242A33;
+  }
+
+  .vto-buttons {
+    flex-direction: column;
+  }
+
+  .vto-btn-outline {
+    color: #242A33;
+  }
+
+}
+</style>
+
+{% schema %}
+{
+  "name": "Video with Text Overlay",
+  "settings": [
+    {
+      "type": "select",
+      "id": "container_type",
+      "label": "Container Type",
+      "default": "full_width",
+      "options": [
+        { "label": "Full Width", "value": "full_width" },
+        { "label": "Container", "value": "container_box" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "section_margin_top",
+      "label": "Margin Top",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_margin_bottom",
+      "label": "Margin Bottom",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 0
+    },
+    {
+      "type": "video",
+      "id": "desktop_video",
+      "label": "Desktop Video"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video",
+      "label": "Mobile Video"
+    },
+    {
+      "type": "range",
+      "id": "content_padding_top",
+      "label": "Content Padding Top",
+      "min": 0,
+      "max": 400,
+      "step": 10,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "content_padding_bottom",
+      "label": "Content Padding Bottom",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "video_overlay",
+      "label": "Show Overlay",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "video_sub_heading",
+      "label": "Sub Heading",
+      "default": "New Arrivals"
+    },
+    {
+      "type": "text",
+      "id": "video_heading",
+      "label": "Heading",
+      "default": "Switch up style this season!"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_video_buttons",
+      "label": "Show Buttons",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "video_btn_1",
+      "label": "Button 1 Label",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Button 1 Link"
+    },
+    {
+      "type": "text",
+      "id": "video_btn_2",
+      "label": "Button 2 Label",
+      "default": "EXPLORE"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Button 2 Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video-with-text-overlay"
+    }
+  ]
+}
+{% endschema %}

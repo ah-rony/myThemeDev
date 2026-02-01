@@ -1,75 +1,94 @@
-<div class="richtext-timer" 
-style="margin-top: {{ section.settings.section_margin_top }}px; 
-           margin-bottom: {{ section.settings.section_margin_bottom }}px;">
-           
-<div class="{{ section.settings.container_type }}" style="position: relative; padding-top: {{ section.settings.section_padding_top }}px; 
-               padding-bottom: {{ section.settings.section_padding_bottom }}px;">
-  
-  <div class="timer_inner">
-    <div class="richtext-content">
-      {% if section.settings.richtext_heading != blank %}
-        <h2>{{ section.settings.richtext_heading }}</h2>
-      {% endif %}
-      {% if section.settings.richtext_button_text != blank %}
-        <div class="timer-btn">
-        <a href="{{ section.settings.richtext_button_link }}">
-          {{ section.settings.richtext_button_text }}
-        </a>
-        </div>
-      {% endif %}
-    </div>
+<div class="discount-timer" 
+     style="margin-top: {{ section.settings.section_margin_top }}px; 
+            margin-bottom: {{ section.settings.section_margin_bottom }}px;">
 
-    <div class="timer-box">
-      <div class="timer">
-        <div class="days">
-          <span class="days_left">0</span>
-          Days
-        </div>
-        <div class="hours">
-          <span class="hours_left">0</span>
-          Hours
-        </div>
-        <div class="mins">
-          <span class="mins_left">0</span>
-          Min
-        </div>
-        <div class="secs">
-          <span class="secs_left">0</span>
-          Sec
+  <div class="{{ section.settings.container_type }} discount-timer-container" 
+       style="position: relative; padding-top: {{ section.settings.section_padding_top }}px; 
+              padding-bottom: {{ section.settings.section_padding_bottom }}px;">
+
+    <div class="discount-timer-inner">
+      <div class="discount-timer-content">
+        {% if section.settings.richtext_heading != blank %}
+          <h2>{{ section.settings.richtext_heading }}</h2>
+        {% endif %}
+        {% if section.settings.richtext_button_text != blank %}
+          <div class="discount-timer-btn">
+            <a href="{{ section.settings.richtext_button_link }}">
+              {{ section.settings.richtext_button_text }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="discount-timer-box">
+        <div class="discount-timer-units">
+          <div class="discount-days">
+            <span class="discount-days-left">0</span>
+            Days
+          </div>
+          <div class="discount-hours">
+            <span class="discount-hours-left">0</span>
+            Hours
+          </div>
+          <div class="discount-mins">
+            <span class="discount-mins-left">0</span>
+            Min
+          </div>
+          <div class="discount-secs">
+            <span class="discount-secs-left">0</span>
+            Sec
+          </div>
         </div>
       </div>
     </div>
-  </div>
+
   </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.richtext-timer').forEach(section => {
+  document.querySelectorAll('.discount-timer').forEach(section => {
 
-    // const endDate = new Date("2026-02-09T00:00:00").getTime();
+  
+    let date = "{{ section.settings.timer_end_date }}";
+    let time = "{{ section.settings.timer_end_time }}"; 
 
-    const endDate = new Date(
-  "{{ section.settings.timer_end_date }}T{{ section.settings.timer_end_time }}:00"
-).getTime();
+    
+    let parts = time.split(':');
+    let hour = parts[0] ? parseInt(parts[0], 10) : 0;
+    let minute = parts[1] ? parseInt(parts[1], 10) : 0;
 
+   
+    if(hour < 10) hour = "0" + hour;
+    if(minute < 10) minute = "0" + minute;
 
+    const endDate = new Date(`${date}T${hour}:${minute}:00`).getTime();
 
-    const daysEl  = section.querySelector('.days_left');
-    const hoursEl = section.querySelector('.hours_left');
-    const minsEl  = section.querySelector('.mins_left');
-    const secsEl  = section.querySelector('.secs_left');
-    if (!daysEl) return;
+    const daysEl  = section.querySelector('.discount-days-left');
+    const hoursEl = section.querySelector('.discount-hours-left');
+    const minsEl  = section.querySelector('.discount-mins-left');
+    const secsEl  = section.querySelector('.discount-secs-left');
+
+    if (!daysEl || isNaN(endDate)) return;
 
     setInterval(() => {
       const now = new Date().getTime();
       const diff = endDate - now;
-      if (diff <= 0) return;
-      daysEl.textContent  = Math.floor(diff / (1000*60*60*24));
-      hoursEl.textContent = Math.floor((diff / (1000*60*60)) % 24);
-      minsEl.textContent  = Math.floor((diff / (1000*60)) % 60);
+
+      if (diff <= 0) {
+        daysEl.textContent  = 0;
+        hoursEl.textContent = 0;
+        minsEl.textContent  = 0;
+        secsEl.textContent  = 0;
+        return;
+      }
+
+      daysEl.textContent  = Math.floor(diff / (1000 * 60 * 60 * 24));
+      hoursEl.textContent = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      minsEl.textContent  = Math.floor((diff / (1000 * 60)) % 60);
       secsEl.textContent  = Math.floor((diff / 1000) % 60);
     }, 1000);
+
   });
 });
 </script>
@@ -83,12 +102,12 @@ document.addEventListener('DOMContentLoaded', function () {
     font-family: "Outfit", sans-serif;
 }
 
-.richtext-timer { 
+.discount-timer { 
     width: 100%; 
     margin-top: 0; 
 }
 
-.timer_inner { 
+.discount-timer-inner { 
     display: flex; 
     align-items: center; 
     justify-content: space-between; 
@@ -98,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
     margin: 0 auto; 
 }
 
-.timer-box { 
+.discount-timer-box { 
     display: flex; 
     flex-wrap: nowrap; 
     gap: 20px; 
@@ -106,12 +125,12 @@ document.addEventListener('DOMContentLoaded', function () {
     padding-bottom: 54px;
 }
 
-.timer {
+.discount-timer-units {
     display: flex;
     gap: 20px; 
 }
 
-.timer > div { 
+.discount-timer-units > div { 
     display: flex; 
     flex-direction: column; 
     align-items: center; 
@@ -125,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
     line-height: 140%;
 }
 
-.timer > div span { 
+.discount-timer-units > div span { 
     font-size: 50px; 
     font-weight: 500; 
     margin-bottom: 6px; 
@@ -133,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
     line-height: 100%;
 }
 
-.richtext-content { 
+.discount-timer-content { 
     display: flex; 
     flex-direction: column; 
     gap: 27px; 
@@ -141,14 +160,14 @@ document.addEventListener('DOMContentLoaded', function () {
     padding-bottom: 50px;
 }
 
-.richtext-content h2 { 
+.discount-timer-content h2 { 
     font-family: "Instrument Serif", serif;
     font-size: 40px; 
     font-weight: 400;
     color: #242A33;
 }
 
-.timer-btn a { 
+.discount-timer-btn a { 
     padding: 14px 24px; 
     font-size: 14px;
     font-weight: 500; 
@@ -160,64 +179,62 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 @media (max-width: 1024px) {
-    .timer_inner {
+    .discount-timer-inner {
         margin: 0 20px;
     }
 
-    .timer > div {
+    .discount-timer-units > div {
         width: 110px; 
         min-height: 105px; 
     }
 
-    .timer > div span {
+    .discount-timer-units > div span {
         font-size: 34px; 
     }
 }
 
 @media (max-width: 768px) {
-    .timer_inner { 
+    .discount-timer-inner { 
         flex-direction: column; 
         text-align: center; 
         gap: 20px;
         padding: 10px 20px;
     }
 
-  
-    .timer-box { 
+    .discount-timer-box { 
         order: 1; 
         justify-content: center;
         padding: 0; 
     }
 
-    .richtext-content { 
+    .discount-timer-content { 
         order: 2; 
         text-align: center; 
         align-items: center;
         padding-top: 0;
     }
 
-    .timer > div { 
+    .discount-timer-units > div { 
         width: 70px; 
         min-height: 80px; 
         padding: 10px; 
         font-size: 12px; 
     }
 
-    .timer > div span { 
+    .discount-timer-units > div span { 
         font-size: 24px; 
     }
 }
 
-
 @media (max-width: 480px) {
-    .timer > div { 
+    .discount-timer-units > div { 
         width: 70px; 
         min-height: 80px; 
         padding: 8px; 
         font-size: 11px; 
     }
 
-    .timer > div span { 
+    .discount-timer-units > div span { 
         font-size: 22px; 
     }
 }
@@ -238,14 +255,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </style>
 
+
+
+
 {% schema %}
 {
-  "name": "Richtext Timer",
+  "name": "Discount Timer",
   "settings": [
     {
     "type": "select",
     "id": "container_type",
-    "label": "Section Container Type",
+    "label": "Container Type",
     "default": "full_width",
     "options": [
     { "label": "Full Width", "value": "full_width" },
@@ -294,36 +314,38 @@ document.addEventListener('DOMContentLoaded', function () {
     {
       "type": "text",
       "id": "richtext_heading",
-      "label": "Timer Heading",
+      "label": "Heading",
       "default": "Archive Sale Is On!"
     },
     {
       "type": "text",
       "id": "richtext_button_text",
-      "label": "Timer Button Text",
+      "label": "Button Label",
       "default": "EXPLORE ALL"
     },
     {
       "type": "url",
       "id": "richtext_button_link",
-      "label": "Timer Button Link"
+      "label": "Button Link"
     },
     {
       "type": "text",
       "id": "timer_end_date",
-      "label": "Timer End Date (YYYY-MM-DD)",
+      "label": "End Date",
+      "info": "(YYYY-MM-DD)",
       "default": "2026-02-09"
     },
     {
       "type": "text",
       "id": "timer_end_time",
-      "label": "Timer End Time (HH:MM, 24h)",
+      "label": "End Time",
+      "info": "(HH:MM, 24h)",
       "default": "00:00"
     }
 
   ],
   "presets": [
-    { "name": "Richtext Timer" }
+    { "name": "Discount Timer" }
   ]
 }
 {% endschema %}

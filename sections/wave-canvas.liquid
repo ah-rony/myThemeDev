@@ -30,7 +30,7 @@ canvas#waveCanvas {
   window.addEventListener('resize', resizeCanvas);
   resizeCanvas();
 
-  // Wave layers with colors and directions
+
   const waves = [
     { color: '{{ section.settings.wave_color_1 }}', direction: 1 },
     { color: '{{ section.settings.wave_color_2 }}', direction: -1 },
@@ -117,25 +117,25 @@ canvas#waveCanvas {
     {
       "type": "color",
       "id": "wave_color_1",
-      "label": "Wave Color 1",
+      "label": "Color 1",
       "default": "#00c8ff"
     },
     {
       "type": "color",
       "id": "wave_color_2",
-      "label": "Wave Color 2",
+      "label": "Color 2",
       "default": "rgba(255,100,100,0.3)"
     },
     {
       "type": "color",
       "id": "wave_color_3",
-      "label": "Wave Color 3",
+      "label": "Color 3",
       "default": "rgba(50,50,50,0.2)"
     },
     {
       "type": "color",
       "id": "wave_color_4",
-      "label": "Wave Color 4",
+      "label": "Color 4",
       "default": "rgba(0,255,200,0.2)"
     },
     {
@@ -150,7 +150,7 @@ canvas#waveCanvas {
     {
       "type": "range",
       "id": "wave_wavelength",
-      "label": "Wavelength",
+      "label": "Wave Length",
       "min": 100,
       "max": 1000,
       "step": 10,
