@@ -1,0 +1,509 @@
+<div class="section"
+     style="padding-top: {{ section.settings.padding_top }}px;
+            padding-bottom: {{ section.settings.padding_bottom }}px;">
+
+    <div class="section-header">
+        <h2>{{ section.settings.heading }}</h2>
+
+        <div class="arrows">
+            <button class="arrow" id="prev"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" x="0" y="0" viewBox="0 0 128 128" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><path d="M84 108a3.988 3.988 0 0 1-2.828-1.172l-40-40a3.997 3.997 0 0 1 0-5.656l40-40c1.563-1.563 4.094-1.563 5.656 0s1.563 4.094 0 5.656L49.656 64l37.172 37.172a3.997 3.997 0 0 1 0 5.656A3.988 3.988 0 0 1 84 108z" fill="currentColor" opacity="1" data-original="#000000" class=""></path></g></svg></button>
+
+            <button class="arrow" id="next"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" x="0" y="0" viewBox="0 0 128 128" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><path d="M44 108a3.988 3.988 0 0 1-2.828-1.172 3.997 3.997 0 0 1 0-5.656L78.344 64 41.172 26.828c-1.563-1.563-1.563-4.094 0-5.656s4.094-1.563 5.656 0l40 40a3.997 3.997 0 0 1 0 5.656l-40 40A3.988 3.988 0 0 1 44 108z" fill="currentColor" opacity="1" data-original="#000000"></path></g></svg></button>
+        </div>
+        
+    </div>
+
+    <div class="slider-container">
+        <div class="slider">
+  {% for block in section.blocks %}
+    <div class="slide">
+
+      {% if block.type == 'image_review' %}
+  <div class="slide-img">
+    {% if block.settings.image != blank %}
+      <img
+        src="{{ block.settings.image | image_url: width: 300 }}"
+        alt="{{ block.settings.author | escape }}">
+    {% else %}
+      <div class="img-placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 25 25" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><g data-name="Layer 14"><path d="M12.5 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0-9a4 4 0 1 1-4 4 4 4 0 0 1 4-4zM13.56 13h-2.12A9.47 9.47 0 0 0 2 22.5a.5.5 0 0 0 .5.5h20a.55.55 0 0 0 .5-.56A9.46 9.46 0 0 0 13.56 13zM3 22a8.46 8.46 0 0 1 8.43-8h2.12A8.46 8.46 0 0 1 22 22z" fill="#242a33" opacity="1" data-original="#000000" class=""></path></g></g></svg>
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
+
+
+      <div class="slide-content">
+
+        <div class="{% if block.type == 'image_review' %}img-stars{% else %}stars{% endif %}">
+          {% for i in (1..block.settings.stars) %}
+            <svg width="20" height="20" viewBox="0 0 24 24" style="color: {{ block.settings.star_color }};">
+              <path fill="currentColor"
+                d="m23.363 8.584-7.378-1.127L12.678.413c-.247-.526-1.11-.526-1.357 0L8.015 7.457.637 8.584a.75.75 0 0 0-.423 1.265l5.36 5.494-1.267 7.767a.75.75 0 0 0 1.103.777L12 20.245l6.59 3.643a.75.75 0 0 0 1.103-.777l-1.267-7.767 5.36-5.494a.75.75 0 0 0-.423-1.266z"/>
+            </svg>
+          {% endfor %}
+        </div>
+
+        {% if block.settings.title != blank %}
+          <h3>{{ block.settings.title }}</h3>
+        {% endif %}
+
+        {% if block.settings.content != blank %}
+          <p>{{ block.settings.content }}</p>
+        {% endif %}
+
+        <div class="author">{{ block.settings.author }}</div>
+        <div class="date">{{ block.settings.date }}</div>
+
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+    </div>
+</div>
+
+
+
+
+<style>
+
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Instrument+Serif:ital@0;1&family=Outfit:wght@100..900&display=swap');
+    
+    body {
+        font-family: 'Outfit', sans-serif;
+        background: #F9F9F9;
+        margin: 0;
+    }
+
+    .section {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin: auto;
+        background: #F9F9F9;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .section-header h2 {
+        font-family: "Instrument Serif", serif;
+        color: #242A33;
+        font-size: 52px;
+        font-weight: 400;
+        margin: 0;
+        margin-bottom: 32px;
+    }
+
+    .arrows {
+        display: flex;
+        gap: 32px;
+        margin-bottom: 22px;
+    }
+
+    .arrow {
+        background: #fff;
+        color: #FFB686;
+        width: 44px;
+        height: 44px;
+        border: 1px solid #C1D0E5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .arrow:disabled {
+        color: #58677D;
+        opacity: 0.4;
+        cursor: default;
+    }
+
+    
+
+    .slider-container {
+        overflow: hidden;
+    }
+
+    .slider {
+        display: flex;
+        gap: 24px;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    .slide {
+        min-width: calc((100% - 72px) / 4); 
+        background: #fff;
+        text-align: left;
+        box-sizing: border-box;
+        border: 1px solid #E9EFF7;
+    }
+
+    .slide-img{
+        line-height: 0;
+    }
+
+    .slide img {
+        width: 100%;
+        height: 256px;
+    }
+
+    .img-placeholder svg {
+  width: 100%;
+  height: 256px;
+  display: block;
+}
+
+
+    .slide-content{
+        padding: 32px 20px 21px;
+    }
+
+    .stars {
+        display: flex;
+        gap: 5px;
+        color: #756DFF;
+        margin-bottom: 40px;
+    }
+    .img-stars {
+        display: flex;
+        gap: 5px;
+        color: #756DFF;
+        margin-bottom: 22px;
+    }
+
+    .slide h3 {
+        color: #242A33;
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0 0 12px;
+        line-height: 1.3;
+    }
+
+    .slide p {
+        color: #242A33;
+        font-size: 18px;
+        line-height: 1.7;
+        margin-bottom: 40px;
+    }
+
+    .slide .author {
+        font-size: 16px;
+        margin-bottom: 12px;
+        line-height: 1.3;
+        letter-spacing: 0.2px;
+    }
+
+    .slide .date {
+        font-size: 16px;
+        color: #58677D;
+        line-height: 1.7;
+    }
+
+
+@media (max-width: 1440px) {
+  .slide {
+    min-width: calc((100% - 48px) / 3);
+  }
+  .section-header h2 {
+        font-size: 48px;
+    }
+}
+
+
+@media (max-width: 1024px) {
+  .section {
+    padding: 80px 40px;
+  }
+
+  .section-header h2 {
+        font-size: 42px;
+    }
+
+  .slide {
+    min-width: calc((100% - 24px) / 2);
+  }
+
+  .slide h3 {
+    font-size: 20px;
+  }
+
+  .slide p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .section {
+    padding: 56px 16px;
+  }
+
+  .section-header h2 {
+        font-size: 36px;
+    }
+
+  .slide {
+    min-width: 100%;
+  }
+
+  .slide-content {
+    padding: 24px 16px;
+  }
+
+  .slide h3 {
+    font-size: 18px;
+  }
+
+  .slide p {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .slide img {
+    height: 220px;
+    object-fit: cover;
+  }
+
+
+  .arrows {
+    display: none;
+  }
+}
+
+
+</style>
+
+
+
+<script>
+  const slider = document.querySelector('.slider');
+  const slides = document.querySelectorAll('.slide');
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+  const container = document.querySelector('.slider-container');
+
+  const gap = 24;
+  let index = 0;
+
+  function slidesPerView() {
+    const width = window.innerWidth;
+    if (width <= 600) return 1;
+    if (width <= 1024) return 2;
+    if (width <= 1400) return 3;
+    return 4;
+  }
+
+  function updateSlider() {
+    const slideWidth = slides[0].offsetWidth + gap;
+    const maxIndex = slides.length - slidesPerView();
+
+    index = Math.max(0, Math.min(index, maxIndex));
+
+    slider.style.transform = `translateX(${-index * slideWidth}px)`;
+
+    if (prev && next) {
+      prev.disabled = index === 0;
+      next.disabled = index >= maxIndex;
+    }
+  }
+
+  next?.addEventListener('click', () => {
+    index++;
+    updateSlider();
+  });
+
+  prev?.addEventListener('click', () => {
+    index--;
+    updateSlider();
+  });
+
+
+  let startX = 0;
+  let currentX = 0;
+  let isDragging = false;
+
+  container.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    isDragging = true;
+  });
+
+  container.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    currentX = e.touches[0].clientX;
+  });
+
+  container.addEventListener('touchend', () => {
+    if (!isDragging) return;
+    const diff = startX - currentX;
+
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) index++;
+      else index--;
+    }
+
+    isDragging = false;
+    updateSlider();
+  });
+
+  window.addEventListener('resize', updateSlider);
+
+  updateSlider();
+</script>
+
+
+
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "10,000+ 5-Star Reviews"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text_review",
+      "name": "Review (No image)",
+      "settings": [
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "Star rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "color",
+          "id": "star_color",
+          "label": "Star color",
+          "default": "#756DFF"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Obsessed with Mavroo!"
+        },
+        {
+          "type": "textarea",
+          "id": "content",
+          "label": "Descriptions",
+          "default": "Mavroo is a game-changer! Our team loves the seamless integration and intuitive design process."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author name",
+          "default": "Juniper Skye"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Date",
+          "default": "1 week ago"
+        }
+      ]
+    },
+    {
+      "type": "image_review",
+      "name": "Review (With image)",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "Star rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "color",
+          "id": "star_color",
+          "label": "Star color",
+          "default": "#756DFF"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "The ultimate comfort!"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author name",
+          "default": "Juniper Skye"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Date",
+          "default": "5 days ago"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+      {
+        "type": "text_review"
+      },
+      {
+        "type": "image_review"
+      },
+      {
+        "type": "text_review"
+      },
+      {
+        "type": "image_review"
+      },
+      {
+        "type": "text_review"
+      }
+    ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,573 @@
+<section class="parallax-section-{{ section.id }}">
+  <div class="parallax-container-{{ section.id }}">
+    <div class="parallax-bg-{{ section.id }}"
+         style="{% if section.settings.background_image != blank %}background-image: url('{{ section.settings.background_image | img_url: '2000x' }}');{% endif %}">
+      <div class="parallax-bg-overlay-{{ section.id }}"></div>
+    </div>
+
+    <div class="parallax-cards-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div class="card-{{ section.id }}" {{ block.shopify_attributes }}>
+          <div class="card-img-{{ section.id }}">
+            {% if block.settings.image != blank %}
+              <img 
+                src="{{ block.settings.image | img_url: '800x' }}" 
+                srcset="{{ block.settings.image | img_url: '400x' }} 400w, {{ block.settings.image | img_url: '600x' }} 600w, {{ block.settings.image | img_url: '800x' }} 800w"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt="{{ block.settings.image.alt | escape }}"
+                width="800"
+                height="440"
+                loading="lazy"
+              >
+            {% else %}
+              <div class="placeholder-image-{{ section.id }}">
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="card-content-{{ section.id }}">
+            {% if block.settings.badge_text != blank %}
+              <span class="badge-{{ section.id }}" 
+                    style="--badge-color: {{ block.settings.badge_color }}; --badge-text-color: {{ block.settings.badge_text_color }}">
+                {{ block.settings.badge_text }}
+              </span>
+            {% endif %}
+            {% if block.settings.title != blank %}
+              <h3>{{ block.settings.title }}</h3>
+            {% endif %}
+            {% if block.settings.button_text != blank %}
+              <a href="{{ block.settings.button_link | default: '#' }}" class="card-link-{{ section.id }}">
+                {{ block.settings.button_text }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+<style>
+.parallax-section-{{ section.id }} * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.parallax-section-{{ section.id }} {
+  position: relative;
+  height: 100vh;
+  min-height: 700px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  overflow: hidden;
+}
+
+.parallax-container-{{ section.id }} {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.parallax-bg-{{ section.id }} {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  will-change: transform;
+}
+
+.parallax-bg-overlay-{{ section.id }} {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: {{ section.settings.background_overlay }};
+  opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+  z-index: 1;
+}
+
+.placeholder-background-{{ section.id }} {
+  width: 100%;
+  height: 100%;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.parallax-cards-{{ section.id }} {
+  display: flex;
+  gap: 24px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1800px;
+  padding: 0 24px;
+  height: 440px;
+  align-items: stretch;
+}
+
+.card-{{ section.id }} {
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  height: 100%;
+  min-height: 440px;
+}
+
+.card-{{ section.id }}:hover {
+  transform: translateY(-4px);
+}
+
+.card-img-{{ section.id }} {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  min-height: 440px;
+}
+
+.card-img-{{ section.id }} img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card-{{ section.id }}:hover .card-img-{{ section.id }} img {
+  transform: scale(1.05);
+}
+
+.placeholder-image-{{ section.id }} {
+  width: 100%;
+  height: 100%;
+  background: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-image-{{ section.id }} .placeholder-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.card-content-{{ section.id }} {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 40px;
+  padding-right: 40px;
+  height: 100%;
+}
+
+.badge-{{ section.id }} {
+  font-size: 16px;
+  padding: 8px 16px;
+  width: fit-content;
+  border-radius: 2px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: var(--badge-color, #ED3F27);
+  color: var(--badge-text-color, #FFFFFF);
+  margin-bottom: 24px;
+}
+
+.card-content-{{ section.id }} h3 {
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #242A33;
+  margin: 0 0 32px 0;
+}
+
+.card-link-{{ section.id }} {
+  font-size: 16px;
+  color: #242A33;
+  text-decoration: none;
+  border-bottom: 1px solid #242A33;
+  width: fit-content;
+  line-height: 1.4;
+  padding-bottom: 2px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.card-link-{{ section.id }}:hover {
+  opacity: 0.7;
+}
+
+
+@media (max-width: 1200px) {
+  .parallax-cards-{{ section.id }} {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    padding: 0 16px;
+    height: auto;
+    min-height: 440px;
+  }
+
+  .card-{{ section.id }} {
+    width: calc(50% - 12px);
+    flex-direction: column;
+    height: 440px;
+    min-height: 440px;
+  }
+
+  .card-img-{{ section.id }} {
+    height: 50%;
+    min-height: 200px;
+  }
+
+  .card-content-{{ section.id }} {
+    padding: 32px;
+    justify-content: flex-start;
+    height: 50%;
+  }
+  
+  .card-content-{{ section.id }} h3 {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+  
+  .badge-{{ section.id }} {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 992px) {
+  .parallax-section-{{ section.id }} {
+    height: auto;
+    min-height: auto;
+    padding: 80px 0;
+  }
+
+  .parallax-container-{{ section.id }} {
+    height: auto;
+  }
+
+  .parallax-cards-{{ section.id }} {
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    height: auto;
+  }
+
+  .card-{{ section.id }} {
+    width: 80%;
+    max-width: 600px;
+    flex-direction: column;
+    height: 500px;
+  }
+
+  .card-img-{{ section.id }} {
+    height: 50%;
+  }
+
+  .card-content-{{ section.id }} {
+    padding: 32px;
+    height: 50%;
+  }
+  
+  .card-content-{{ section.id }} h3 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .parallax-section-{{ section.id }} {
+    padding: 60px 0;
+  }
+
+  .parallax-cards-{{ section.id }} {
+    flex-direction: column;
+    gap: 32px;
+    padding: 0 16px;
+  }
+
+  .card-{{ section.id }} {
+    width: 100%;
+    max-width: 400px;
+    flex-direction: column;
+    height: 450px;
+  }
+
+  .card-img-{{ section.id }} img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-content-{{ section.id }} {
+    padding: 24px;
+  }
+
+  .card-content-{{ section.id }} h3 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .card-link-{{ section.id }} {
+    font-size: 14px;
+  }
+
+  .badge-{{ section.id }} {
+    font-size: 14px;
+    padding: 6px 12px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .parallax-section-{{ section.id }} {
+    padding: 40px 0;
+  }
+
+  .parallax-cards-{{ section.id }} {
+    gap: 24px;
+  }
+
+  .card-{{ section.id }} {
+    height: 400px;
+  }
+
+  .card-content-{{ section.id }} {
+    padding: 20px;
+  }
+
+  .card-content-{{ section.id }} h3 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .badge-{{ section.id }} {
+    font-size: 12px;
+    padding: 4px 10px;
+    margin-bottom: 12px;
+  }
+
+  .card-link-{{ section.id }} {
+    font-size: 14px;
+  }
+}
+
+/* Touch device optimization */
+@media (hover: none) and (pointer: coarse) {
+  .card-{{ section.id }}:hover {
+    transform: none;
+  }
+  
+  .card-link-{{ section.id }}:hover {
+    opacity: 1;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .card-{{ section.id }},
+  .card-img-{{ section.id }} img,
+  .card-link-{{ section.id }} {
+    transition: none;
+  }
+}
+</style>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const section = document.querySelector('.parallax-section-{{ section.id }}');
+  if (!section) return;
+  
+  const container = section.querySelector('.parallax-container-{{ section.id }}');
+  const bg = section.querySelector('.parallax-bg-{{ section.id }}');
+
+  function updateParallax() {
+    if (!container || !bg) return;
+    
+    const rect = container.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const containerTop = rect.top;
+    
+    // Calculate progress based on container position in viewport
+    const progress = -containerTop / viewportHeight;
+    const maxMove = {{ section.settings.parallax_intensity | default: 80 }};
+    
+    // Smooth parallax effect
+    const offset = progress * maxMove;
+    bg.style.transform = `translateY(${offset}px)`;
+  }
+
+  // Throttle scroll events for performance
+  let ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      window.requestAnimationFrame(function() {
+        updateParallax();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // Initial update
+  updateParallax();
+  
+  // Update on resize
+  window.addEventListener('resize', updateParallax);
+  
+  // Initialize Intersection Observer for better performance
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        updateParallax();
+      }
+    });
+  }, {
+    threshold: 0.1
+  });
+  
+  observer.observe(section);
+});
+</script>
+
+{% schema %}
+{
+  "name": "Parallax Cards",
+  "class": "section-parallax-cards",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image",
+      "info": "Recommended size: 1920x800px"
+    },
+    {
+      "type": "range",
+      "id": "parallax_intensity",
+      "min": 20,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Parallax Intensity",
+      "default": 80
+    },
+    {
+      "type": "color",
+      "id": "background_overlay",
+      "label": "Background Overlay Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Recommended size: 544x440px"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge Text",
+          "default": "HOT"
+        },
+        {
+          "type": "color",
+          "id": "badge_color",
+          "label": "Badge Color",
+          "default": "#ED3F27"
+        },
+        {
+          "type": "color",
+          "id": "badge_text_color",
+          "label": "Badge Text Color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Product Title"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Text",
+          "default": "SHOP NOW"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Parallax Cards",
+      "category": "Custom Sections",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "badge_text": "HOT",
+            "badge_color": "#ED3F27",
+            "title": "Chill Kids' Fashion Jacket",
+            "button_text": "SHOP NOW"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "badge_text": "-35%",
+            "badge_color": "#ED3F27",
+            "title": "Cool Women's Fashion Tee",
+            "button_text": "SHOP NOW"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "badge_text": "HOT",
+            "badge_color": "#ED3F27",
+            "title": "Upgrade Style Without Breaking the Bank",
+            "button_text": "SHOP NOW"
+          }
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3
+}
+{% endschema %}
