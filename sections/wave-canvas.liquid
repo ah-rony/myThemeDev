@@ -30,13 +30,47 @@ canvas#waveCanvas {
   window.addEventListener('resize', resizeCanvas);
   resizeCanvas();
 
+  function hexToRgba(hex, opacity) {
+  hex = hex.replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+ 
+const waves = [
+  {
+    color: hexToRgba(
+      '{{ section.settings.wave_color_1 }}',
+      {{ section.settings.wave_opacity_1 }} / 100
+    ),
+    direction: 1
+  },
+  {
+    color: hexToRgba(
+      '{{ section.settings.wave_color_2 }}',
+      {{ section.settings.wave_opacity_2 }} / 100
+    ),
+    direction: -1
+  },
+  {
+    color: hexToRgba(
+      '{{ section.settings.wave_color_3 }}',
+      {{ section.settings.wave_opacity_3 }} / 100
+    ),
+    direction: 1
+  },
+  {
+    color: hexToRgba(
+      '{{ section.settings.wave_color_4 }}',
+      {{ section.settings.wave_opacity_4 }} / 100
+    ),
+    direction: -1
+  }
+];
 
-  const waves = [
-    { color: '{{ section.settings.wave_color_1 }}', direction: 1 },
-    { color: '{{ section.settings.wave_color_2 }}', direction: -1 },
-    { color: '{{ section.settings.wave_color_3 }}', direction: 1 },
-    { color: '{{ section.settings.wave_color_4 }}', direction: -1 }
-  ];
+
+
 
   const baseSettings = {
     amplitude: {{ section.settings.wave_amplitude }},
@@ -108,11 +142,12 @@ canvas#waveCanvas {
     {
       "type": "range",
       "id": "container_height",
-      "label": "Container Height (px)",
+      "label": "Height",
       "min": 100,
       "max": 800,
       "step": 10,
-      "default": 300
+      "unit": "px",
+      "default": 100
     },
     {
       "type": "color",
@@ -121,23 +156,67 @@ canvas#waveCanvas {
       "default": "#00c8ff"
     },
     {
+      "type": "range",
+      "id": "wave_opacity_1",
+      "label": "Color 1 Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100
+    },
+
+    {
       "type": "color",
       "id": "wave_color_2",
       "label": "Color 2",
-      "default": "rgba(255,100,100,0.3)"
+      "default": "#ff6464"
     },
+    {
+      "type": "range",
+      "id": "wave_opacity_2",
+      "label": "Color 2 Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 30
+    },
+
     {
       "type": "color",
       "id": "wave_color_3",
       "label": "Color 3",
-      "default": "rgba(50,50,50,0.2)"
+      "default": "#323232"
     },
+    {
+      "type": "range",
+      "id": "wave_opacity_3",
+      "label": "Color 3 Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 20
+    },
+
     {
       "type": "color",
       "id": "wave_color_4",
       "label": "Color 4",
-      "default": "rgba(0,255,200,0.2)"
+      "default": "#00ffc8"
     },
+    {
+      "type": "range",
+      "id": "wave_opacity_4",
+      "label": "Color 4 Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 20
+    },
+
     {
       "type": "range",
       "id": "wave_amplitude",
