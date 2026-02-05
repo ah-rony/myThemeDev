@@ -1,4 +1,11 @@
+{% if section.settings.enable_wave %}
+  {% render 'wave-snippet' %}
+{% endif %}
+
+
+
 <footer>
+  
   <div class="footer__copyright">
     &copy;
     {{ 'now' | date: '%Y' }}
@@ -41,6 +48,122 @@
 {
   "name": "t:general.footer",
   "settings": [
+    {
+  "type": "checkbox",
+  "id": "enable_wave",
+  "label": "Enable Wave",
+  "default": false
+},
+{
+  "type": "header",
+  "content": "Wave Settings"
+},
+    {
+      "type": "range",
+      "id": "container_height",
+      "label": "Height",
+      "min": 100,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "wave_color_1",
+      "label": "Color 1",
+      "default": "#00c8ff"
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity_1",
+      "label": "Color 1 Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100
+    },
+
+    {
+      "type": "color",
+      "id": "wave_color_2",
+      "label": "Color 2",
+      "default": "#ff6464"
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity_2",
+      "label": "Color 2 Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 30
+    },
+
+    {
+      "type": "color",
+      "id": "wave_color_3",
+      "label": "Color 3",
+      "default": "#323232"
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity_3",
+      "label": "Color 3 Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 20
+    },
+
+    {
+      "type": "color",
+      "id": "wave_color_4",
+      "label": "Color 4",
+      "default": "#00ffc8"
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity_4",
+      "label": "Color 4 Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 20
+    },
+
+    {
+      "type": "range",
+      "id": "wave_amplitude",
+      "label": "Wave Amplitude",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "wave_wavelength",
+      "label": "Wave Length",
+      "min": 100,
+      "max": 1000,
+      "step": 10,
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "wave_speed",
+      "label": "Wave Speed",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 2
+    },
+
     {
       "type": "link_list",
       "id": "menu",
