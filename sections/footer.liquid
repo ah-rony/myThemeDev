@@ -56,7 +56,8 @@
 },
 {
   "type": "header",
-  "content": "Wave Settings"
+  "content": "Wave Settings",
+   "visible_if": "{{ section.settings.enable_wave }}"
 },
     {
       "type": "range",
@@ -66,13 +67,15 @@
       "max": 800,
       "step": 10,
       "unit": "px",
-      "default": 100
+      "default": 100,
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
     {
       "type": "color",
       "id": "wave_color_1",
       "label": "Color 1",
-      "default": "#00c8ff"
+      "default": "#00c8ff",
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
     {
       "type": "range",
@@ -82,14 +85,16 @@
       "max": 100,
       "step": 1,
       "unit": "%",
-      "default": 100
+      "default": 100,
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
 
     {
       "type": "color",
       "id": "wave_color_2",
       "label": "Color 2",
-      "default": "#ff6464"
+      "default": "#ff6464",
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
     {
       "type": "range",
@@ -99,14 +104,16 @@
       "max": 100,
       "step": 1,
       "unit": "%",
-      "default": 30
+      "default": 30,
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
 
     {
       "type": "color",
       "id": "wave_color_3",
       "label": "Color 3",
-      "default": "#323232"
+      "default": "#323232",
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
     {
       "type": "range",
@@ -116,14 +123,16 @@
       "max": 100,
       "step": 1,
       "unit": "%",
-      "default": 20
+      "default": 20,
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
 
     {
       "type": "color",
       "id": "wave_color_4",
       "label": "Color 4",
-      "default": "#00ffc8"
+      "default": "#00ffc8",
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
     {
       "type": "range",
@@ -133,7 +142,8 @@
       "max": 100,
       "step": 1,
       "unit": "%",
-      "default": 20
+      "default": 20,
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
 
     {
@@ -143,7 +153,8 @@
       "min": 5,
       "max": 100,
       "step": 1,
-      "default": 20
+      "default": 20,
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
     {
       "type": "range",
@@ -152,7 +163,8 @@
       "min": 100,
       "max": 1000,
       "step": 10,
-      "default": 300
+      "default": 300,
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
     {
       "type": "range",
@@ -161,7 +173,8 @@
       "min": 1,
       "max": 10,
       "step": 1,
-      "default": 2
+      "default": 2,
+       "visible_if": "{{ section.settings.enable_wave }}"
     },
 
     {
