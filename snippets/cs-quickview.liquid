@@ -1,0 +1,417 @@
+<style>
+  .cs-v2-quickview-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-v2-quickview-modal.active {
+  display: flex;
+}
+
+/* overlay */
+.cs-v2-quickview-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+}
+
+/* main box */
+.cs-v2-quickview-box {
+  position: relative;
+  width: min(900px, 92vw);
+  background: #fff;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 24px;
+  z-index: 2;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  animation: qvFade 0.25s ease;
+}
+
+/* animation */
+@keyframes qvFade {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* image section */
+.cs-v2-quickview-box img.qv-image {
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  background: #fafafa;
+}
+
+/* content */
+.qv-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qv-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.qv-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111;
+}
+
+.qv-desc {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* button */
+.qv-btn {
+  margin-top: 10px;
+  display: inline-block;
+  padding: 12px 16px;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.qv-btn:hover {
+  background: #333;
+}
+
+/* close button */
+.cs-v2-qv-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  z-index: 3;
+}
+
+.cs-v2-qv-close:hover {
+  background: #e5e5e5;
+}
+
+
+/* ============================= */
+
+.qv-swatches {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.qv-swatch {
+  width: 45px;
+  height: 45px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.qv-swatch img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.qv-swatch.active {
+  border: 2px solid black;
+}
+
+.qv-sizes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.qv-size {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.qv-size.active {
+  background: black;
+  color: white;
+  border-color: black;
+}
+
+.qv-add-to-cart {
+  background: black;
+  color: white;
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+
+
+/* =========================== */
+
+
+@media (max-width: 768px) {
+  .cs-v2-quickview-box {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .cs-v2-quickview-box img.qv-image {
+    max-height: 300px;
+  }
+
+  .qv-title {
+    font-size: 18px;
+  }
+}
+
+
+</style>
+
+<div class="cs-v2-quickview-modal" id="csQuickView">
+  <div class="cs-v2-quickview-overlay"></div>
+
+  <div class="cs-v2-quickview-box">
+    <button class="cs-v2-qv-close">×</button>
+
+    <img
+      class="qv-image"
+      src=""
+      width="600"
+      height="600"
+      alt="Product image"
+      loading="lazy"
+    />
+
+    {% comment %} <div class="qv-content">
+      <h2 class="qv-title"></h2>
+      <p class="qv-price"></p>
+      <p class="qv-desc"></p>
+
+      <a class="qv-btn" href="#">View Product</a>
+    </div> {% endcomment %}
+    <div class="qv-content">
+  <h2 class="qv-title"></h2>
+
+  <p class="qv-price">
+    <span class="qv-price-current"></span>
+    <span class="qv-price-compare"></span>
+  </p>
+
+  <!-- SWATCH IMAGES -->
+  <div class="qv-swatches"></div>
+
+  <!-- SIZE VARIANTS -->
+  <div class="qv-sizes"></div>
+
+  <!-- ACTION BUTTONS -->
+  <button class="qv-add-to-cart">Add to Cart</button>
+
+  <a class="qv-btn" href="#">View Product</a>
+</div>
+
+
+  </div>
+</div>
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("csQuickView");
+
+  let currentProduct = null;
+  let selectedVariantId = null;
+
+  // OPEN QUICK VIEW
+  document.querySelectorAll(".cs-v2-quickview-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const handle = btn.dataset.handle;
+
+      const res = await fetch(`/products/${handle}.js`);
+      const product = await res.json();
+
+      currentProduct = product;
+
+      openQuickView(product);
+    });
+  });
+
+  function openQuickView(product) {
+    modal.classList.add("active");
+
+    // title
+    modal.querySelector(".qv-title").innerText = product.title;
+
+    // price
+    const variant = product.variants[0];
+
+    modal.querySelector(".qv-price-current").innerText =
+      formatMoney(variant.price);
+
+    modal.querySelector(".qv-price-compare").innerText =
+      variant.compare_at_price
+        ? formatMoney(variant.compare_at_price)
+        : "";
+
+    // link
+    modal.querySelector(".qv-btn").href = `/products/${product.handle}`;
+
+    selectedVariantId = variant.id;
+
+    renderSwatches(product);
+    renderSizes(product);
+  }
+
+  // SWATCH RENDER
+  function renderSwatches(product) {
+    const wrap = modal.querySelector(".qv-swatches");
+    wrap.innerHTML = "";
+
+    const images = product.images;
+
+    images.forEach((img, index) => {
+      const el = document.createElement("div");
+      el.className = "qv-swatch";
+
+      if (index === 0) el.classList.add("active");
+
+      el.innerHTML = `<img src="${img}" />`;
+
+      el.addEventListener("click", () => {
+        modal.querySelector(".qv-image").src = img;
+
+        document.querySelectorAll(".qv-swatch").forEach(s => s.classList.remove("active"));
+        el.classList.add("active");
+      });
+
+      wrap.appendChild(el);
+    });
+
+    modal.querySelector(".qv-image").src = images[0];
+  }
+
+  // SIZE RENDER
+function renderSizes(product) {
+  const wrap = modal.querySelector(".qv-sizes");
+  wrap.innerHTML = "";
+
+  // 🔥 better size detection (FIXED)
+  const sizeOptionIndex = product.options.findIndex(o =>
+    o && o.toLowerCase().includes("size")
+  );
+
+  if (sizeOptionIndex === -1) return;
+
+  const sizes = [];
+
+  product.variants.forEach(v => {
+    const size = v.options?.[sizeOptionIndex];
+
+    if (size && !sizes.includes(size)) {
+      sizes.push(size);
+    }
+  });
+
+  if (!sizes.length) return;
+
+  sizes.forEach(size => {
+    const el = document.createElement("div");
+    el.className = "qv-size";
+    el.innerText = size;
+
+    el.addEventListener("click", () => {
+      wrap.querySelectorAll(".qv-size")
+        .forEach(s => s.classList.remove("active"));
+
+      el.classList.add("active");
+
+      const match = product.variants.find(v =>
+        v.options?.[sizeOptionIndex] === size
+      );
+
+      if (!match) return;
+
+      selectedVariantId = match.id;
+
+      modal.querySelector(".qv-price-current").innerText =
+        formatMoney(match.price);
+
+      const compare = match.compare_at_price;
+
+      modal.querySelector(".qv-price-compare").innerText =
+        compare && compare > match.price
+          ? formatMoney(compare)
+          : "";
+    });
+
+    wrap.appendChild(el);
+  });
+
+  // auto select first
+  const first = wrap.querySelector(".qv-size");
+  if (first) first.click();
+}
+
+  // ADD TO CART
+  modal.querySelector(".qv-add-to-cart").addEventListener("click", async () => {
+    if (!selectedVariantId) return;
+
+    await fetch("/cart/add.js", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: selectedVariantId,
+        quantity: 1
+      })
+    });
+
+    window.location.href = "/cart";
+  });
+
+  // CLOSE
+  modal.querySelector(".cs-v2-qv-close").addEventListener("click", close);
+  modal.querySelector(".cs-v2-quickview-overlay").addEventListener("click", close);
+
+  function close() {
+    modal.classList.remove("active");
+  }
+
+  // MONEY FORMAT
+  function formatMoney(cents) {
+    return (cents / 100).toLocaleString() + " BDT";
+  }
+});
+</script>

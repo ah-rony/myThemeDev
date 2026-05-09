@@ -1,0 +1,198 @@
+{% style %}
+.multi-switch-section-main-{{section.id}}{
+
+.multi-switch-section {
+  padding: 40px 0;
+}
+
+.multi-switch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.tab-btn.active {
+  font-weight: bold;
+  color: red;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+
+/* //arrow */
+
+.swiper {
+  position: relative;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  width: 40px;
+  height: 40px;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  display: none;
+}
+
+
+.swiper-button-next::before,
+.swiper-button-prev::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid black;
+  border-right: 2px solid black;
+  display: block;
+  margin: auto;
+}
+
+
+.swiper-button-next::before {
+  transform: rotate(45deg);
+}
+
+.swiper-button-prev::before {
+  transform: rotate(-135deg);
+}
+
+
+.swiper-button-next {
+  right: 10px;
+}
+
+.swiper-button-prev {
+  left: 10px;
+}
+
+
+
+}
+{% endstyle %}
+
+<div class="multi-switch-section multi-switch-section-main-{{section.id}} ">
+
+  <div class="multi-switch-header">
+    <h2>{{ section.settings.title }}</h2>
+
+    <div class="tabs">
+      {% for block in section.blocks %}
+        <button
+          class="tab-btn {% if forloop.first %}active{% endif %}"
+          data-tab="tab-{{ block.id }}"
+        >
+          {{ block.settings.tab_title }}
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% for block in section.blocks %}
+    <div
+      id="tab-{{ block.id }}"
+      class="tab-content {% if forloop.first %}active{% endif %}"
+    >
+      <div class="swiper swiper-{{ section.id }}-{{ block.id }}">
+        <div class="swiper-wrapper">
+
+          {% for product in block.settings.collection.products %}
+            <div class="swiper-slide">
+
+              {% render 'multi-switch-card',
+                product: product,
+                switch_type: section.settings.switch_type
+              %}
+
+            </div>
+          {% endfor %}
+
+        </div>
+
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+    </div>
+  {% endfor %}
+
+</div>
+
+
+
+{% schema %}
+{
+  "name": "Multi Switch Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "New Arrivals"
+    },
+    {
+      "type": "select",
+      "id": "switch_type",
+      "label": "Swatch Type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image Swatch"
+        },
+        {
+          "value": "color",
+          "label": "Color Swatch"
+        }
+      ],
+      "default": "image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multi Switch Products"
+    }
+  ]
+}
+{% endschema %}

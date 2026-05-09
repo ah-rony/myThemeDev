@@ -1,0 +1,45 @@
+{{'accordion-tab.css' | asset_url | stylesheet_tag}}
+<script src="{{'accordion-tab.js' |  asset_url}}" defer="defer"></script>
+
+{% for block in section.blocks %}
+    <accordion-tab class="page-width">
+<div class="accordion_header" data-header>
+    <h2>{{block.settings.title}}</h2>
+</div>
+<div class="accordion_content" data-content>
+    <p>{{block.settings.content}}</p>
+</div>
+</accordion-tab>
+{% endfor %}
+
+{% schema %}
+{
+    "name": "Accordion Tab",
+    "settings": [],
+    "blocks": [
+        {
+            "type": "accordion",
+            "name":"Accordion",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title",
+                    "default":"This is accordion"
+                },
+                {
+                    "type": "richtext",
+                    "id": "content",
+                    "label": "content",
+                    "default":"<p>Accordion content that was displayed</p>"
+                }
+            ]
+        }
+    ],
+        "presets": [
+            {
+                "name": "Accordion Tab"
+            }
+        ]
+}
+{% endschema %}

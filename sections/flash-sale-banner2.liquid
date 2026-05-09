@@ -1,0 +1,680 @@
+{% comment %} <section class="flash-sale-timer-section">
+    <div class="flash-sale-timer-container container">
+        <div class="flash-sale-timer-row row gx-0 gy-0">
+            <div class="col-12 col-md-8 col-lg-6 fst-left-col">
+                <div class="fst-img img-with-timer">
+                    {% if section.settings.left_image !=blank %}
+
+                        {% else %}
+                            
+                        
+                    {% endif %}
+
+                    <p class="fst-flash-label">{{section.settings.flash_label}}</p>
+
+                    <div class="fst-bottom-block">
+                        <p class="fst-tagline">{{section.settings.tagline}}</p>
+                        <a class="fst-cta-btn" href="{{section.settings.cta_url}}">{{section.settings.cta_label}}</a>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-6 fst-right-col scroll-reveal" id="fst-right-{{section.id}}" aria-hidden="true">
+                <div class=" fst-img fst-img--plain">
+                    {% if section.settings.right_image !=blank %}
+
+                        {% else %}
+                            
+                        
+                    {% endif %}
+                </div>
+                        
+            </div>
+
+
+
+        </div>
+    </div>
+
+</section> {% endcomment %}
+
+
+
+{% comment %}
+  Section  : Flash Sale Timer
+  File     : sections/flash-sale-timer.liquid
+  Grid     : layout.css (container / row / col-*)
+  Animation: CSS scroll-driven (animation-timeline) — tablet slide-in from right
+             IntersectionObserver fallback for unsupported browsers
+  JS       : OOP — CountdownTimer + ScrollReveal
+{% endcomment %}
+
+<section class="flash-sale-timer-section">
+  <div class="flash-sale-timer-container container">
+    <div class="flash-sale-timer-row row gx-0 gy-0">
+
+      {%- comment -%} ── LEFT COLUMN : image + countdown ── {%- endcomment -%}
+      <div class="col-12 col-md-8 col-lg-6 fst-left-col">
+        <div class="fst-img img-with-timer">
+
+          {% if section.settings.left_image != blank %}
+            <img
+              class="fst-bg-img"
+              src="{{ section.settings.left_image | image_url: width: 1000 }}"
+              srcset="
+                {{ section.settings.left_image | image_url: width: 600  }} 600w,
+                {{ section.settings.left_image | image_url: width: 800  }} 800w,
+                {{ section.settings.left_image | image_url: width: 1000 }} 1000w
+              "
+              sizes="(min-width: 992px) 50vw, (min-width: 768px) 66vw, 100vw"
+              alt="{{ section.settings.left_image.alt | escape }}"
+              loading="eager"
+              width="{{ section.settings.left_image.width }}"
+              height="{{ section.settings.left_image.height }}"
+            >
+          {% else %}
+            <div class="fst-placeholder fst-placeholder--dark" aria-hidden="true">
+              {{ 'image' | placeholder_svg_tag: 'fst-placeholder-svg' }}
+            </div>
+          {% endif %}
+
+          <p class="fst-flash-label" style="color: {{ section.settings.flash_label_color }};">
+            {{ section.settings.flash_label }}
+          </p>
+
+          <div class="fst-bottom-block">
+            <p class="fst-tagline" style="color: {{ section.settings.tagline_color }};">
+              {{ section.settings.tagline }}
+            </p>
+
+            {%- comment -%} ── Countdown ── {%- endcomment -%}
+            <div class="fst-countdown" role="timer" aria-live="off" aria-label="Sale countdown timer">
+              <div class="fst-countdown__unit">
+                <span class="fst-digits" id="fst-days-{{ section.id }}">00</span>
+                <span class="fst-unit-label">{{ section.settings.label_days | default: 'D' }}</span>
+              </div>
+              <div class="fst-countdown__unit">
+                <span class="fst-digits" id="fst-hours-{{ section.id }}">00</span>
+                <span class="fst-unit-label">{{ section.settings.label_hours | default: 'Hr' }}</span>
+              </div>
+              <div class="fst-countdown__unit">
+                <span class="fst-digits" id="fst-mins-{{ section.id }}">00</span>
+                <span class="fst-unit-label">{{ section.settings.label_mins | default: 'Min' }}</span>
+              </div>
+              <div class="fst-countdown__unit">
+                <span class="fst-digits" id="fst-secs-{{ section.id }}">00</span>
+                <span class="fst-unit-label">{{ section.settings.label_secs | default: 'Sec' }}</span>
+              </div>
+            </div>
+
+            <a class="fst-cta-btn" href="{{ section.settings.cta_url }}">
+              {{ section.settings.cta_label }}
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      {%- comment -%} ── RIGHT COLUMN : plain image (scroll-animated on tablet) ── {%- endcomment -%}
+      <div
+        class="col-12 col-md-4 col-lg-6 fst-right-col"
+        id="fst-right-{{ section.id }}"
+        aria-hidden="true"
+      >
+        <div class="fst-img fst-img--plain">
+
+          {% if section.settings.right_image != blank %}
+            <img
+              class="fst-bg-img"
+              src="{{ section.settings.right_image | image_url: width: 900 }}"
+              srcset="
+                {{ section.settings.right_image | image_url: width: 500 }} 500w,
+                {{ section.settings.right_image | image_url: width: 900 }} 900w
+              "
+              sizes="(min-width: 992px) 50vw, (min-width: 768px) 34vw, 100vw"
+              alt="{{ section.settings.right_image.alt | escape }}"
+              loading="lazy"
+              width="{{ section.settings.right_image.width }}"
+              height="{{ section.settings.right_image.height }}"
+            >
+          {% else %}
+            <div class="fst-placeholder" aria-hidden="true">
+              {{ 'image' | placeholder_svg_tag: 'fst-placeholder-svg' }}
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+{%- comment -%} ══════════════ STYLES ══════════════ {%- endcomment -%}
+<style>
+  /* ── Scoped reset ─────────────────────────────────────────── */
+  .flash-sale-timer-section *,
+  .flash-sale-timer-section *::before,
+  .flash-sale-timer-section *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .flash-sale-timer-section {
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+  }
+
+  .flash-sale-timer-container {
+    padding-block: 20px;
+  }
+
+  /* ── Image cards (mobile base) ───────────────────────────── */
+  .fst-img {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #1a1a1a;
+  }
+
+  .img-with-timer { aspect-ratio: 9 / 14; }
+  .fst-img--plain { aspect-ratio: 9 / 10; }
+
+  .fst-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .img-with-timer .fst-bg-img { object-position: center top; }
+  .fst-img--plain .fst-bg-img { object-position: center; }
+
+  /* Placeholder */
+  .fst-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2d2d2d;
+  }
+  .fst-placeholder--dark { background: #1a1a1a; }
+  .fst-placeholder-svg   { width: 60%; height: 60%; opacity: 0.3; }
+
+  /* ── Flash label ─────────────────────────────────────────── */
+  .fst-flash-label {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 3;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 400;
+    /* colour: inline style from schema */
+  }
+
+  /* ── Bottom block ────────────────────────────────────────── */
+  .fst-bottom-block {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    padding: 0 20px 24px;
+  }
+
+  .fst-tagline {
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 14px;
+    opacity: 0.92;
+    /* colour: inline style from schema */
+  }
+
+  /* ── Countdown ───────────────────────────────────────────── */
+  .fst-countdown {
+    display: flex;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.45);
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.45);
+    margin-bottom: 10px;
+  }
+
+  .fst-countdown__unit {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 0;
+    border-right: 0.5px solid rgba(255, 255, 255, 0.45);
+  }
+  .fst-countdown__unit:last-child { border-right: none; }
+
+  .fst-digits {
+    font-size: 16px;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .fst-unit-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1;
+  }
+
+  /* ── CTA button ──────────────────────────────────────────── */
+  .fst-cta-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #fff;
+    color: #1c1c1c;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-family: inherit;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+  .fst-cta-btn:hover         { opacity: 0.85; }
+  .fst-cta-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+
+  /* ════════════════════════════════════════════════════════════
+     TABLET  768–991px
+
+     The right col is absolutely positioned over the right
+     edge of the row. It starts fully off-screen (translateX
+     100%) and animates in as the page scrolls.
+
+     ROOT CAUSE OF HIDDEN BUG:
+       The previous code used display/visibility to hide the
+       right col, which removed it from rendering entirely.
+       The fix: NEVER touch display/visibility — only use
+       transform to move it off-screen. The row's
+       overflow:hidden clips it visually while it's outside
+       the row boundary.
+     ════════════════════════════════════════════════════════════ */
+ @@media (min-width: 768px) and (max-width: 991px) {
+
+  .flash-sale-timer-row {
+    position: relative;
+    display: flex !important;
+    overflow: hidden;
+  }
+
+  /* FORCE override bootstrap columns */
+  .fst-left-col {
+    flex: 0 0 25% !important;
+    max-width: 25% !important;
+    position: relative;
+    z-index: 2;
+  }
+
+  .fst-right-col {
+    flex: 0 0 75% !important;
+    max-width: 75% !important;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* IMPORTANT: animation should be on IMAGE, not column */
+  .fst-right-col .fst-img {
+    height: 100%;
+    width: 100%;
+    animation: fst-shift-left linear both;
+    animation-timeline: scroll(root block);
+    animation-range: entry 0% cover 60%;
+  }
+
+  .fst-img,
+  .img-with-timer,
+  .fst-img--plain {
+    height: 100%;
+    aspect-ratio: unset;
+  }
+}
+
+@keyframes fst-shift-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-20%);
+  }
+}
+
+
+  /* ════════════════════════════════════════════════════════════
+     DESKTOP  992px+
+
+     Both columns sit side-by-side in normal flow.
+     Right col gets a fade-up as the section enters view.
+     ════════════════════════════════════════════════════════════ */
+  @media (min-width: 992px) {
+
+    .img-with-timer,
+    .fst-img--plain {
+      aspect-ratio: 9 / 12;
+    }
+
+    .fst-bottom-block {
+      padding: 0 32px 36px;
+    }
+
+    .fst-flash-label { font-size: 20px; }
+    .fst-tagline     { font-size: 16px; }
+
+    .fst-right-col {
+      animation: fst-fade-up linear both;
+      animation-timeline: scroll(root block);
+      animation-range: entry 0% cover 30%;
+    }
+  }
+
+
+  /* ── Keyframes ───────────────────────────────────────────── */
+  @keyframes fst-slide-right {
+    from { transform: translateX(100%); opacity: 0.2; }
+    to   { transform: translateX(0);    opacity: 1;   }
+  }
+
+  @keyframes fst-fade-up {
+    from { transform: translateY(48px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+</style>
+
+
+{%- comment -%} ══════════════ JAVASCRIPT ══════════════ {%- endcomment -%}
+<script>
+(function () {
+  'use strict';
+
+  /* ══════════════════════════════════════════════════════════
+     CLASS: CountdownTimer
+     Accepts a Unix ms end time and four DOM span elements.
+     Updates them every second. Stops cleanly at zero.
+     ══════════════════════════════════════════════════════════ */
+  class CountdownTimer {
+    constructor(endMs, els) {
+      this._end   = endMs;
+      this._els   = els;   /* { days, hours, mins, secs } */
+      this._timer = null;
+    }
+
+    _pad(n) {
+      return String(Math.max(0, n)).padStart(2, '0');
+    }
+
+    _tick() {
+      const diff  = Math.max(0, this._end - Date.now());
+      const total = Math.floor(diff / 1000);
+
+      this._els.days.textContent  = this._pad(Math.floor(total / 86400));
+      this._els.hours.textContent = this._pad(Math.floor((total % 86400) / 3600));
+      this._els.mins.textContent  = this._pad(Math.floor((total % 3600) / 60));
+      this._els.secs.textContent  = this._pad(total % 60);
+
+      if (diff <= 0) this.stop();
+    }
+
+    start() {
+      this._tick();
+      this._timer = setInterval(() => this._tick(), 1000);
+      return this;
+    }
+
+    stop() {
+      clearInterval(this._timer);
+      this._timer = null;
+    }
+  }
+
+
+  /* ══════════════════════════════════════════════════════════
+     CLASS: ScrollReveal
+     Fallback for browsers that don't support animation-timeline.
+     Only activates when native support is absent.
+
+     KEY FIX:
+       _hide() uses transform (not display/visibility) so the
+       element stays in the DOM and rendered — the parent's
+       overflow:hidden clips it visually. This matches exactly
+       what the CSS @keyframes fst-slide-right does natively.
+     ══════════════════════════════════════════════════════════ */
+  class ScrollReveal {
+    constructor(el, opts = {}) {
+      this._el  = el;
+      this._cfg = {
+        x:         opts.x         ?? 100,
+        y:         opts.y         ?? 0,
+        duration:  opts.duration  ?? '0.7s',
+        easing:    opts.easing    ?? 'cubic-bezier(0.4, 0, 0.2, 1)',
+        threshold: opts.threshold ?? 0.08,
+      };
+      this._done = false;
+      this._init();
+    }
+
+    static get hasNativeSupport() {
+      return CSS.supports('animation-timeline', 'scroll()');
+    }
+
+    /* Off-screen via transform only — element stays visible in DOM */
+    _hide() {
+      const s = this._el.style;
+      s.transform  = `translate(${this._cfg.x}%, ${this._cfg.y}%)`;
+      s.opacity    = '0';
+      s.transition = 'none';
+      s.willChange = 'transform, opacity';
+    }
+
+    /* Transition back to natural position */
+    _show() {
+      const s = this._el.style;
+      s.transition = `transform ${this._cfg.duration} ${this._cfg.easing}, opacity ${this._cfg.duration} ease`;
+      s.transform  = 'translate(0%, 0%)';
+      s.opacity    = '1';
+    }
+
+    _init() {
+      if (ScrollReveal.hasNativeSupport) return; /* CSS handles it */
+
+      this._hide();
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !this._done) {
+            this._done = true;
+            this._show();
+            io.disconnect();
+          }
+        });
+      }, { threshold: this._cfg.threshold });
+
+      io.observe(this._el);
+    }
+  }
+
+
+  /* ══════════════════════════════════════════════════════════
+     BOOT — wires CountdownTimer + ScrollReveal for this section
+     ══════════════════════════════════════════════════════════ */
+  function boot() {
+    const id = '{{ section.id }}';
+
+    /* 1. Countdown */
+    const els = {
+      days:  document.getElementById(`fst-days-${id}`),
+      hours: document.getElementById(`fst-hours-${id}`),
+      mins:  document.getElementById(`fst-mins-${id}`),
+      secs:  document.getElementById(`fst-secs-${id}`),
+    };
+
+    if (Object.values(els).every(Boolean)) {
+      const endMs =
+        Date.now() +
+        (
+          ({{ section.settings.countdown_days  | default: 5  }} * 86400) +
+          ({{ section.settings.countdown_hours | default: 16 }} * 3600)  +
+          ({{ section.settings.countdown_mins  | default: 12 }} * 60)    +
+           {{ section.settings.countdown_secs  | default: 49 }}
+        ) * 1000;
+
+      new CountdownTimer(endMs, els).start();
+    }
+
+    /* 2. Scroll reveal on right column */
+    const rightCol = document.getElementById(`fst-right-${id}`);
+    if (rightCol) {
+      new ScrollReveal(rightCol, { x: 100, y: 0, threshold: 0.08 });
+    }
+  }
+
+  /* Run once DOM is ready */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  /* Shopify theme editor live re-render */
+  document.addEventListener('shopify:section:load', (e) => {
+    if (e.detail.sectionId === '{{ section.id }}') boot();
+  });
+
+}());
+</script>
+
+
+{%- comment -%} ══════════════ SCHEMA ══════════════ {%- endcomment -%}
+{% schema %}
+{
+  "name": "Flash Sale Timer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Left image"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image",
+      "label": "Left image"
+    },
+    {
+      "type": "text",
+      "id": "flash_label",
+      "label": "Flash label",
+      "default": "Flash Sale"
+    },
+    {
+      "type": "color",
+      "id": "flash_label_color",
+      "label": "Flash label colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Limited-time steals. Upgrade your sneaker collection now."
+    },
+    {
+      "type": "color",
+      "id": "tagline_color",
+      "label": "Tagline colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "header",
+      "content": "Countdown timer"
+    },
+    {
+      "type": "number",
+      "id": "countdown_days",
+      "label": "Days remaining",
+      "default": 5
+    },
+    {
+      "type": "number",
+      "id": "countdown_hours",
+      "label": "Hours remaining",
+      "default": 16
+    },
+    {
+      "type": "number",
+      "id": "countdown_mins",
+      "label": "Minutes remaining",
+      "default": 12
+    },
+    {
+      "type": "number",
+      "id": "countdown_secs",
+      "label": "Seconds remaining",
+      "default": 49
+    },
+    {
+      "type": "header",
+      "content": "Countdown unit labels"
+    },
+    {
+      "type": "text",
+      "id": "label_days",
+      "label": "Days label",
+      "default": "D"
+    },
+    {
+      "type": "text",
+      "id": "label_hours",
+      "label": "Hours label",
+      "default": "Hr"
+    },
+    {
+      "type": "text",
+      "id": "label_mins",
+      "label": "Minutes label",
+      "default": "Min"
+    },
+    {
+      "type": "text",
+      "id": "label_secs",
+      "label": "Seconds label",
+      "default": "Sec"
+    },
+    {
+      "type": "header",
+      "content": "Right image"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image",
+      "label": "Right image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flash Sale Timer"
+    }
+  ]
+}
+{% endschema %}

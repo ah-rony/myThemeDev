@@ -1,0 +1,490 @@
+<section class="sop-flash-sale-timer">
+  <div class="container">
+    <div class="row gx-0 gy-0">
+      <div class="col-12 col-md-8 col-lg-6 fst-left-col">
+        <div class="sop-img-with-timer">
+          {% if section.settings.left_image != blank %}
+            <img
+              src="{{ section.settings.left_image | image_url: width: 900 }}"
+              alt="{{ section.settings.flash_label | escape }}"
+              class="sop-left-img sop-img-desktop"
+              loading="lazy"
+              width="{{ section.settings.left_image.width }}"
+              height="{{ section.settings.left_image.height }}"
+            >
+          {% else %}
+            <div class="sop-left-img sop-img-desktop sop-img-placeholder">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+
+          {% if section.settings.left_image_mobile != blank %}
+            <img
+              src="{{ section.settings.left_image_mobile | image_url: width: 600 }}"
+              alt="{{ section.settings.flash_label | escape }}"
+              class="sop-left-img sop-img-mobile"
+              loading="lazy"
+              width="{{ section.settings.left_image_mobile.width }}"
+              height="{{ section.settings.left_image_mobile.height }}"
+            >
+          {% elsif section.settings.left_image != blank %}
+            <img
+              src="{{ section.settings.left_image | image_url: width: 600 }}"
+              alt="{{ section.settings.flash_label | escape }}"
+              class="sop-left-img sop-img-mobile"
+              loading="lazy"
+              width="{{ section.settings.left_image.width }}"
+              height="{{ section.settings.left_image.height }}"
+            >
+          {% endif %}
+
+          {% if section.settings.flash_label != blank %}
+            <p class="sop-flash-label">{{ section.settings.flash_label }}</p>
+          {% endif %}
+
+          <div class="sop-bottom-block">
+            
+
+            {% if section.settings.tagline != blank %}
+              <p class="sop-tagline">{{ section.settings.tagline }}</p>
+            {% endif %}
+
+            <hr class="sop-divider">
+
+            <div
+              class="sop-timer"
+              data-days="{{ section.settings.timer_days | default: 0 }}"
+              data-hours="{{ section.settings.timer_hours | default: 0 }}"
+              data-minutes="{{ section.settings.timer_minutes | default: 0 }}"
+              data-seconds="{{ section.settings.timer_seconds | default: 0 }}"
+            >
+              <div class="sop-timer-cell">
+                <span class="sop-timer-value sop-timer-days">
+                  {{- section.settings.timer_days | default: 0 -}}
+                </span>
+                <span class="sop-timer-label">
+                  {{- section.settings.timer_label_days | default: 'Days' -}}
+                </span>
+              </div>
+              <div class="sop-timer-cell">
+                <span class="sop-timer-value sop-timer-hours">
+                  {{- section.settings.timer_hours | default: 0 -}}
+                </span>
+                <span class="sop-timer-label">
+                  {{- section.settings.timer_label_hours | default: 'Hours' -}}
+                </span>
+              </div>
+              <div class="sop-timer-cell">
+                <span class="sop-timer-value sop-timer-minutes">
+                  {{- section.settings.timer_minutes | default: 0 -}}
+                </span>
+                <span class="sop-timer-label">
+                  {{- section.settings.timer_label_minutes | default: 'Minutes' -}}
+                </span>
+              </div>
+              <div class="sop-timer-cell">
+                <span class="sop-timer-value sop-timer-seconds">
+                  {{- section.settings.timer_seconds | default: 0 -}}
+                </span>
+                <span class="sop-timer-label">
+                  {{- section.settings.timer_label_seconds | default: 'Seconds' -}}
+                </span>
+              </div>
+            </div>
+
+            {% if section.settings.cta_label != blank %}
+              <a
+                class="sop-cta-btn"
+                {% if section.settings.cta_url != blank %}
+                  href="{{ section.settings.cta_url }}"
+                {% endif %}
+              >
+                {{ section.settings.cta_label }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-6 fst-right-col">
+        <div class="sop-img-plain">
+          {% if section.settings.right_image != blank %}
+            <img
+              src="{{ section.settings.right_image | image_url: width: 900 }}"
+              alt="{{ section.settings.flash_label | escape }}"
+              class="sop-right-img sop-img-desktop"
+              loading="lazy"
+              width="{{ section.settings.right_image.width }}"
+              height="{{ section.settings.right_image.height }}"
+            >
+          {% else %}
+            <div class="sop-right-img sop-img-desktop sop-img-placeholder">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+
+          {% if section.settings.right_image_mobile != blank %}
+            <img
+              src="{{ section.settings.right_image_mobile | image_url: width: 600 }}"
+              alt="{{ section.settings.flash_label | escape }}"
+              class="sop-right-img sop-img-mobile"
+              loading="lazy"
+              width="{{ section.settings.right_image_mobile.width }}"
+              height="{{ section.settings.right_image_mobile.height }}"
+            >
+          {% elsif section.settings.right_image != blank %}
+            <img
+              src="{{ section.settings.right_image | image_url: width: 600 }}"
+              alt="{{ section.settings.flash_label | escape }}"
+              class="sop-right-img sop-img-mobile"
+              loading="lazy"
+              width="{{ section.settings.right_image.width }}"
+              height="{{ section.settings.right_image.height }}"
+            >
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.sop-flash-sale-timer .sop-img-desktop {
+  display: none;
+}
+
+.sop-flash-sale-timer .sop-img-mobile {
+  display: block;
+}
+
+.sop-flash-sale-timer .sop-img-with-timer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.sop-flash-sale-timer .sop-img-plain {
+  width: 100%;
+  height: 100%;
+}
+
+/* Mobile-first image sizing */
+.sop-flash-sale-timer .sop-left-img,
+.sop-flash-sale-timer .sop-right-img,
+.sop-flash-sale-timer .sop-img-placeholder {
+  width: 100%;
+  height: 520px;
+  object-fit: cover;
+}
+
+.sop-flash-sale-timer .sop-img-placeholder {
+  background: #e0e0e0;
+}
+
+.sop-flash-sale-timer .sop-img-placeholder svg {
+  width: 100%;
+  height: 100%;
+}
+
+.sop-flash-sale-timer .sop-flash-label {
+  position: absolute;
+  top: 28px;
+  left: 28px;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+}
+
+.sop-flash-sale-timer .sop-bottom-block {
+  position: absolute;
+  bottom: 28px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sop-flash-sale-timer .sop-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+.sop-flash-sale-timer .sop-tagline {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: #ffffff;
+}
+
+.sop-flash-sale-timer .sop-timer {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.sop-flash-sale-timer .sop-timer-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 4px;
+}
+
+.sop-flash-sale-timer .sop-timer-cell:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.sop-flash-sale-timer .sop-timer-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.sop-flash-sale-timer .sop-timer-label {
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+}
+
+.sop-flash-sale-timer .sop-cta-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+/* Desktop and up */
+@media (min-width: 768px) {
+  .sop-flash-sale-timer .sop-img-desktop {
+    display: block;
+  }
+
+  .sop-flash-sale-timer .sop-img-mobile {
+    display: none;
+  }
+
+  .sop-flash-sale-timer .sop-left-img,
+  .sop-flash-sale-timer .sop-right-img {
+    height: 920px;
+    max-height: 1020px;
+  }
+
+  .sop-flash-sale-timer .sop-img-placeholder {
+    height: 920px;
+  }
+
+  .sop-flash-sale-timer .sop-timer-value {
+    font-size: 20px;
+  }
+
+  .sop-flash-sale-timer .sop-timer-label {
+    font-size: 12px;
+  }
+
+  .sop-flash-sale-timer .sop-cta-btn {
+    font-size: 18px;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+(function () {
+  const timers = document.querySelectorAll('.sop-flash-sale-timer .sop-timer');
+
+  timers.forEach((timer) => {
+    const daysEl = timer.querySelector('.sop-timer-days');
+    const hoursEl = timer.querySelector('.sop-timer-hours');
+    const minutesEl = timer.querySelector('.sop-timer-minutes');
+    const secondsEl = timer.querySelector('.sop-timer-seconds');
+
+    if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+
+    const startDays = Number(timer.dataset.days || '0');
+    const startHours = Number(timer.dataset.hours || '0');
+    const startMinutes = Number(timer.dataset.minutes || '0');
+    const startSeconds = Number(timer.dataset.seconds || '0');
+
+    let totalSeconds =
+      startDays * 86400 +
+      startHours * 3600 +
+      startMinutes * 60 +
+      startSeconds;
+
+    const pad = (n) => String(n).padStart(2, '0');
+
+    function updateDisplay() {
+      const d = Math.floor(totalSeconds / 86400);
+      const h = Math.floor((totalSeconds % 86400) / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+
+      daysEl.textContent = pad(d);
+      hoursEl.textContent = pad(h);
+      minutesEl.textContent = pad(m);
+      secondsEl.textContent = pad(s);
+    }
+
+    function tick() {
+      if (totalSeconds <= 0) {
+        updateDisplay();
+        return;
+      }
+      totalSeconds -= 1;
+      updateDisplay();
+      setTimeout(tick, 1000);
+    }
+
+    updateDisplay();
+    setTimeout(tick, 1000);
+  });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Flash Sale Timer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Left Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image",
+      "label": "Left image — Desktop",
+      "info": "Shown on screens 768px and wider"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image_mobile",
+      "label": "Left image — Mobile",
+      "info": "Shown on screens below 768px. Falls back to the desktop image if left blank"
+    },
+    {
+      "type": "header",
+      "content": "Right Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image",
+      "label": "Right image — Desktop",
+      "info": "Shown on screens 768px and wider"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image_mobile",
+      "label": "Right image — Mobile",
+      "info": "Shown on screens below 768px. Falls back to the desktop image if left blank"
+    },
+    {
+      "type": "header",
+      "content": "Text Content"
+    },
+    {
+      "type": "text",
+      "id": "flash_label",
+      "label": "Flash label",
+      "default": "FLASH SALE",
+      "info": "Displayed top-left on the image"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Limited-time steals. Upgrade your sneaker collection now."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Countdown Timer — Starting Values"
+    },
+    {
+      "type": "number",
+      "id": "timer_days",
+      "label": "Days",
+      "default": 5,
+      "info": "Starting number of days"
+    },
+    {
+      "type": "number",
+      "id": "timer_hours",
+      "label": "Hours",
+      "default": 16,
+      "info": "Starting hours (0 – 23)"
+    },
+    {
+      "type": "number",
+      "id": "timer_minutes",
+      "label": "Minutes",
+      "default": 12,
+      "info": "Starting minutes (0 – 59)"
+    },
+    {
+      "type": "number",
+      "id": "timer_seconds",
+      "label": "Seconds",
+      "default": 49,
+      "info": "Starting seconds (0 – 59)"
+    },
+    {
+      "type": "header",
+      "content": "Countdown Timer — Unit Labels"
+    },
+    {
+      "type": "text",
+      "id": "timer_label_days",
+      "label": "Days label",
+      "default": "Days"
+    },
+    {
+      "type": "text",
+      "id": "timer_label_hours",
+      "label": "Hours label",
+      "default": "Hours"
+    },
+    {
+      "type": "text",
+      "id": "timer_label_minutes",
+      "label": "Minutes label",
+      "default": "Minutes"
+    },
+    {
+      "type": "text",
+      "id": "timer_label_seconds",
+      "label": "Seconds label",
+      "default": "Seconds"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flash Sale Timer"
+    }
+  ]
+}
+{% endschema %}

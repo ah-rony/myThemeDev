@@ -1,0 +1,165 @@
+{% style %}
+.cs-card {
+  position: relative;
+}
+
+/* IMAGE WRAPPER */
+.cs-image-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.cs-card img {
+  width: 100%;
+  display: block;
+}
+
+/* HOVER IMAGE (pure CSS hover) */
+.cs-hover-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cs-image-wrap:hover .cs-hover-image {
+  opacity: 1;
+}
+
+/* SWATCHES */
+.cs-swatches {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.cs-swatch {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.cs-swatch img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cs-swatch.is-active {
+  outline: 2px solid black;
+}
+{% endstyle %}
+
+<div class="cs-card">
+
+  <!-- IMAGE -->
+  <div class="cs-image-wrap">
+    <a href="{{ product.url }}">
+
+      <!-- MAIN IMAGE -->
+      <img
+        class="cs-main-image"
+        src="{{ product.images[0] | image_url: width: 600 }}"
+        width="600"
+        height="600"
+        alt="{{ product.title }}"
+      >
+
+      <!-- HOVER IMAGE -->
+      {% if product.images[1] %}
+        <img
+          class="cs-hover-image"
+          src="{{ product.images[1] | image_url: width: 600 }}"
+          width="600"
+          height="600"
+          alt="{{ product.title }}"
+        >
+      {% endif %}
+
+    </a>
+  </div>
+
+  <!-- TITLE -->
+  <h3>{{ product.title }}</h3>
+  <p>{{ product.price | money }}</p>
+
+  <!-- SWATCHES -->
+  {% assign color_index = nil %}
+  {% for option in product.options_with_values %}
+    {% if option.name == 'Color' or option.name == 'Colour' %}
+      {% assign color_index = forloop.index0 %}
+    {% endif %}
+  {% endfor %}
+
+  <div class="cs-swatches">
+
+    {% assign shown = '' %}
+
+    {% for variant in product.variants %}
+
+      {% assign value = variant.options[color_index] %}
+
+      {% unless shown contains value %}
+
+        {% assign variant_img = variant.image %}
+
+        <button
+          class="cs-swatch"
+          data-main="{% if variant_img %}{{ variant_img | image_url: width: 600 }}{% endif %}"
+        >
+          {% if variant_img %}
+            <img src="{{ variant_img | image_url: width: 80 }}" width="80" height="80">
+          {% else %}
+            <img src="{{ product.images[0] | image_url: width: 80 }}" width="80" height="80">
+          {% endif %}
+        </button>
+
+        {% assign shown = shown | append: value | append: ',' %}
+      {% endunless %}
+
+    {% endfor %}
+
+  </div>
+
+</div>
+
+<script>
+class CSProductCard {
+  constructor(card) {
+    this.card = card;
+    this.image = card.querySelector('.cs-main-image');
+    this.swatches = card.querySelectorAll('.cs-swatch');
+
+    this.init();
+  }
+
+  init() {
+    this.swatches.forEach((swatch) => {
+      swatch.addEventListener('click', () => {
+        const img = swatch.dataset.main;
+
+        if (img && img !== "undefined") {
+          this.image.src = img;
+        }
+
+        this.setActive(swatch);
+      });
+    });
+  }
+
+  setActive(active) {
+    this.swatches.forEach(s => s.classList.remove('is-active'));
+    active.classList.add('is-active');
+  }
+}
+
+// INIT
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.cs-card').forEach(card => {
+    new CSProductCard(card);
+  });
+});
+</script>

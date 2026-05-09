@@ -1,0 +1,1895 @@
+{% liquid
+  assign sop_product = section.settings.product | default: product
+  assign sop_radius  = section.settings.card_radius
+  assign sop_cv      = sop_product.selected_or_first_available_variant
+%}
+
+<section class="sop-weekly-winner">
+  <div class="container">
+    <div class="row g-4 align-start">
+
+      <div class="col-12 col-lg-7 sop-gallery">
+        {% for image in sop_product.images %}
+          <div class="sop-image-wrap">
+            <div class="sop-image">
+              {{
+                image
+                | image_url: width: 2000
+                | image_tag:
+                  loading: 'lazy',
+                  alt: image.alt | default: sop_product.title,
+                  widths: '600,900,1200,1600,2000'
+              }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="col-12 col-lg-5 sop-sidebar">
+        <div class="sop-sidebar-inner">
+
+          {% for block in section.blocks %}
+            {% case block.type %}
+
+              {% comment %} {% when 'title' %}
+                <div class="sop-block" {{ block.shopify_attributes }}>
+                  {% if block.settings.show_vendor and sop_product.vendor != blank %}
+                    <p class="sop-vendor">{{ sop_product.vendor }}</p>
+                  {% endif %}
+                  <h1 class="sop-title">{{ sop_product.title }}</h1>
+                  {% if block.settings.show_sku and sop_cv.sku != blank %}
+                    <p class="sop-sku">SKU: {{ sop_cv.sku }}</p>
+                  {% endif %}
+                </div> {% endcomment %}
+
+                {% when 'title' %}
+                <div class="sop-block sop-title-divider" {{ block.shopify_attributes }}>
+                  
+                  {% if block.settings.show_vendor and sop_product.vendor != blank %}
+                    <p class="sop-vendor">{{ sop_product.vendor }}</p>
+                  {% endif %}
+
+                  <div class="sop-title-wrap">
+                    <span class="sop-line"></span>
+                    <h1 class="sop-title">{{ sop_product.title }}</h1>
+                    <span class="sop-line"></span>
+                  </div>
+
+                  {% if block.settings.show_sku and sop_cv.sku != blank %}
+                    <p class="sop-sku">SKU: {{ sop_cv.sku }}</p>
+                  {% endif %}
+
+                </div>
+
+              {% when 'price' %}
+                <div class="sop-block" {{ block.shopify_attributes }}>
+                  <div class="sop-price-wrap">
+                    <span class="sop-price">{{ sop_cv.price | money }}</span>
+                    {% if sop_cv.compare_at_price > sop_cv.price %}
+                      <span class="sop-compare-price">{{ sop_cv.compare_at_price | money }}</span>
+                      {% if block.settings.show_savings %}
+                        {% assign saved = sop_cv.compare_at_price | minus: sop_cv.price %}
+                        <span class="sop-savings">Save {{ saved | money }}</span>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                  {% if block.settings.show_tax_note %}
+                    <p class="sop-tax-note">{{ block.settings.tax_note_text }}</p>
+                  {% endif %}
+                </div>
+
+              {% when 'countdown' %}
+                <div class="sop-block" {{ block.shopify_attributes }}>
+                  <div class="sop-countdown">
+                    <div class="sop-countdown-left">
+                      {% if block.settings.heading != blank %}
+                        <div class="sop-countdown-heading">{{ block.settings.heading }}</div>
+                      {% endif %}
+                      {% if block.settings.badge != blank %}
+                        <div class="sop-badge-wrap">
+                          <span class="sop-badge-text">{{ block.settings.badge }}</span>
+                          <button type="button" class="sop-copy-btn" data-copy="{{ block.settings.badge }}">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            Copy
+                          </button>
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div
+                      class="sop-timer"
+                      data-days="{{ block.settings.days }}"
+                      data-hours="{{ block.settings.hours }}"
+                      data-mins="{{ block.settings.minutes }}"
+                      data-secs="{{ block.settings.seconds }}"
+                    >
+                      <div class="sop-time-box"><span class="sop-days">00</span><small>{{ block.settings.days_label }}</small></div>
+                      <div class="sop-time-box"><span class="sop-hours">00</span><small>{{ block.settings.hours_label }}</small></div>
+                      <div class="sop-time-box"><span class="sop-mins">00</span><small>{{ block.settings.minutes_label }}</small></div>
+                      <div class="sop-time-box"><span class="sop-secs">00</span><small>{{ block.settings.seconds_label }}</small></div>
+                    </div>
+                  </div>
+                </div>
+
+              {% when 'siblings' %}
+                {% if block.settings.collection != blank %}
+                  <div class="sop-block" {{ block.shopify_attributes }}>
+                    {% if block.settings.heading != blank %}
+                      <div class="sop-label">{{ block.settings.heading }}</div>
+                    {% endif %}
+                    <div class="sop-sibling-list">
+                      {% for sibling in collections[block.settings.collection].products limit: 12 %}
+                        <a
+                          href="{{ sibling.url }}"
+                          class="sop-sibling {% if sibling.id == sop_product.id %}active{% endif %}"
+                          title="{{ sibling.title }}"
+                        >
+                          {% if sibling.featured_image %}
+                            {{ sibling.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: sibling.title }}
+                          {% endif %}
+                        </a>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+
+              {% when 'size_picker' %}
+                {% assign size_option = blank %}
+                {% for option in sop_product.options_with_values %}
+                  {% assign option_name_downcase = option.name | downcase %}
+                    {% if option_name_downcase contains 'size' %}
+                    {% assign size_option = option %}
+                  {% endif %}
+                {% endfor %}
+                {% if size_option != blank %}
+                  <div class="sop-block" {{ block.shopify_attributes }}>
+                    <div class="sop-size-top">
+                      <div class="sop-label sop-label--no-margin">{{ block.settings.heading }}</div>
+                      {% if block.settings.enable_size_guide %}
+                        <button type="button" class="sop-size-guide-btn" id="sop-open-size-guide">
+                          <svg width="14" height="10" viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 5h12M9 1l4 4-4 4"/><path d="M5 1L1 5l4 4"/></svg>
+                          {{ block.settings.size_guide_text }}
+                        </button>
+                      {% endif %}
+                    </div>
+                    <div class="sop-size-list">
+                      {% for value in size_option.values %}
+                        {% assign sz_available = false %}
+                        {% for variant in sop_product.variants %}
+                          {% if variant.options contains value and variant.available %}
+                            {% assign sz_available = true %}
+                          {% endif %}
+                        {% endfor %}
+                        <button
+                          type="button"
+                          class="sop-size-btn {% if sop_cv.options contains value %}active{% endif %} {% unless sz_available %}sold-out{% endunless %}"
+                          data-value="{{ value }}"
+                        >{{ value }}</button>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+
+              {% when 'variant_picker' %}
+                {% for option in sop_product.options_with_values %}
+                  {% assign down_name = option.name | downcase %}
+                  {% unless down_name contains 'size' %}
+                    <div class="sop-block" {{ block.shopify_attributes }}>
+                      <div class="sop-label">{{ option.name }}</div>
+                      <div class="sop-variant-list">
+                        {% for value in option.values %}
+                          {% assign v_available = false %}
+                          {% for variant in sop_product.variants %}
+                            {% if variant.options contains value and variant.available %}
+                              {% assign v_available = true %}
+                            {% endif %}
+                          {% endfor %}
+                          <button
+                            type="button"
+                            class="sop-variant-btn {% if sop_cv.options contains value %}active{% endif %} {% unless v_available %}sold-out{% endunless %}"
+                            data-option="{{ option.name }}"
+                            data-value="{{ value }}"
+                          >{{ value }}</button>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% endunless %}
+                {% endfor %}
+
+              {% when 'quantity' %}
+                <div class="sop-block" {{ block.shopify_attributes }}>
+                  {% if block.settings.label != blank %}
+                    <div class="sop-label sop-label--no-margin" style="margin-bottom:12px;">{{ block.settings.label }}</div>
+                  {% endif %}
+                  <div class="sop-qty-wrap">
+                    <button type="button" class="sop-qty-btn sop-minus">−</button>
+                    <input type="number" class="sop-qty-input" value="1" min="1" id="sop-qty-main">
+                    <button type="button" class="sop-qty-btn sop-plus">+</button>
+                  </div>
+                </div>
+
+              {% when 'add_to_cart' %}
+                <div class="sop-block" {{ block.shopify_attributes }}>
+                  {% form 'product', sop_product, id: 'sop-product-form' %}
+                    <input type="hidden" name="id" value="{{ sop_cv.id }}" id="sop-variant-id">
+                    <input type="hidden" name="quantity" value="1" id="sop-form-qty">
+                    <div class="sop-atc-row">
+                      <div class="sop-inline-qty sop-qty-wrap">
+                        <button type="button" class="sop-qty-btn sop-minus">−</button>
+                        <input type="number" class="sop-qty-input" value="1" min="1">
+                        <button type="button" class="sop-qty-btn sop-plus">+</button>
+                      </div>
+                      <button type="submit" class="sop-atc-btn">
+                        {{ block.settings.button_text }}
+                      </button>
+                    </div>
+                    {% if block.settings.show_dynamic_checkout %}
+                      <div class="sop-dynamic-checkout">{{ form | payment_button }}</div>
+                    {% endif %}
+                  {% endform %}
+                </div>
+
+              {% when 'buy_now' %}
+                <div class="sop-block" {{ block.shopify_attributes }}>
+                  <button type="button" class="sop-buy-now-btn" id="sop-buy-now" data-product-url="{{ sop_product.url }}" data-variant-id="{{ sop_cv.id }}">
+                    {{ block.settings.button_text }}
+                  </button>
+                </div>
+
+              {% when 'stock_urgency' %}
+                {% assign stock_qty = sop_cv.inventory_quantity %}
+                <div class="sop-block" {{ block.shopify_attributes }}>
+                  <div class="sop-stock-wrap">
+                    <div class="sop-stock-top">
+                      <span class="sop-stock-text">
+                        {{ block.settings.prefix }} <strong>{{ stock_qty }}</strong> {{ block.settings.suffix }}
+                      </span>
+                    </div>
+                    <div class="sop-stock-bar-wrapper">
+                      
+                      <svg class="sop-stock-icon" width="14" height="14" viewBox="0 0 24 24" fill="#111"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                      <div class="sop-stock-bar">
+                      <div class="sop-stock-fill" style="width:{% if stock_qty > 100 %}100{% else %}{{ stock_qty }}{% endif %}%"></div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+
+              {% when 'pickup' %}
+                <div class="sop-block" {{ block.shopify_attributes }}>
+                  <div class="sop-pickup-wrap">
+                    {% if block.settings.heading != blank %}
+                      <div class="sop-pickup-heading">{{ block.settings.heading }}</div>
+                    {% endif %}
+                    <div class="sop-pickup-stores">
+                      {% for i in (1..4) %}
+                        {% assign name_key  = 'store_' | append: i %}
+                        {% assign avail_key = 'store_' | append: i | append: '_available' %}
+                        {% assign store_name  = block.settings[name_key] %}
+                        {% assign store_avail = block.settings[avail_key] %}
+                        {% if store_name != blank %}
+                          <div class="sop-pickup-row">
+                            <span class="sop-dot {% if store_avail %}sop-dot--on{% else %}sop-dot--off{% endif %}"></span>
+                            <span>{{ store_name }}</span>
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    <div class="sop-pickup-footer">
+                      {% if block.settings.note != blank %}
+                        <span class="sop-pickup-note">{{ block.settings.note }}</span>
+                      {% endif %}
+                      {% if block.settings.link_text != blank %}
+                        <a href="{{ block.settings.link_url }}" class="sop-pickup-link">{{ block.settings.link_text }}</a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+              {% when 'description' %}
+                {% if sop_product.description != blank %}
+                  <div class="sop-accordion" {{ block.shopify_attributes }}>
+                    <button type="button" class="sop-accordion-btn">
+                      <span>{{ block.settings.heading }}</span>
+                      <span class="sop-accord-icon">+</span>
+                    </button>
+                    <div class="sop-accordion-body">
+                      <div class="sop-rte">{{ sop_product.description }}</div>
+                    </div>
+                  </div>
+                {% endif %}
+
+              {% when 'collapsible_tab' %}
+                <div class="sop-accordion" {{ block.shopify_attributes }}>
+                  <button type="button" class="sop-accordion-btn">
+                    <span>{{ block.settings.heading }}</span>
+                    <span class="sop-accord-icon">+</span>
+                  </button>
+                  <div class="sop-accordion-body">
+                    <div class="sop-rte">{{ block.settings.content }}</div>
+                  </div>
+                </div>
+
+              {% when 'upsell' %}
+                {% assign upsell    = all_products[block.settings.product] %}
+                {% assign upsell_cv = upsell.selected_or_first_available_variant %}
+                {% if upsell != blank %}
+                  <div class="sop-upsell" {{ block.shopify_attributes }}>
+                    {% if block.settings.heading != blank %}
+                      <div class="sop-label">{{ block.settings.heading }}</div>
+                    {% endif %}
+                    <div class="sop-upsell-card">
+                      <div class="sop-upsell-image">
+                        {% if upsell.featured_image %}
+                          {{ upsell.featured_image | image_url: width: 300 | image_tag: loading: 'lazy', alt: upsell.title }}
+                        {% endif %}
+                      </div>
+                      <div class="sop-upsell-content">
+                        <div class="sop-upsell-title">{{ upsell.title }}</div>
+                        <div class="sop-upsell-prices">
+                          {% if upsell_cv.compare_at_price > upsell_cv.price %}
+                            <del class="sop-upsell-compare">{{ upsell_cv.compare_at_price | money }}</del>
+                          {% endif %}
+                          <span class="sop-upsell-price">{{ upsell_cv.price | money }}</span>
+                        </div>
+                        {% if block.settings.show_qty %}
+                          <div class="sop-upsell-qty sop-qty-wrap">
+                            <button type="button" class="sop-qty-btn sop-minus">−</button>
+                            <input type="number" class="sop-qty-input" value="1" min="1">
+                            <button type="button" class="sop-qty-btn sop-plus">+</button>
+                          </div>
+                        {% endif %}
+                      </div>
+                      <button type="button" class="sop-upsell-btn" data-variant-id="{{ upsell_cv.id }}">
+                        {{ block.settings.button_text }}
+                      </button>
+                    </div>
+                  </div>
+                {% endif %}
+
+              {% when 'divider' %}
+                <hr class="sop-divider" style="border-color:{{ block.settings.color }};margin:{{ block.settings.spacing }}px 0;" {{ block.shopify_attributes }}>
+
+              {% when 'text' %}
+                <div class="sop-block" {{ block.shopify_attributes }}>
+                  {% if block.settings.heading != blank %}
+                    <div class="sop-label">{{ block.settings.heading }}</div>
+                  {% endif %}
+                  <div class="sop-rte">{{ block.settings.content }}</div>
+                </div>
+
+              {% when 'custom_html' %}
+                <div class="sop-block" {{ block.shopify_attributes }}>{{ block.settings.html }}</div>
+
+            {% endcase %}
+          {% endfor %}
+
+        </div>
+      </div><!-- /.col sop-sidebar -->
+    </div><!-- /.row -->
+  </div><!-- /.container -->
+
+  <div class="sop-size-overlay"></div>
+  <div class="sop-size-drawer">
+    <div class="sop-size-header">
+      <h3>{{ section.settings.size_drawer_title }}</h3>
+      <button type="button" class="sop-close-drawer">✕</button>
+    </div>
+    <div class="sop-size-content">
+      {% if section.settings.size_guide_image != blank %}
+        {{ section.settings.size_guide_image | image_url: width: 1400 | image_tag: loading: 'lazy', alt: 'Size Guide' }}
+      {% endif %}
+      {% if section.settings.size_guide_content != blank %}
+        <div class="sop-rte">{{ section.settings.size_guide_content }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+</section>
+
+<div class="sop-zoom-cursor" id="sop-zoom-cursor">Zoom</div>
+
+<style>
+/* ============================================
+   weekly-winner — Mobile-first styles
+   Breakpoints follow layout.css:
+   sm ≥ 576 | md ≥ 768 | lg ≥ 992 | xl ≥ 1200
+   ============================================ */
+
+* { box-sizing: border-box; }
+
+/* ── Section ── */
+.sop-weekly-winner {
+  padding: 24px 0;
+}
+
+/* ── Gallery ── */
+.sop-gallery {
+  display: flex;
+  flex-direction: column;
+}
+
+.sop-image-wrap {
+  border-radius: {{ sop_radius }}px;
+  overflow: hidden;
+  background: #f5f5f5;
+  cursor: none;
+}
+
+.sop-image img {
+  width: 100%;
+  display: block;
+}
+
+/* ── Zoom cursor ── */
+.sop-zoom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 100px;
+  opacity: 0;
+  transition: opacity .15s;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+.sop-zoom-cursor.visible {
+  opacity: 1;
+}
+
+/* ── Sidebar ── */
+.sop-sidebar {
+  position: static;
+}
+
+.sop-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Blocks ── */
+.sop-block { margin: 0; }
+
+.sop-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: 16px;
+}
+
+.sop-label--no-margin {
+  margin-bottom: 0;
+}
+
+/* ── Title ── */
+.sop-vendor {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: #999;
+  margin-bottom: 6px;
+}
+
+/* .sop-title {
+  font-size: 24px;
+  line-height: 100%;
+  font-weight: 400;
+} */
+
+.sop-title-wrap{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.sop-line{
+  flex:1;
+  height:1px;
+  background:#d9d9d9;
+}
+
+.sop-title{
+  margin:0;
+  font-size:24px;
+  line-height:100%;
+  font-weight:400;
+  white-space:nowrap;
+}
+
+.sop-sku {
+  font-size: 11px;
+  color: #bbb;
+  margin: 6px 0 0;
+}
+
+/* ── Price ── */
+.sop-price-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sop-price {
+  color: #1C1C1CCC;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 100%;
+}
+
+.sop-compare-price {
+  color: #aaa;
+  text-decoration: line-through;
+  font-size: 16px;
+}
+
+.sop-savings {
+  font-size: 12px;
+  font-weight: 600;
+  color: #27ae60;
+  background: #eafaf1;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.sop-tax-note {
+  font-size: 12px;
+  color: #aaa;
+  margin: 6px 0 0;
+}
+
+/* ── Countdown ── */
+.sop-countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  background: #1c1c1c;
+  color: #fff;
+  padding: 12px;
+}
+
+.sop-countdown-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sop-countdown-heading {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 100%;
+}
+
+.sop-badge-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1.5px dashed #FFFFFF99;
+  overflow: hidden;
+}
+
+.sop-badge-text {
+  padding: 21px 0 21px 8px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 100%;
+}
+
+.sop-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #1C1C1C;
+  border: none;
+  padding: 12px 57px;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  margin: 8px 8px 8px 0;
+}
+
+.sop-timer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.sop-time-box {
+    background: #ffffff;
+    color: #1c1c1c;
+    text-align: center;
+    padding: 4px 14px;
+    min-width: 52px;
+    width: 73px;
+}
+
+.sop-time-box span {
+  display: block;
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+.sop-time-box small {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* ── Siblings ── */
+.sop-sibling-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.sop-sibling {
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+  overflow: hidden;
+  border: 2px solid transparent;
+  padding: 3px;
+  transition: border-color .2s;
+  display: block;
+  flex-shrink: 0;
+}
+
+.sop-sibling img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 100%;
+  display: block;
+}
+
+.sop-sibling.active,
+.sop-sibling:hover {
+  border-color: #111;
+}
+
+/* ── Size picker ── */
+.sop-size-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.sop-size-guide-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sop-size-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+.sop-size-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: #111;
+  cursor: pointer;
+  transition: all .18s;
+  line-height: 1;
+}
+
+.sop-size-btn.active {
+  border: 1.5px solid #111;
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sop-size-btn.sold-out {
+  opacity: .3;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.sop-size-btn:not(.sold-out):not(.active):hover {
+  opacity: .55;
+}
+
+/* ── Variant picker ── */
+.sop-variant-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sop-variant-btn {
+  border: 1px solid #d8d8d8;
+  background: #fff;
+  padding: 7px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #111;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all .15s;
+}
+
+.sop-variant-btn.active {
+  border-color: #111;
+  background: #111;
+  color: #fff;
+  font-weight: 500;
+}
+
+.sop-variant-btn.sold-out {
+  opacity: .35;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.sop-variant-btn:not(.sold-out):not(.active):hover {
+  border-color: #888;
+}
+
+/* ── Quantity ── */
+.sop-qty-wrap {
+  background: #F2F2F2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.sop-qty-btn {
+  width: 50px;
+  height: 50px;
+  border: 0;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: #111;
+  flex-shrink: 0;
+  transition: background .1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sop-qty-btn:hover {
+  background: #f5f5f5;
+}
+
+.sop-qty-input {
+  width: 50px;
+  border: 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  background: transparent;
+  -moz-appearance: textfield;
+}
+
+.sop-qty-input::-webkit-inner-spin-button,
+.sop-qty-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+/* ── Add to cart ── */
+.sop-atc-row {
+    display: grid;
+    grid-template-columns: 45% 1fr;
+    gap: 24px;
+    margin-bottom: 0;
+}
+
+.sop-inline-qty {
+  width: 100%;
+}
+
+.sop-atc-btn {
+    border: 0;
+    background: #1c1c1c;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+
+.sop-dynamic-checkout {
+  margin-top: 12px;
+}
+
+/* ── Buy now ── */
+.sop-buy-now-btn {
+    display: block;
+    width: 100%;
+    height: 50px;
+    border: 1px solid #1c1c1c;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.sop-buy-now-btn:hover {
+  border-color: #111;
+  background: #fafafa;
+}
+
+/* ── Stock urgency ── */
+.sop-stock-wrap {
+  border: 1px solid #d8d8d8;
+  padding: 16px 20px;
+}
+
+.sop-stock-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sop-stock-icon {
+  flex-shrink: 0;
+}
+
+.sop-stock-text {
+  font-size: 15px;
+  color: #111;
+  line-height: 1.4;
+}
+
+.sop-stock-text strong {
+  font-weight: 700;
+}
+
+.sop-stock-bar {
+  height: 4px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.sop-stock-fill {
+  height: 100%;
+  background: #111;
+}
+
+/* ── Pickup ── */
+.sop-pickup-wrap {
+  border: 1px solid #d8d8d8;
+  padding: 18px 20px;
+}
+
+.sop-pickup-heading {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 14px;
+}
+
+.sop-pickup-stores {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.sop-pickup-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #111;
+  font-weight: 500;
+}
+
+.sop-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sop-dot--on  { background: #111; }
+.sop-dot--off { background: #d93025; }
+
+.sop-dot::after {
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 100%;
+  background: #fff;
+}
+
+.sop-pickup-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  border-top: 1px solid #ebebeb;
+  padding-top: 14px;
+}
+
+.sop-pickup-note {
+  font-size: 13px;
+  color: #888;
+}
+
+.sop-pickup-link {
+  font-size: 13px;
+  color: #111;
+  text-decoration: underline;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Accordion ── */
+.sop-accordion {
+  border-top: 1px solid #dcdcdc;
+}
+
+.sop-accordion:last-of-type {
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.sop-accordion-btn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: #111;
+  text-align: left;
+}
+
+.sop-accord-icon {
+  font-size: 22px;
+  font-weight: 300;
+  line-height: 1;
+  transition: transform .25s;
+  flex-shrink: 0;
+}
+
+.sop-accordion.open .sop-accord-icon {
+  transform: rotate(45deg);
+}
+
+.sop-accordion-body {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height .35s ease;
+}
+
+.sop-accordion.open .sop-accordion-body {
+  max-height: 800px;
+}
+
+.sop-rte {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.75;
+  padding-bottom: 20px;
+}
+
+/* ── Upsell ── */
+.sop-upsell {
+  border: 1px solid #dcdcdc;
+  padding: 18px;
+}
+
+.sop-upsell-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sop-upsell-image {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #f5f5f5;
+}
+
+.sop-upsell-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sop-upsell-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sop-upsell-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.sop-upsell-prices {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.sop-upsell-compare {
+  font-size: 12px;
+  color: #bbb;
+}
+
+.sop-upsell-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+.sop-upsell-qty {
+  height: 34px;
+  max-width: 120px;
+}
+
+.sop-upsell-qty .sop-qty-btn {
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
+}
+
+.sop-upsell-qty .sop-qty-input {
+  width: 34px;
+  font-size: 13px;
+}
+
+.sop-upsell-btn {
+  border: 0;
+  background: #111;
+  color: #fff;
+  height: 44px;
+  padding: 0 18px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+
+.sop-upsell-btn:hover {
+  background: #333;
+}
+
+/* ── Divider ── */
+.sop-divider {
+  border: 0;
+  border-top: 1px solid #e0e0e0;
+  margin: 0;
+}
+
+/* ── Size drawer ── */
+.sop-size-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  opacity: 0;
+  visibility: hidden;
+  transition: .3s;
+  z-index: 9998;
+}
+
+.sop-size-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sop-size-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(520px, 100%);
+  height: 100%;
+  background: #fff;
+  z-index: 9999;
+  transform: translateX(100%);
+  transition: .35s cubic-bezier(.4,0,.2,1);
+  display: flex;
+  flex-direction: column;
+}
+
+.sop-size-drawer.active {
+  transform: translateX(0);
+}
+
+.sop-size-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.sop-size-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin: 0;
+}
+
+.sop-close-drawer {
+  border: 0;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  color: #333;
+  padding: 4px;
+  line-height: 1;
+}
+
+.sop-size-content {
+  overflow: auto;
+  padding: 24px;
+  flex: 1;
+}
+
+.sop-size-content img {
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+}
+
+
+/* ============================================
+   sm ≥ 576px
+   ============================================ */
+@media (min-width: 576px) {
+  .sop-title {
+    font-size: 32px;
+  }
+
+  .sop-atc-row {
+    grid-template-columns: 160px 1fr;
+  }
+
+  .sop-sibling {
+    width: 74px;
+    height: 74px;
+  }
+
+  .sop-size-list {
+    gap: 20px;
+  }
+
+  .sop-size-btn {
+    font-size: 20px;
+  }
+
+  .sop-size-btn.active {
+    font-size: 16px;
+    padding: 7px 16px;
+  }
+}
+
+
+/* ============================================
+   md ≥ 768px
+   ============================================ */
+@media (min-width: 768px) {
+  .sop-weekly-winner {
+    padding: 40px 0;
+  }
+
+  .sop-countdown {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .sop-pickup-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+}
+
+
+/* ============================================
+   lg ≥ 992px  — two-column layout kicks in
+   (col-lg-7 / col-lg-5 from layout.css)
+   ============================================ */
+@media (min-width: 992px) {
+  .sop-sidebar {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+  }
+
+  .sop-title {
+    font-size: 52px;
+  }
+}
+
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const zoomCursor = document.getElementById('sop-zoom-cursor');
+
+  document.querySelectorAll('.sop-image-wrap').forEach((wrap) => {
+    wrap.addEventListener('mouseenter', () => {
+      zoomCursor.classList.add('visible');
+    });
+
+    wrap.addEventListener('mouseleave', () => {
+      zoomCursor.classList.remove('visible');
+    });
+
+    wrap.addEventListener('mousemove', (e) => {
+      zoomCursor.style.left = e.clientX + 'px';
+      zoomCursor.style.top  = e.clientY + 'px';
+    });
+  });
+
+  document.querySelectorAll('.sop-qty-wrap').forEach((wrapper) => {
+    const input = wrapper.querySelector('.sop-qty-input');
+    const minus = wrapper.querySelector('.sop-minus');
+    const plus  = wrapper.querySelector('.sop-plus');
+
+    minus?.addEventListener('click', () => {
+      const val = parseInt(input.value, 10);
+      if (val > 1) input.value = val - 1;
+    });
+
+    plus?.addEventListener('click', () => {
+      input.value = parseInt(input.value, 10) + 1;
+    });
+  });
+
+  document.querySelectorAll('.sop-size-btn:not(.sold-out)').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      btn.closest('.sop-size-list').querySelectorAll('.sop-size-btn').forEach((b) => {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.sop-variant-btn:not(.sold-out)').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      btn.closest('.sop-variant-list').querySelectorAll('.sop-variant-btn').forEach((b) => {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.sop-accordion-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      btn.closest('.sop-accordion').classList.toggle('open');
+    });
+  });
+
+  const openBtn  = document.getElementById('sop-open-size-guide');
+  const overlay  = document.querySelector('.sop-size-overlay');
+  const drawer   = document.querySelector('.sop-size-drawer');
+  const closeBtn = document.querySelector('.sop-close-drawer');
+
+  const openDrawer = () => {
+    overlay.classList.add('active');
+    drawer.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeDrawer = () => {
+    overlay.classList.remove('active');
+    drawer.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  openBtn?.addEventListener('click', openDrawer);
+  closeBtn?.addEventListener('click', closeDrawer);
+  overlay?.addEventListener('click', closeDrawer);
+
+  document.querySelectorAll('.sop-copy-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.copy;
+      if (!text) return;
+
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✓ Copied';
+        setTimeout(() => { btn.innerHTML = orig; }, 1600);
+      });
+    });
+  });
+
+  document.querySelectorAll('.sop-timer').forEach((timer) => {
+    let total = 0;
+    total += parseInt(timer.dataset.days  || 0, 10) * 86400;
+    total += parseInt(timer.dataset.hours || 0, 10) * 3600;
+    total += parseInt(timer.dataset.mins  || 0, 10) * 60;
+    total += parseInt(timer.dataset.secs  || 0, 10);
+
+    const dEl = timer.querySelector('.sop-days');
+    const hEl = timer.querySelector('.sop-hours');
+    const mEl = timer.querySelector('.sop-mins');
+    const sEl = timer.querySelector('.sop-secs');
+
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const tick = () => {
+      if (total < 0) return;
+      dEl.textContent = pad(Math.floor(total / 86400));
+      hEl.textContent = pad(Math.floor((total % 86400) / 3600));
+      mEl.textContent = pad(Math.floor((total % 3600) / 60));
+      sEl.textContent = pad(Math.floor(total % 60));
+      total--;
+    };
+
+    tick();
+    setInterval(tick, 1000);
+  });
+
+  document.querySelectorAll('.sop-upsell-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const variantId = btn.dataset.variantId;
+      if (!variantId) return;
+
+      const qtyInput = btn.closest('.sop-upsell-card')?.querySelector('.sop-qty-input');
+      const qty = qtyInput ? parseInt(qtyInput.value, 10) : 1;
+      const orig = btn.innerHTML;
+
+      btn.innerHTML  = 'Adding…';
+      btn.disabled   = true;
+
+      fetch('/cart/add.js', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ id: variantId, quantity: qty })
+      })
+      .then((r) => r.json())
+      .then(() => {
+        btn.innerHTML = 'Added ✓';
+        document.dispatchEvent(new CustomEvent('cart:updated'));
+        setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2200);
+      })
+      .catch(() => {
+        btn.innerHTML = 'Error';
+        btn.disabled  = false;
+      });
+    });
+  });
+
+  const buyNowBtn = document.getElementById('sop-buy-now');
+  buyNowBtn?.addEventListener('click', () => {
+    const url = buyNowBtn.dataset.productUrl;
+    const id  = buyNowBtn.dataset.variantId;
+    if (url && id) {
+      window.location.href = `${url}?variant=${id}&buy_now=true`;
+    }
+  });
+
+});
+</script>
+
+{% schema %}
+{
+  "name": "Weekly winner",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Image radius (px)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Size Guide Drawer"
+    },
+    {
+      "type": "text",
+      "id": "size_drawer_title",
+      "label": "Drawer title",
+      "default": "Size Guide"
+    },
+    {
+      "type": "image_picker",
+      "id": "size_guide_image",
+      "label": "Size guide image"
+    },
+    {
+      "type": "richtext",
+      "id": "size_guide_content",
+      "label": "Size guide content (optional)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_vendor",
+          "label": "Show vendor",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_sku",
+          "label": "Show SKU",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_savings",
+          "label": "Show savings amount",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_tax_note",
+          "label": "Show tax note",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "tax_note_text",
+          "label": "Tax note text",
+          "default": "Tax included. Shipping calculated at checkout."
+        }
+      ]
+    },
+    {
+      "type": "countdown",
+      "name": "Countdown",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Don't miss the deal!"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Coupon code",
+          "default": "SALE30"
+        },
+        {
+          "type": "range",
+          "id": "days",
+          "label": "Days",
+          "min": 0,
+          "max": 99,
+          "step": 1,
+          "default": 2
+        },
+        {
+          "type": "range",
+          "id": "hours",
+          "label": "Hours",
+          "min": 0,
+          "max": 23,
+          "step": 1,
+          "default": 12
+        },
+        {
+          "type": "range",
+          "id": "minutes",
+          "label": "Minutes",
+          "min": 0,
+          "max": 59,
+          "step": 1,
+          "default": 30
+        },
+        {
+          "type": "range",
+          "id": "seconds",
+          "label": "Seconds",
+          "min": 0,
+          "max": 59,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "text",
+          "id": "days_label",
+          "label": "Days label",
+          "default": "Days"
+        },
+        {
+          "type": "text",
+          "id": "hours_label",
+          "label": "Hours label",
+          "default": "Hours"
+        },
+        {
+          "type": "text",
+          "id": "minutes_label",
+          "label": "Minutes label",
+          "default": "Min"
+        },
+        {
+          "type": "text",
+          "id": "seconds_label",
+          "label": "Seconds label",
+          "default": "Sec"
+        }
+      ]
+    },
+    {
+      "type": "siblings",
+      "name": "Product Siblings",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Product Siblings"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Siblings collection"
+        }
+      ]
+    },
+    {
+      "type": "size_picker",
+      "name": "Size Picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Product Size"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_size_guide",
+          "label": "Show size guide button",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "size_guide_text",
+          "label": "Size guide button text",
+          "default": "Size Guide"
+        }
+      ]
+    },
+    {
+      "type": "variant_picker",
+      "name": "Variant Picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows all non-size product options (Color, Material, etc.) as button selectors."
+        }
+      ]
+    },
+    {
+      "type": "add_to_cart",
+      "name": "Add to Cart",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "Add to cart"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "label": "Show dynamic checkout button",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "buy_now",
+      "name": "Buy Now",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "Buy it now"
+        }
+      ]
+    },
+    {
+      "type": "stock_urgency",
+      "name": "Stock Urgency",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "prefix",
+          "label": "Text before number",
+          "default": "Hurry, only"
+        },
+        {
+          "type": "text",
+          "id": "suffix",
+          "label": "Text after number",
+          "default": "items left in stock!"
+        }
+      ]
+    },
+    {
+      "type": "pickup",
+      "name": "Pickup Availability",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Pickup availability"
+        },
+        {
+          "type": "text",
+          "id": "store_1",
+          "label": "Store 1 name",
+          "default": "Chittagong Store"
+        },
+        {
+          "type": "checkbox",
+          "id": "store_1_available",
+          "label": "Store 1 available",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "store_2",
+          "label": "Store 2 name",
+          "default": "Sylhet Store"
+        },
+        {
+          "type": "checkbox",
+          "id": "store_2_available",
+          "label": "Store 2 available",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "store_3",
+          "label": "Store 3 name (optional)"
+        },
+        {
+          "type": "checkbox",
+          "id": "store_3_available",
+          "label": "Store 3 available",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "store_4",
+          "label": "Store 4 name (optional)"
+        },
+        {
+          "type": "checkbox",
+          "id": "store_4_available",
+          "label": "Store 4 available",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Pickup note",
+          "default": "Usually ready in 24 hours"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link text",
+          "default": "View store information"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link URL"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Label",
+          "default": "Description"
+        }
+      ]
+    },
+    {
+      "type": "collapsible_tab",
+      "name": "Collapsible Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Label",
+          "default": "Product Care"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        }
+      ]
+    },
+    {
+      "type": "upsell",
+      "name": "Goes Great With",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Goes great with"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_qty",
+          "label": "Show quantity selector",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "Add"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading (optional)"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider",
+      "settings": [
+        {
+          "type": "range",
+          "id": "spacing",
+          "label": "Spacing (px)",
+          "min": 0,
+          "max": 40,
+          "step": 2,
+          "default": 4
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Color",
+          "default": "#e0e0e0"
+        }
+      ]
+    },
+    {
+      "type": "custom_html",
+      "name": "Custom HTML",
+      "settings": [
+        {
+          "type": "html",
+          "id": "html",
+          "label": "HTML"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Weekly winner",
+      "blocks": [
+        { "type": "title" },
+        { "type": "price" },
+        { "type": "countdown" },
+        { "type": "siblings" },
+        { "type": "size_picker" },
+        { "type": "variant_picker" },
+        { "type": "add_to_cart" },
+        { "type": "buy_now" },
+        { "type": "stock_urgency" },
+        { "type": "pickup" },
+        { "type": "description" },
+        { "type": "collapsible_tab" },
+        { "type": "upsell" }
+      ]
+    }
+  ]
+}
+{% endschema %}

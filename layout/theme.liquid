@@ -24,6 +24,13 @@
     {% render 'meta-tags' %}
 
     {{ content_for_header }}
+
+    <link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+
   </head>
 
   <body>
@@ -32,5 +39,12 @@
     {{ content_for_layout }}
 
     {% sections 'footer-group' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script src="{{ 'blocks-card.js' | asset_url }}" defer></script>
+    <script src="{{ 'product-hover.js' | asset_url }}" defer></script>
+    <script src="{{ 'product-hover-v2.js' | asset_url }}" defer></script>
+    <script src="{{ 'multi-switch.js' | asset_url }}" defer></script>
+    <script src="{{ 'multi-switch-card.js' | asset_url }}" defer></script>
   </body>
 </html>

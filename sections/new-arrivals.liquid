@@ -1,0 +1,312 @@
+{% style %}
+.new-arrivals {
+  padding: 40px 0;
+}
+
+.new-arrivals-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.tab-btn.active {
+  color: red;
+  font-weight: bold;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+
+
+
+/* css for cards */
+
+
+.color-swatches {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.color-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.color-swatch.active {
+  border: 2px solid black;
+  transform: scale(1.1);
+}
+
+.product-main-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+/* for image hover switch */
+
+/* .product-image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.product-main-image,
+.product-hover-image {
+  width: 100%;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.product-hover-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.product-card:hover .product-hover-image {
+  opacity: 1;
+}
+
+.product-card:hover .product-main-image {
+  opacity: 0;
+} */
+
+/* QUICK VIEW ICON */
+
+
+/* .quick-view-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 32px;
+  height: 32px;
+
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+  font-weight: bold;
+
+  opacity: 0;
+  transform: scale(0.8);
+  transition: 0.2s ease;
+
+  cursor: pointer;
+}
+
+.product-card:hover .quick-view-icon {
+  opacity: 1;
+  transform: scale(1);
+} */
+
+{% endstyle %}
+
+<div class="new-arrivals">
+  <div class="new-arrivals-header">
+    <h2>{{ section.settings.title }}</h2>
+
+    <div class="tabs">
+      {% for block in section.blocks %}
+        <button
+          class="tab-btn {% if forloop.first %}active{% endif %}"
+          data-tab="tab-{{ block.id }}"
+        >
+          {{ block.settings.tab_title }}
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% for block in section.blocks %}
+    <div
+      id="tab-{{ block.id }}"
+      class="tab-content {% if forloop.first %}active{% endif %}"
+    >
+      <div class="swiper swiper-{{ section.id }}-{{ block.id }}">
+        <div class="swiper-wrapper">
+          {% for product in block.settings.collection.products %}
+            <div class="swiper-slide">
+              {% render 'product-card', product: product %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  // -------------------
+  // Tabs logic
+  // -------------------
+  const buttons = document.querySelectorAll('.tab-btn');
+  const contents = document.querySelectorAll('.tab-content');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+
+      buttons.forEach(b => b.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      btn.classList.add('active');
+      document.getElementById(target).classList.add('active');
+    });
+  });
+
+  // -------------------
+  // Swiper init (IMPORTANT FIX)
+  // -------------------
+  document.querySelectorAll('.swiper').forEach((el) => {
+    new Swiper(el, {
+      slidesPerView: 1,
+      spaceBetween: 15,
+      navigation: {
+        nextEl: el.querySelector('.swiper-button-next'),
+        prevEl: el.querySelector('.swiper-button-prev'),
+      },
+      breakpoints: {
+        640: { slidesPerView: 2 },
+        768: { slidesPerView: 3 },
+        1024: { slidesPerView: 4 }
+      }
+    });
+  });
+
+});
+
+
+
+// js for card 
+
+
+document.addEventListener('click', function (e) {
+
+  if (e.target.classList.contains('color-swatch')) {
+
+    const swatch = e.target;
+    const card = swatch.closest('.product-card');
+
+    const img = card.querySelector('.product-main-image');
+
+    // update image
+    const newImage = swatch.dataset.image;
+    if (newImage) {
+      img.src = newImage;
+    }
+
+    // active state
+    card.querySelectorAll('.color-swatch').forEach(s => {
+      s.classList.remove('active');
+    });
+
+    swatch.classList.add('active');
+  }
+
+});
+
+
+
+//hocver image card 
+
+// document.addEventListener('mouseover', function (e) {
+//   const card = e.target.closest('.product-card');
+//   if (!card) return;
+
+//   const img = card.querySelector('.product-main-image');
+//   const hoverImg = card.querySelector('.product-hover-image');
+
+//   if (hoverImg && img) {
+//     img.style.opacity = "0";
+//     hoverImg.style.opacity = "1";
+//   }
+// });
+
+// document.addEventListener('mouseout', function (e) {
+//   const card = e.target.closest('.product-card');
+//   if (!card) return;
+
+//   const img = card.querySelector('.product-main-image');
+//   const hoverImg = card.querySelector('.product-hover-image');
+
+//   if (hoverImg && img) {
+//     img.style.opacity = "1";
+//     hoverImg.style.opacity = "0";
+//   }
+// });
+
+
+
+</script>
+
+
+
+
+{% schema %}
+{
+  "name": "New Arrivals Tabs",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "New Arrivals"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

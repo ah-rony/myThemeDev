@@ -1,0 +1,41 @@
+<section>
+     {% assign collection = collections[section.settings.collection-product] %}
+
+     {% for product in collection.products %}
+       {{ product.title }}
+     {% endfor %} <br>--------
+
+
+    <h1>All collections</h1>
+    {{ collections | json }} 
+
+    <h1>Single collections products</h1>
+    {{ collections['ligths'].products | json}} 
+{% comment %} 
+    {% for product in collections['products'].products %}
+      {{ product.title }}
+    {% endfor %}
+     {% endcomment %}
+    <h1>All Products</h1>
+    {{ collections.all.products | json }} 
+</section>
+
+
+
+{% schema %}
+{
+    "name": "collection-grid",
+    "settings": [
+        {
+            "type": "collection",
+            "id": "collection-product",
+            "label": "section collection"
+        }
+    ],
+    "presets": [
+        {
+            "name":"collection-grid"
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,148 @@
+{% style %}
+.bc-section-{{ section.id }} {
+  padding: 40px 0;
+}
+
+.bc-card {
+  position: relative;
+}
+
+.bc-image-wrap {
+  position: relative;
+}
+
+.bc-card img {
+  width: 100%;
+  display: block;
+}
+
+.bc-hover-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.bc-image-wrap:hover .bc-hover-image {
+  opacity: 1;
+}
+
+.bc-swatches {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.bc-swatch {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.bc-swatch img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bc-swatch.is-active {
+  outline: 2px solid black;
+}
+{% endstyle %}
+
+<div class="bc-section bc-section-{{ section.id }}">
+  <h2>{{ section.settings.title }}</h2>
+
+  {% for block in section.blocks %}
+
+    {% assign collection = block.settings.collection %}
+
+    <div class="bc-tab">
+      <h3>{{ block.settings.tab_title }}</h3>
+
+      <div class="bc-products">
+
+        {% for product in collection.products %}
+
+          <div class="bc-card" data-product-id="{{ product.id }}">
+
+            <!-- IMAGE -->
+            <div class="bc-image-wrap">
+              <a href="{{ product.url }}">
+
+                <img class="bc-main-image"
+                     src="{{ product.featured_image | image_url: width: 600 }}">
+
+                {% if product.images[1] %}
+                  <img class="bc-hover-image"
+                       src="{{ product.images[1] | image_url: width: 600 }}">
+                {% endif %}
+
+              </a>
+            </div>
+
+            <!-- TITLE -->
+            <h3>{{ product.title }}</h3>
+
+            <!-- SNIPPETS -->
+            {% render 'card-price', product: product %}
+
+            {% render 'card-swatch', product: product %}
+
+            {% render 'card-size', product: product %}
+
+            {% render 'card-badge', product: product %}
+
+            {% render 'card-addtocart', product: product %}
+
+            {% render 'card-quickview', product: product %}
+
+          </div>
+
+        {% endfor %}
+
+      </div>
+    </div>
+
+  {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "Blocks Card",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Products"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Collection Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blocks Card Tabs"
+    }
+  ]
+}
+{% endschema %}

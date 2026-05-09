@@ -1,118 +1,235 @@
 {% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
-
+  Product template section — renders media gallery, product info, and add-to-cart form.
   https://shopify.dev/docs/storefronts/themes/architecture/templates/product
 {% endcomment %}
 
+{% assign current_variant = product.selected_or_first_available_variant %}
 
 <div class="product-page">
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
-
-
-
-<div class="product-content">
-
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
-
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
-
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
+  <div class="product-gallery">
+    <ul class="gallery-list">
+      {% for image in product.images %}
+        <li class="gallery-item" style="--index: {{ forloop.index }}">
+          {% render 'image', class: 'gallery-image', image: image %}
+        </li>
       {% endfor %}
-    </select>
+    </ul>
+  </div>
 
-    <input type="text" name="quantity" min="1" value="1">
+  <div class="product-sidebar">
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
-</div>
+    <div class="product-info">
+      <h1 class="product-title">{{ product.title }}</h1>
+      <p class="product-price">{{ current_variant.price | money }}</p>
+      <div class="product-description">{{ product.description }}</div>
+    </div>
+
+    <div class="product-form">
+      {% form 'product', product %}
+
+        {% if product.variants.size > 1 %}
+          {% comment %} <div class="form-field">
+            <label for="variant-select">{{ 'products.product.variant' | t | default: 'Variant' }}</label>
+            <select id="variant-select" name="id">
+              {% for variant in product.variants %}
+                <option
+                  value="{{ variant.id }}"
+                  {% unless variant.available %}disabled{% endunless %}
+                  {% if variant == current_variant %}selected{% endif %}>
+                  {{ variant.title }}
+                  {% unless variant.available %} — {{ 'products.product.sold_out' | t | default: 'Sold out' }}{% endunless %}
+                </option>
+              {% endfor %}
+            </select>
+          </div> {% endcomment %}
+        {% else %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+        {% endif %}
+
+        {% comment %} <div class="form-field form-field--quantity">
+          <label for="quantity-input">{{ 'products.product.quantity' | t | default: 'Quantity' }}</label>
+          <input
+            id="quantity-input"
+            type="number"
+            name="quantity"
+            min="1"
+            value="1">
+        </div> {% endcomment %}
+
+        {% comment %} <button
+          type="submit"
+          class="btn-add-to-cart"
+          {% unless current_variant.available %}disabled{% endunless %}>
+          {% if current_variant.available %}
+            {{ 'products.product.add_to_cart' | t | default: 'Add to cart' }}
+          {% else %}
+            {{ 'products.product.sold_out' | t | default: 'Sold out' }}
+          {% endif %}
+        </button> {% endcomment %}
+
+        {{ form | payment_button }}
+
+      {% endform %}
+    </div>
+
+  </div>
 
 </div>
 
 <style>
- .product-page {
-  display: flex;
-  flex-wrap: wrap;
-  margin: -20px; 
-}
-
-.product-images,
-.product-content {
-  flex: 0 0 50%;
-  max-width: 50%;
-  padding: 20px; 
-  box-sizing: border-box; 
-}
-
-.product-images .product-image {
-  width: 100%;
-  margin-bottom: 10px;
-  object-fit: cover;
-}
-
-.product-info h1 {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.product-info p {
-  margin-bottom: 10px;
-}
-
-.product-form select,
-.product-form input[type="text"],
-.product-form input[type="submit"] {
-  display: block;
-  width: 100%;
-  max-width: 300px;
-  margin-bottom: 10px;
-  padding: 10px;
-}
-
-.product-form {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.shopify-payment-button__button {
-  max-width: 300px;
-  border-radius: 4px;
-}
-
-
-
-@media (max-width: 768px) {
-  .product-images,
-  .product-content {
-    flex: 0 0 100%;
-    max-width: 100%;
-    padding: 10px;
+ 
+  .product-page {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
   }
-}
+
+  
+  .product-gallery {
+    flex: 0 0 58%;
+    max-width: 58%;
+  }
+
+  .gallery-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 40vh;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .gallery-item {
+    position: sticky;
+    top: 0;
+    z-index: var(--index);
+  }
+
+  .gallery-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  .product-sidebar {
+    flex: 1;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
 
 
+  .product-title {
+    margin: 0 0 8px;
+    font-size: 1.6rem;
+    line-height: 1.2;
+  }
+
+  .product-price {
+    margin: 0 0 16px;
+    font-size: 1.2rem;
+  }
+
+  .product-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #555;
+  }
+
+
+  .product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-field label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #444;
+  }
+
+  .form-field select,
+  .form-field input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    background: #fff;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .form-field--quantity input {
+    max-width: 100px;
+  }
+
+  .btn-add-to-cart {
+    width: 100%;
+    padding: 14px;
+    background: #111;
+    color: #fff;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .btn-add-to-cart:hover:not(:disabled) {
+    background: #333;
+  }
+
+  .btn-add-to-cart:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+  }
+
+
+  @media (max-width: 768px) {
+    .product-page {
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .product-gallery,
+    .product-sidebar {
+      flex: none;
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .product-sidebar {
+      position: static;
+      max-height: none;
+      overflow: visible;
+    }
+
+    .gallery-item {
+      position: static;
+    }
+
+    .gallery-list {
+      padding-bottom: 0;
+    }
+  }
 </style>
 
 {% schema %}

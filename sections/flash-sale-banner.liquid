@@ -1,0 +1,691 @@
+{% comment %}
+  Section: flash-sale-banner.liquid
+  Place in: sections/flash-sale-banner.liquid
+  Requires snippet: snippets/countdown-timer.liquid
+{% endcomment %}
+
+{%- liquid
+  assign sec = section.settings
+
+  assign left_img_desktop = sec.left_image_desktop
+  assign left_img_tablet  = sec.left_image_tablet  | default: left_img_desktop
+  assign left_img_mobile  = sec.left_image_mobile   | default: left_img_desktop
+
+  assign right_img_desktop = sec.right_image_desktop
+  assign right_img_tablet  = sec.right_image_tablet  | default: right_img_desktop
+  assign right_img_mobile  = sec.right_image_mobile  | default: right_img_desktop
+-%}
+
+<section
+  class="flash-sale-section"
+  id="flash-sale-{{ section.id }}"
+  style="
+    --section-bg: {{ sec.section_bg_color }};
+    --cta-bg:     {{ sec.cta_bg_color }};
+    --cta-color:  {{ sec.cta_text_color }};
+    --overlay-opacity: {{ sec.overlay_opacity | divided_by: 100.0 }};
+  "
+>
+  <div class="fss-container">
+    <div class="fss-row" id="fss-row-{{ section.id }}">
+
+      {%- comment %} ── LEFT CARD (timer) ── {%- endcomment %}
+      <div class="fss-left-col">
+        <div class="fss-card fss-card--with-timer">
+
+          {%- comment %} Responsive background images {%- endcomment %}
+          {% if left_img_desktop != blank %}
+            <picture>
+              {% if left_img_mobile != blank %}
+                <source
+                  media="(max-width: 767px)"
+                  srcset="{{ left_img_mobile | image_url: width: 800 }}"
+                >
+              {% endif %}
+              {% if left_img_tablet != blank %}
+                <source
+                  media="(min-width: 768px) and (max-width: 991px)"
+                  srcset="{{ left_img_tablet | image_url: width: 1200 }}"
+                >
+              {% endif %}
+              <img
+                class="fss-bg-img"
+                src="{{ left_img_desktop | image_url: width: 1400 }}"
+                alt="{{ left_img_desktop.alt | escape | default: sec.label }}"
+                loading="eager"
+                width="{{ left_img_desktop.width }}"
+                height="{{ left_img_desktop.height }}"
+              >
+            </picture>
+          {% else %}
+            <div class="fss-img-placeholder"></div>
+          {% endif %}
+
+          <div class="fss-overlay"></div>
+
+          {%- if sec.label != blank -%}
+            <p class="fss-flash-label">{{ sec.label }}</p>
+          {%- endif -%}
+
+          <div class="fss-bottom-block">
+            {%- if sec.tagline != blank -%}
+              <p class="fss-tagline">{{ sec.tagline }}</p>
+            {%- endif -%}
+
+            {%- if sec.show_timer -%}
+              {% render 'countdown-timer',
+                end_date: sec.end_date,
+                end_time: sec.end_time,
+                timer_id: section.id
+              %}
+            {%- endif -%}
+
+            {%- if sec.cta_label != blank -%}
+              <a
+                class="fss-cta-btn"
+                href="{{ sec.cta_url | default: '#' }}"
+                {% if sec.cta_new_tab %}target="_blank" rel="noopener"{% endif %}
+              >
+                {{ sec.cta_label }}
+              </a>
+            {%- endif -%}
+          </div>
+
+        </div>
+      </div>
+
+      {%- comment %} ── RIGHT CARD (no timer) ── {%- endcomment %}
+      <div class="fss-right-col" id="fss-right-{{ section.id }}">
+        <div class="fss-card fss-card--no-timer">
+
+          {% if right_img_desktop != blank %}
+            <picture>
+              {% if right_img_mobile != blank %}
+                <source
+                  media="(max-width: 767px)"
+                  srcset="{{ right_img_mobile | image_url: width: 800 }}"
+                >
+              {% endif %}
+              {% if right_img_tablet != blank %}
+                <source
+                  media="(min-width: 768px) and (max-width: 991px)"
+                  srcset="{{ right_img_tablet | image_url: width: 1200 }}"
+                >
+              {% endif %}
+              <img
+                class="fss-bg-img"
+                src="{{ right_img_desktop | image_url: width: 1400 }}"
+                alt="{{ right_img_desktop.alt | escape | default: sec.right_image_alt }}"
+                loading="lazy"
+                width="{{ right_img_desktop.width }}"
+                height="{{ right_img_desktop.height }}"
+              >
+            </picture>
+          {% else %}
+            <div class="fss-img-placeholder"></div>
+          {% endif %}
+
+          <div class="fss-overlay"></div>
+
+          {%- if sec.right_label != blank -%}
+            <p class="fss-flash-label">{{ sec.right_label }}</p>
+          {%- endif -%}
+
+          {%- if sec.right_tagline != blank or sec.right_cta_label != blank -%}
+            <div class="fss-bottom-block">
+              {%- if sec.right_tagline != blank -%}
+                <p class="fss-tagline">{{ sec.right_tagline }}</p>
+              {%- endif -%}
+              {%- if sec.right_cta_label != blank -%}
+                <a
+                  class="fss-cta-btn"
+                  href="{{ sec.right_cta_url | default: '#' }}"
+                  {% if sec.right_cta_new_tab %}target="_blank" rel="noopener"{% endif %}
+                >
+                  {{ sec.right_cta_label }}
+                </a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+        </div>
+
+        {%- comment %} Drag handle — tablet only {%- endcomment %}
+        <div class="fss-drag-handle" id="fss-handle-{{ section.id }}" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M6 4l-4 5 4 5M12 4l4 5-4 5"
+                  stroke="#555" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+      </div>
+
+    </div><!-- /.fss-row -->
+  </div><!-- /.fss-container -->
+</section>
+
+
+<style>
+/* ─── Reset / Base ─────────────────────────────────────────── */
+#flash-sale-{{ section.id }} *,
+#flash-sale-{{ section.id }} *::before,
+#flash-sale-{{ section.id }} *::after {
+  box-sizing: border-box;
+}
+
+#flash-sale-{{ section.id }} {
+  background: var(--section-bg, #e5e5e5);
+  font-family: "Inter", sans-serif;
+}
+
+.fss-container {
+  padding-block: {{ sec.section_padding_block | default: 20 }}px;
+}
+
+/* ─── Cards ─────────────────────────────────────────────────── */
+.fss-card {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #2a2a2a;
+}
+
+.fss-card--with-timer  { aspect-ratio: 9 / 14; }
+.fss-card--no-timer    { aspect-ratio: 9 / 10; }
+
+.fss-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fss-card--with-timer  .fss-bg-img { object-position: center top; }
+.fss-card--no-timer    .fss-bg-img { object-position: {{ sec.right_image_position | default: 'center center' }}; }
+
+.fss-img-placeholder {
+  position: absolute;
+  inset: 0;
+  background: #3a3a3a;
+}
+
+.fss-overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--overlay-opacity, 0);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─── Labels ─────────────────────────────────────────────────── */
+.fss-flash-label {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 3;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Bottom block ───────────────────────────────────────────── */
+.fss-bottom-block {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  padding: 0 20px 24px;
+}
+
+.fss-tagline {
+  font-size: 15px;
+  color: #fff;
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+/* ─── Countdown (from snippet) ───────────────────────────────── */
+.countdown {
+  display: flex;
+  border-top: 0.5px solid rgba(255,255,255,0.5);
+  border-bottom: 0.5px solid rgba(255,255,255,0.5);
+  margin-bottom: 10px;
+}
+
+.countdown-unit {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 0;
+  border-right: 0.5px solid rgba(255,255,255,0.5);
+}
+
+.countdown-unit:last-child { border-right: none; }
+
+.digits,
+.unit-label {
+  font-size: 16px;
+  color: #fff;
+}
+
+/* ─── CTA Button ─────────────────────────────────────────────── */
+.fss-cta-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: var(--cta-bg, #fff);
+  color: var(--cta-color, #1c1c1c);
+  padding: 12px;
+  font-size: 16px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.fss-cta-btn:hover { opacity: 0.88; }
+
+/* ─── Tablet (768–991px) ────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 991px) {
+  .fss-row {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fss-left-col {
+    flex: 0 0 75%;
+    max-width: 75%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .fss-right-col {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 30%;
+    z-index: 3;
+    overflow: hidden;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fss-right-col .fss-card--no-timer {
+    aspect-ratio: unset;
+    height: 100%;
+    width: 100%;
+  }
+
+  .fss-right-col .fss-bg-img {
+    object-position: 20% center;
+  }
+
+  /* Drag handle */
+  .fss-drag-handle {
+    position: absolute;
+    top: 50%;
+    left: -18px;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: ew-resize;
+    touch-action: none;
+  }
+}
+
+/* ─── Desktop (992px+) ──────────────────────────────────────── */
+@media (min-width: 992px) {
+  .fss-row {
+    display: flex;
+    gap: 0;
+  }
+
+  .fss-left-col  { flex: 0 0 50%; max-width: 50%; }
+  .fss-right-col { flex: 0 0 50%; max-width: 50%; }
+
+  .fss-card--with-timer,
+  .fss-card--no-timer {
+    aspect-ratio: 9 / 12;
+  }
+
+  .fss-bottom-block { padding: 0 32px 36px; }
+  .fss-drag-handle  { display: none; }
+}
+</style>
+
+
+<script>
+(function () {
+  var TABLET_MIN  = 768;
+  var TABLET_MAX  = 991;
+  var DEFAULT_W   = 30;
+  var EXPANDED_W  = 75;
+  var SNAP_PX     = 20;
+
+  var row      = document.getElementById('fss-row-{{ section.id }}');
+  var rightCol = document.getElementById('fss-right-{{ section.id }}');
+  var handle   = document.getElementById('fss-handle-{{ section.id }}');
+
+  if (!row || !rightCol || !handle) return;
+
+  var dragging = false;
+  var startX   = 0;
+  var startPx  = 0;
+  var rowW     = 0;
+
+  function isTablet() {
+    var w = window.innerWidth;
+    return w >= TABLET_MIN && w <= TABLET_MAX;
+  }
+
+  function getPx() {
+    return rightCol.getBoundingClientRect().width;
+  }
+
+  function setW(pct) {
+    rightCol.style.width = pct + '%';
+  }
+
+  function enableTransition() {
+    rightCol.style.transition = 'width 0.4s cubic-bezier(0.4,0,0.2,1)';
+  }
+
+  function disableTransition() {
+    rightCol.style.transition = 'none';
+  }
+
+  function onStart(e) {
+    if (!isTablet()) return;
+    dragging = true;
+    startX   = e.touches ? e.touches[0].clientX : e.clientX;
+    rowW     = row.getBoundingClientRect().width;
+    startPx  = getPx();
+    disableTransition();
+    e.preventDefault();
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    var x     = e.touches ? e.touches[0].clientX : e.clientX;
+    var dx    = startX - x;
+    var newPx = startPx + dx;
+    var minPx = rowW * 0.25;
+    var maxPx = rowW * 0.80;
+    newPx = Math.max(minPx, Math.min(maxPx, newPx));
+    rightCol.style.width = (newPx / rowW * 100).toFixed(2) + '%';
+  }
+
+  function onEnd(e) {
+    if (!dragging) return;
+    dragging = false;
+    enableTransition();
+    var x  = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+    var dx = startX - x;
+    if (dx > SNAP_PX) {
+      setW(EXPANDED_W);
+    } else if (dx < -SNAP_PX) {
+      setW(DEFAULT_W);
+    } else {
+      var pct = parseFloat(rightCol.style.width) || DEFAULT_W;
+      setW(pct > 50 ? EXPANDED_W : DEFAULT_W);
+    }
+  }
+
+  window.addEventListener('resize', function () {
+    if (!isTablet()) {
+      rightCol.style.width      = '';
+      rightCol.style.transition = '';
+    }
+  });
+
+  handle.addEventListener('mousedown',  onStart);
+  handle.addEventListener('touchstart', onStart, { passive: false });
+  window.addEventListener('mousemove',  onMove);
+  window.addEventListener('touchmove',  onMove,  { passive: false });
+  window.addEventListener('mouseup',    onEnd);
+  window.addEventListener('touchend',   onEnd);
+}());
+</script>
+
+
+{% schema %}
+{
+  "name": "Flash Sale Banner",
+  "tag": "section",
+  "class": "flash-sale-banner",
+  "limit": 2,
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "── Layout & Style ──────────────────"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Section background colour",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_block",
+      "label": "Vertical padding (px)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Dark overlay opacity (%)",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 0
+    },
+
+    {
+      "type": "header",
+      "content": "── Left Card — Images ──────────────"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image_desktop",
+      "label": "Left image — Desktop",
+      "info": "Recommended: 900 × 1200 px (portrait)"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image_tablet",
+      "label": "Left image — Tablet",
+      "info": "Recommended: 900 × 1200 px. Falls back to Desktop image if blank."
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image_mobile",
+      "label": "Left image — Mobile",
+      "info": "Recommended: 800 × 1120 px (portrait). Falls back to Desktop image if blank."
+    },
+
+    {
+      "type": "header",
+      "content": "── Left Card — Content ─────────────"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Badge / label text",
+      "default": "Flash Sale",
+      "info": "Shown top-left of the left card. Leave blank to hide."
+    },
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Limited-time steals. Upgrade your sneaker collection now."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "cta_new_tab",
+      "label": "Open link in new tab",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "cta_bg_color",
+      "label": "CTA button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "CTA button text colour",
+      "default": "#1c1c1c"
+    },
+
+    {
+      "type": "header",
+      "content": "── Countdown Timer ─────────────────"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timer",
+      "label": "Show countdown timer",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "Sale end date",
+      "info": "Format: YYYY-MM-DD  (e.g. 2025-12-31)",
+      "default": "2025-12-31"
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "Sale end time (24-hour)",
+      "info": "Format: HH:MM  (e.g. 23:59 for midnight). Uses store's local time.",
+      "default": "23:59"
+    },
+
+    {
+      "type": "header",
+      "content": "── Right Card — Images ─────────────"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image_desktop",
+      "label": "Right image — Desktop",
+      "info": "Recommended: 900 × 1080 px"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image_tablet",
+      "label": "Right image — Tablet",
+      "info": "Falls back to Desktop image if blank."
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image_mobile",
+      "label": "Right image — Mobile",
+      "info": "Falls back to Desktop image if blank."
+    },
+    {
+      "type": "select",
+      "id": "right_image_position",
+      "label": "Right image focal point",
+      "options": [
+        { "value": "center center", "label": "Centre" },
+        { "value": "center top",    "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" },
+        { "value": "left center",   "label": "Left" },
+        { "value": "right center",  "label": "Right" },
+        { "value": "20% center",    "label": "Left-centre (tablet peek)" }
+      ],
+      "default": "center center"
+    },
+
+    {
+      "type": "header",
+      "content": "── Right Card — Content ────────────"
+    },
+    {
+      "type": "text",
+      "id": "right_label",
+      "label": "Badge / label text",
+      "info": "Top-left of the right card. Leave blank to hide."
+    },
+    {
+      "type": "textarea",
+      "id": "right_tagline",
+      "label": "Tagline",
+      "info": "Leave blank to hide the bottom block entirely."
+    },
+    {
+      "type": "text",
+      "id": "right_cta_label",
+      "label": "CTA button label",
+      "info": "Leave blank to hide."
+    },
+    {
+      "type": "url",
+      "id": "right_cta_url",
+      "label": "CTA button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "right_cta_new_tab",
+      "label": "Open link in new tab",
+      "default": false
+    }
+
+  ],
+  "presets": [
+    {
+      "name": "Flash Sale Banner",
+      "settings": {
+        "label": "Flash Sale",
+        "tagline": "Limited-time steals. Upgrade your sneaker collection now.",
+        "cta_label": "Shop Now",
+        "show_timer": true,
+        "end_date": "2025-12-31",
+        "end_time": "23:59",
+        "section_bg_color": "#e5e5e5",
+        "cta_bg_color": "#ffffff",
+        "cta_text_color": "#1c1c1c",
+        "overlay_opacity": 0,
+        "section_padding_block": 20,
+        "right_image_position": "center center"
+      }
+    }
+  ]
+}
+{% endschema %}

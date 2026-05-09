@@ -1,0 +1,111 @@
+<div class="product-card" data-product-id="{{ product.id }}">
+
+  <a href="{{ product.url }}">
+    <img
+      class="product-main-image"
+      src="{{ product.featured_image | image_url: width: 500 }}"
+      width="500"
+      height="500"
+      alt="{{ product.title }}"
+    >
+  </a>
+
+  <h3>{{ product.title }}</h3>
+  <p>{{ product.price | money }}</p>
+
+  {% assign color_option_index = nil %}
+
+  {% for option in product.options_with_values %}
+    {% if option.name == 'Color' or option.name == 'Colour' %}
+      {% assign color_option_index = forloop.index0 %}
+    {% endif %}
+  {% endfor %}
+
+  {% if color_option_index != nil %}
+
+    <div class="image-swatches">
+
+      {% assign shown_values = '' %}
+
+      {% for variant in product.variants %}
+
+        {% assign value = variant.options[color_option_index] %}
+
+        {% unless shown_values contains value %}
+
+          <button
+            class="image-swatch"
+            data-image="{{ variant.featured_image | image_url: width: 500 }}"
+            title="{{ value }}"
+          >
+            {% if variant.featured_image %}
+              <img
+                src="{{ variant.featured_image | image_url: width: 100 }}"
+                alt="{{ value }}"
+              >
+            {% endif %}
+          </button>
+
+          {% assign shown_values = shown_values | append: value | append: ',' %}
+
+        {% endunless %}
+
+      {% endfor %}
+
+    </div>
+
+  {% endif %}
+
+</div>
+
+<script>
+document.addEventListener('click', function (e) {
+
+  const swatch = e.target.closest('.image-swatch');
+  if (!swatch) return;
+
+  const card = swatch.closest('.product-card');
+  const img = card.querySelector('.product-main-image');
+
+  const newImage = swatch.dataset.image;
+
+  if (newImage && img) {
+    img.src = newImage;
+  }
+
+  card.querySelectorAll('.image-swatch').forEach(s => {
+    s.classList.remove('active');
+  });
+
+  swatch.classList.add('active');
+});
+</script>
+
+<style>
+.image-swatches {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.image-swatch {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  padding: 2px;
+  cursor: pointer;
+  background: #fff;
+  overflow: hidden;
+}
+
+.image-swatch img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-swatch.active {
+  border: 2px solid black;
+  transform: scale(1.05);
+}
+</style>

@@ -1,0 +1,11 @@
+accordion-tab{
+    display: block;
+}
+
+.accordion_content{
+    display: none;
+}
+
+accordion-tab[open] .accordion_content{
+    display: block;
+}

@@ -5,10 +5,13 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
 {% endcomment %}
 
+
+
 <h1>{{ 'cart.title' | t }}</h1>
 
 <form action="{{ routes.cart_url }}" method="post">
   <table>
+    {% render 'cart-upsell' %}
     {% for item in cart.items %}
       <tr>
         <td>

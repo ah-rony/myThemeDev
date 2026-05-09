@@ -1,0 +1,152 @@
+{% comment %} <div class="product-card">
+  <a href="{{ product.url }}">
+    {% if product.featured_image %}
+      {{ product.featured_image | image_url: width: 500 | image_tag }}
+    {% endif %}
+
+    <h3>{{ product.title }}</h3>
+
+    <p>
+      {{ product.price | money }}
+    </p>
+  </a>
+</div> {% endcomment %}
+
+
+<div class="product-card" data-product-id="{{ product.id }}">
+
+  <a class="product-image-link" href="{{ product.url }}">
+   <img
+  class="product-main-image"
+  src="{{ product.featured_image | image_url: width: 500 }}"
+  width="500"
+  height="500"
+  data-default="{{ product.featured_image | image_url: width: 500 }}"
+  alt="{{ product.title }}"
+>
+  </a>
+
+  <h3>{{ product.title }}</h3>
+
+  <p>{{ product.price | money }}</p>
+
+  {% assign color_option_index = nil %}
+
+  {% for option in product.options_with_values %}
+    {% if option.name == 'Color' or option.name == 'Colour' %}
+      {% assign color_option_index = forloop.index0 %}
+    {% endif %}
+  {% endfor %}
+
+  {% if color_option_index != nil %}
+
+    <div class="color-swatches">
+
+      {% assign shown_colors = '' %}
+
+      {% for variant in product.variants %}
+
+        {% assign color_value = variant.options[color_option_index] %}
+
+        {% unless shown_colors contains color_value %}
+
+          <button
+            class="color-swatch"
+            data-image="{{ variant.featured_image | image_url: width: 500 }}"
+            title="{{ color_value }}"
+            style="background-color: {{ color_value | downcase }}"
+          ></button>
+
+          {% assign shown_colors = shown_colors | append: color_value | append: ',' %}
+
+        {% endunless %}
+
+      {% endfor %}
+
+    </div>
+
+  {% endif %}
+
+</div>
+
+
+
+
+
+
+
+{% comment %} // =====================this is for hover image effect ================= {% endcomment %}
+
+
+{% comment %} <div class="product-card" data-product-id="{{ product.id }}">
+
+  <a class="product-image-link" href="{{ product.url }}">
+
+    <div class="product-image-wrapper">
+
+      <!-- MAIN IMAGE -->
+      <img
+        class="product-main-image"
+        src="{{ product.featured_image | image_url: width: 500 }}"
+        data-default="{{ product.featured_image | image_url: width: 500 }}"
+        alt="{{ product.title }}"
+      >
+
+      <!-- HOVER IMAGE (FIRST VARIANT IMAGE IF EXISTS) -->
+      {% assign hover_image = product.images[1] %}
+
+      {% if hover_image %}
+        <img
+          class="product-hover-image"
+          src="{{ hover_image | image_url: width: 500 }}"
+          alt="{{ product.title }}"
+        >
+      {% endif %}
+
+      <!-- QUICK VIEW ICON -->
+      <div class="quick-view-icon">
+        +
+      </div>
+
+    </div>
+
+  </a>
+
+  <h3>{{ product.title }}</h3>
+  <p>{{ product.price | money }}</p>
+
+  {% if color_option_index %}
+
+  <div class="color-swatches">
+
+    {% assign shown_colors = '' %}
+
+    {% for variant in product.variants %}
+
+      {% assign color_value = variant.options[color_option_index] %}
+
+      {% unless shown_colors contains color_value %}
+
+        <button
+          class="color-swatch"
+          data-image="{{ variant.featured_image | image_url: width: 500 }}"
+          title="{{ color_value }}"
+          style="background-color: #ccc"
+        ></button>
+
+        {% assign shown_colors = shown_colors | append: color_value | append: ',' %}
+
+      {% endunless %}
+
+    {% endfor %}
+
+  </div>
+
+  {% endif %}
+
+</div> {% endcomment %}
+
+
+
+
+

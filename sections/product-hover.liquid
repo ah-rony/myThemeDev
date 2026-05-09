@@ -1,0 +1,360 @@
+{% style %}
+.cs-section-{{ section.id }} {
+  padding: 40px 0;
+}
+
+
+.cs-image-wrap {
+  position: relative;
+}
+
+.cs-card img {
+  width: 100%;
+  display: block;
+}
+
+
+.cs-hover-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cs-image-wrap:hover .cs-hover-image {
+  opacity: 1;
+}
+
+
+.cs-swatches {
+  display: flex;
+  gap: 6px;
+  margin: 8px 4px;
+}
+
+.cs-swatch {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.cs-swatch img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cs-swatch.is-active {
+  outline: 2px solid black;
+}
+
+.cs-variant-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+
+.cs-size-select {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cs-add-btn {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  background: black;
+  color: white;
+  padding: 10px 16px;
+  font-size: 14px;
+  text-decoration: none;
+  opacity: 0;
+  transition: 0.3s ease;
+}
+
+.cs-image-wrap:hover .cs-add-btn {
+  opacity: 1;
+}
+
+.cs-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  background: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+
+  padding: 6px 10px;
+  border-radius: 4px;
+  z-index: 2;
+}
+
+
+
+.cs-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cs-price-current {
+  font-weight: bold;
+  color: black;
+}
+
+.cs-price-compare {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 14px;
+}
+
+{% endstyle %}
+
+<div class="cs-section cs-section-{{ section.id }}">
+  <h2>{{ section.settings.title }}</h2>
+
+  {% for block in section.blocks %}
+    <h3>{{ block.settings.tab_title }}</h3>
+
+    <div class="swiper">
+      <div class="swiper-wrapper">
+
+        {% for product in block.settings.collection.products %}
+          <div class="swiper-slide">
+
+            <div class="cs-card">
+              <!-- IMAGE -->
+              <div class="cs-image-wrap">
+
+
+              {% if product.compare_at_price > product.price %}
+                {% assign discount = product.compare_at_price | minus: product.price %}
+                {% assign discount_percent = discount | times: 100 | divided_by: product.compare_at_price %}
+
+                <div class="cs-badge">
+                  -{{ discount_percent | round }}%
+                </div>
+              {% endif %}
+
+
+              
+                <a href="{{ product.url }}">
+                  
+                  <!-- MAIN IMAGE -->
+                  <img
+                    class="cs-main-image"
+                    src="{{ product.images[0] | image_url: width: 600 }}"
+                    width="600"
+                    height="600"
+                    alt="{{ product.title }}"
+                  >
+
+                  <!-- HOVER IMAGE -->
+                  {% if product.images[1] %}
+                    <img
+                      class="cs-hover-image"
+                      src="{{ product.images[1] | image_url: width: 600 }}"
+                      width="600"
+                      height="600"
+                      alt="{{ product.title }}"
+                    >
+                  {% endif %}
+
+                </a>
+                 <!-- ADD TO CART BUTTON -->
+                <a href="{{ product.url }}" class="cs-add-btn">
+                  Add to Cart
+                </a>
+              </div>
+
+              <h3>{{ product.title }}</h3>
+              {% comment %} <p>{{ product.price | money }}</p> {% endcomment %}
+
+              {% assign variant = product.selected_or_first_available_variant %}
+
+                <p class="cs-price">
+                  <span class="cs-price-current">
+                    {{ variant.price | money }}
+                  </span>
+
+                  {% if variant.compare_at_price > variant.price %}
+                    <span class="cs-price-compare">
+                      {{ variant.compare_at_price | money }}
+                    </span>
+                  {% endif %}
+                </p>
+
+              <!-- SWATCHES -->
+              {% comment %} {% assign color_index = nil %}
+              {% for option in product.options_with_values %}
+                {% if option.name == 'Color' or option.name == 'Colour' %}
+                  {% assign color_index = forloop.index0 %}
+                {% endif %}
+              {% endfor %}
+
+              <div class="cs-swatches">
+                {% assign shown = '' %}
+
+                {% for variant in product.variants %}
+                  {% assign value = variant.options[color_index] %}
+
+                  {% unless shown contains value %}
+                    {% assign variant_img = variant.image %}
+
+                    <button
+                      class="cs-swatch"
+                      data-main="{% if variant_img %}{{ variant_img | image_url: width: 600 }}{% endif %}"
+                    >
+                      {% if variant_img %}
+                        <img
+                          src="{{ variant_img | image_url: width: 80 }}"
+                          width="80"
+                          height="80"
+                          alt="{{ product.title }} swatch"
+                        >
+                      {% else %}
+                        <img
+                          src="{{ product.images[0] | image_url: width: 80 }}"
+                          width="80"
+                          height="80"
+                          alt="{{ product.title }} swatch"
+                        />
+                      {% endif %}
+                    </button>
+
+                    {% assign shown = shown | append: value | append: ',' %}
+                  {% endunless %}
+                {% endfor %}
+              </div> {% endcomment %}
+
+
+              <div class="cs-variant-row">
+
+                <!-- COLOR SWATCHES -->
+                {% assign color_index = nil %}
+
+                {% for option in product.options_with_values %}
+                  {% if option.name == 'Color' or option.name == 'Colour' %}
+                    {% assign color_index = forloop.index0 %}
+                  {% endif %}
+                {% endfor %}
+
+                <div class="cs-swatches">
+                  {% assign shown = '' %}
+
+                  {% for variant in product.variants %}
+                    {% assign value = variant.options[color_index] %}
+
+                    {% unless shown contains value %}
+                      <button class="cs-swatch" data-main="{{ variant.image | image_url: width: 600 }}">
+                        
+                        {% if variant.image %}
+                        <img
+                          src="{{ variant.image | image_url: width: 80 }}"
+                          width="80"
+                          height="80"
+                          alt="{{ product.title }} swatch"
+                        >
+                      {% else %}
+                        <img
+                          src="{{ product.images[0] | image_url: width: 80 }}"
+                          width="80"
+                          height="80"
+                          alt="{{ product.title }} swatch"
+                        >
+                      {% endif %}
+
+                      </button>
+
+                      {% assign shown = shown | append: value | append: ',' %}
+                    {% endunless %}
+                  {% endfor %}
+                </div>
+
+`
+                <!-- SIZE DROPDOWN -->
+                {% assign size_index = nil %}
+
+                {% for option in product.options_with_values %}
+                  {% if option.name == 'Size' or option.name == 'SIZE' %}
+                    {% assign size_index = forloop.index0 %}
+                  {% endif %}
+                {% endfor %}
+
+                {% if size_index != nil %}
+                  <select class="cs-size-select">
+                    {% assign shown_sizes = '' %}
+
+                    {% for variant in product.variants %}
+                      {% assign size = variant.options[size_index] %}
+
+                      {% unless shown_sizes contains size %}
+                        <option value="{{ variant.id }}">
+                          {{ size }}
+                        </option>
+
+                        {% assign shown_sizes = shown_sizes | append: size | append: ',' %}
+                      {% endunless %}
+                    {% endfor %}
+                  </select>
+                {% endif %}
+
+              </div>
+
+            </div>
+
+          </div>
+        {% endfor %}
+
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+{% schema %}
+{
+  "name": "Collection Swatch",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "Products",
+      "label": "Title"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Title"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Product Hover" }
+  ]
+}
+{% endschema %}
