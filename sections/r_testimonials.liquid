@@ -1,0 +1,405 @@
+{{ 'testimonials.css' | asset_url | stylesheet_tag }}
+{{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="sop-testimonials"
+  itemscope
+  itemtype="https://schema.org/ItemList"
+  aria-label="Customer Testimonials"
+  data-autoplay="{{ section.settings.autoplay }}"
+  data-autoplay-delay="{{ section.settings.autoplay_delay }}"
+  data-speed="{{ section.settings.transition_speed }}"
+  data-loop="{{ section.settings.loop }}"
+  style="
+    color: {{ section.settings.text_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    margin-top: {{ section.settings.margin_top }}px;
+    margin-bottom: {{ section.settings.margin_bottom }}px;
+  "
+>
+  <meta itemprop="name" content="Customer Testimonials">
+
+  <div class="container">
+
+    <div class="row justify-between align-center">
+      <div class="col-6 col-md-6">
+
+        {% if section.settings.show_quote_icon %}
+          <div class="sop-testimonials__quote-icon" aria-hidden="true">
+            <svg width="100" height="73" viewBox="0 0 100 73" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 46.98H25.42L17.095 64.037V72.08L46.98 46.98V0H0L0 46.98Z" fill="currentColor"/>
+              <path d="M61.6494 8.8623V46.9803H82.2734L75.5174 60.8203V67.3433L99.7644 46.9803V8.8623H61.6494Z" fill="currentColor"/>
+            </svg>
+          </div>
+        {% endif %}
+
+      </div>
+
+      {% if section.blocks.size > 1 %}
+        <div class="col-6 col-md-6">
+          <div class="sop-testimonials__nav" role="group" aria-label="Testimonial navigation">
+
+            <button class="sop-testimonials__btn sop-testimonials__prev" aria-label="Previous testimonial" type="button">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M22 11H4.414l5.293-5.293a1 1 0 1 0-1.414-1.414l-7 7a1 1 0 0 0 0 1.414l7 7a1 1 0 0 0 1.414-1.414L4.414 13H22a1 1 0 0 0 0-2z"/>
+              </svg>
+            </button>
+
+            <button class="sop-testimonials__btn sop-testimonials__next" aria-label="Next testimonial" type="button">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M22 11H4.414l5.293-5.293a1 1 0 1 0-1.414-1.414l-7 7a1 1 0 0 0 0 1.414l7 7a1 1 0 0 0 1.414-1.414L4.414 13H22a1 1 0 0 0 0-2z"/>
+              </svg>
+            </button>
+
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+
+        {% if section.blocks.size > 0 %}
+
+          <div class="swiper sop-testimonials__swiper" aria-live="polite" aria-atomic="false">
+            <div class="swiper-wrapper">
+
+              {% for block in section.blocks %}
+                {% if block.type == 'testimonial' %}
+
+                  <div
+                    class="swiper-slide"
+                    {{ block.shopify_attributes }}
+                    itemscope
+                    itemtype="https://schema.org/ListItem"
+                    itemprop="itemListElement"
+                  >
+                    <meta itemprop="position" content="{{ forloop.index }}">
+
+                    <div
+                      class="sop-testimonials__slide-inner"
+                      itemscope
+                      itemtype="https://schema.org/Review"
+                      itemprop="item"
+                    >
+
+                      {% if block.settings.quote != blank %}
+                        <blockquote class="sop-testimonials__quote" itemprop="reviewBody">
+                          {{ block.settings.quote | escape }}
+                        </blockquote>
+                      {% endif %}
+
+                      {% if block.settings.author != blank %}
+                        <p class="sop-testimonials__author">
+
+                          <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+                            <span itemprop="name">
+                              {{ block.settings.author | escape }}
+                            </span>
+                          </span>
+
+                          {% if block.settings.author_title != blank %}
+                            <span class="sop-testimonials__author-title">
+                              ({{ block.settings.author_title | escape }})
+                            </span>
+                          {% endif %}
+
+                        </p>
+                      {% endif %}
+
+                      {% if block.settings.rating > 0 and section.settings.show_rating %}
+                        <div
+                          class="sop-testimonials__rating"
+                          itemprop="reviewRating"
+                          itemscope
+                          itemtype="https://schema.org/Rating"
+                          aria-label="{{ block.settings.rating }} out of 5 stars"
+                          style="--rating: {{ block.settings.rating }}; --star-size: {{ section.settings.star_size }}px;"
+                        >
+                          <meta itemprop="ratingValue" content="{{ block.settings.rating }}">
+                          <meta itemprop="bestRating" content="5">
+
+                          <div class="sop-testimonials__stars-wrap">
+                            <div class="sop-testimonials__stars-base">★★★★★</div>
+                            <div class="sop-testimonials__stars-fill">★★★★★</div>
+                          </div>
+
+                        </div>
+                      {% endif %}
+
+                    </div>
+                  </div>
+
+                {% endif %}
+              {% endfor %}
+
+            </div>
+          </div>
+
+          {% if section.blocks.size > 1 %}
+            <div class="sop-testimonials__pagination-wrap" aria-hidden="true">
+              <div class="swiper-pagination sop-testimonials__pagination"></div>
+            </div>
+          {% endif %}
+
+        {% else %}
+          <p class="sop-testimonials__empty">
+            Add testimonial blocks in the theme editor.
+          </p>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
+<script src="{{ 'testimonials.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "section-testimonials",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margin top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "quote_color",
+      "label": "Quote color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "quote_icon_color",
+      "label": "Quote icon color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "author_color",
+      "label": "Author color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "author_title_color",
+      "label": "Author title color",
+      "default": "#777777"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "pagination_color",
+      "label": "Pagination color",
+      "default": "#d5d5d5"
+    },
+    {
+      "type": "color",
+      "id": "pagination_active_color",
+      "label": "Pagination active color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "star_empty_color",
+      "label": "Empty star color",
+      "default": "#d5d5d5"
+    },
+    {
+      "type": "color",
+      "id": "star_active_color",
+      "label": "Active star color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "star_size",
+      "label": "Star size",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quote_icon",
+      "label": "Show quote icon",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "quote_icon_size",
+      "label": "Quote icon size",
+      "min": 32,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show star rating",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Slider"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_delay",
+      "label": "Autoplay delay",
+      "min": 2000,
+      "max": 9000,
+      "step": 500,
+      "unit": "ms",
+      "default": 4000
+    },
+    {
+      "type": "range",
+      "id": "transition_speed",
+      "label": "Transition speed",
+      "min": 200,
+      "max": 1200,
+      "step": 100,
+      "unit": "ms",
+      "default": 600
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Enable loop",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "From busy city days to slow weekend walks, these sneakers keep up effortlessly. I don't think about comfort anymore — it's just there."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author",
+          "default": "Maya R."
+        },
+        {
+          "type": "text",
+          "id": "author_title",
+          "label": "Author title",
+          "default": "Weekend Wanderer"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star rating",
+          "min": 0,
+          "max": 5,
+          "step": 0.1,
+          "default": 5
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
