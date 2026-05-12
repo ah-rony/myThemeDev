@@ -1,0 +1,562 @@
+{{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="testimonials-section"
+  id="testimonials-{{ section.id }}"
+  itemscope
+  itemtype="https://schema.org/ItemList"
+  aria-label="Customer Testimonials"
+  style="
+    --testimonials-bg: {{ section.settings.background_color }};
+    --testimonials-text: {{ section.settings.text_color }};
+    --testimonials-muted: {{ section.settings.muted_color }};
+    --testimonials-border: {{ section.settings.border_color }};
+    --testimonials-padding-top: {{ section.settings.padding_top }}px;
+    --testimonials-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <meta itemprop="name" content="Customer Testimonials" />
+
+  <div class="container-xl">
+
+    {%- comment -%} ── Header: quote icon + nav ── {%- endcomment -%}
+    <div class="tst-header row justify-between align-center">
+
+      {%- if section.settings.show_quote_icon -%}
+        <div class="col-auto">
+          <div class="tst-quote-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 28" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 28V17.6C0 12.267 1.333 8.267 4 5.6 6.667 2.933 10.533 1.067 15.6 0l1.6 2.8C13.067 3.733 10.533 5.2 9 7.2 7.467 9.2 6.8 11.733 7 14.8H14V28H0ZM18 28V17.6c0-5.333 1.333-9.333 4-12C24.667 2.933 28.533 1.067 33.6 0l1.6 2.8c-4.133.933-6.667 2.4-8.2 4.4C25.467 9.2 24.8 11.733 25 14.8H32V28H18Z"/>
+            </svg>
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 1 -%}
+        <div class="col-auto">
+          <div class="tst-nav" role="group" aria-label="{{ 'sections.testimonials.nav_label' | t | default: 'Testimonial navigation' }}">
+            <button class="tst-btn tst-prev" aria-label="{{ 'sections.testimonials.prev' | t | default: 'Previous testimonial' }}">
+              <svg viewBox="0 0 18 18" fill="none" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="11 4 6 9 11 14"/>
+              </svg>
+            </button>
+            <button class="tst-btn tst-next" aria-label="{{ 'sections.testimonials.next' | t | default: 'Next testimonial' }}">
+              <svg viewBox="0 0 18 18" fill="none" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="7 4 12 9 7 14"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      {%- endif -%}
+
+    </div>{%- comment -%} /tst-header {%- endcomment -%}
+
+    {%- comment -%} ── Swiper ── {%- endcomment -%}
+    <div class="row">
+      <div class="col-12 col-md-10 col-xl-8 tst-slide-col">
+
+        {%- if section.blocks.size > 0 -%}
+          <div
+            class="swiper tst-swiper"
+            aria-live="polite"
+            aria-atomic="false"
+          >
+            <div class="swiper-wrapper">
+
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'testimonial' -%}
+                  <div
+                    class="swiper-slide"
+                    {{ block.shopify_attributes }}
+                    itemscope
+                    itemtype="https://schema.org/ListItem"
+                    itemprop="itemListElement"
+                  >
+                    <meta itemprop="position" content="{{ forloop.index }}" />
+
+                    <div
+                      class="tst-slide-inner"
+                      itemscope
+                      itemtype="https://schema.org/Review"
+                      itemprop="item"
+                    >
+
+                      {%- if block.settings.quote != blank -%}
+                        <blockquote
+                          class="tst-quote"
+                          itemprop="reviewBody"
+                        >
+                          {{ block.settings.quote | escape }}
+                        </blockquote>
+                      {%- endif -%}
+
+                      {%- if block.settings.author != blank -%}
+                        <p class="tst-author">
+                          <span
+                            itemprop="author"
+                            itemscope
+                            itemtype="https://schema.org/Person"
+                          >
+                            <span itemprop="name">{{ block.settings.author | escape }}</span>
+                          </span>
+                          {%- if block.settings.author_title != blank -%}
+                            &nbsp;<span class="tst-author-title">({{ block.settings.author_title | escape }})</span>
+                          {%- endif -%}
+                        </p>
+                      {%- endif -%}
+
+                      {%- if block.settings.rating > 0 and section.settings.show_rating -%}
+                        <div
+                          class="tst-rating"
+                          itemprop="reviewRating"
+                          itemscope
+                          itemtype="https://schema.org/Rating"
+                          aria-label="{{ block.settings.rating }} out of 5 stars"
+                        >
+                          <meta itemprop="ratingValue" content="{{ block.settings.rating }}" />
+                          <meta itemprop="bestRating" content="5" />
+                          {%- for i in (1..5) -%}
+                            <span class="tst-star{% if i <= block.settings.rating %} tst-star--filled{% endif %}" aria-hidden="true">★</span>
+                          {%- endfor -%}
+                        </div>
+                      {%- endif -%}
+
+                    </div>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+
+            </div>{%- comment -%} /swiper-wrapper {%- endcomment -%}
+          </div>{%- comment -%} /swiper {%- endcomment -%}
+
+          {%- if section.blocks.size > 1 -%}
+            <div class="tst-pagination-wrap" aria-hidden="true">
+              <div class="swiper-pagination tst-pagination"></div>
+            </div>
+          {%- endif -%}
+
+        {%- else -%}
+          <div class="tst-empty">
+            {{ 'sections.testimonials.empty' | t | default: 'Add testimonial blocks in the theme editor.' }}
+          </div>
+        {%- endif -%}
+
+      </div>
+    </div>{%- comment -%} /row {%- endcomment -%}
+
+  </div>{%- comment -%} /container-xl {%- endcomment -%}
+</section>
+
+<style>
+  /* ─── layout.css grid (scoped) ──────────────── */
+  #testimonials-{{ section.id }} .container-xl {
+    --container-max: 100%;
+    --container-padding-x: 0.75rem;
+    width: min(100%, calc(var(--container-max) + (var(--container-padding-x) * 2)));
+    margin-inline: auto;
+    padding-inline: var(--container-padding-x);
+  }
+  @media (min-width: 576px)  { #testimonials-{{ section.id }} .container-xl { --container-max: 540px; } }
+  @media (min-width: 768px)  { #testimonials-{{ section.id }} .container-xl { --container-max: 720px; } }
+  @media (min-width: 992px)  { #testimonials-{{ section.id }} .container-xl { --container-max: 960px; } }
+  @media (min-width: 1200px) { #testimonials-{{ section.id }} .container-xl { --container-max: 1140px; } }
+
+  #testimonials-{{ section.id }} .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-inline: calc(-0.75rem);
+  }
+  #testimonials-{{ section.id }} .row > * {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding-inline: 0.75rem;
+  }
+  #testimonials-{{ section.id }} .col-auto { flex: 0 0 auto; width: auto; }
+  #testimonials-{{ section.id }} .col-12   { flex: 0 0 auto; width: 100%; }
+  @media (min-width: 768px) {
+    #testimonials-{{ section.id }} .col-md-10 { flex: 0 0 auto; width: calc(100% * 10 / 12); }
+  }
+  @media (min-width: 1200px) {
+    #testimonials-{{ section.id }} .col-xl-8 { flex: 0 0 auto; width: calc(100% * 8 / 12); }
+  }
+  #testimonials-{{ section.id }} .justify-between { justify-content: space-between; }
+  #testimonials-{{ section.id }} .align-center { align-items: center; }
+
+  /* ─── Section ────────────────────────────────── */
+  #testimonials-{{ section.id }} {
+    background-color: var(--testimonials-bg);
+    color: var(--testimonials-text);
+    padding-block: var(--testimonials-padding-top) var(--testimonials-padding-bottom);
+    overflow: hidden;
+  }
+
+  /* ─── Header ─────────────────────────────────── */
+  #testimonials-{{ section.id }} .tst-header {
+    margin-bottom: 2.5rem;
+  }
+
+  /* ─── Quote Icon ─────────────────────────────── */
+  #testimonials-{{ section.id }} .tst-quote-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 52px;
+    background: var(--testimonials-text);
+  }
+  #testimonials-{{ section.id }} .tst-quote-icon svg {
+    width: 28px;
+    height: 24px;
+    fill: var(--testimonials-bg);
+  }
+
+  /* ─── Nav Buttons ────────────────────────────── */
+  #testimonials-{{ section.id }} .tst-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  #testimonials-{{ section.id }} .tst-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1.5px solid var(--testimonials-text);
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.3s ease, border-color 0.3s ease;
+    padding: 0;
+  }
+  #testimonials-{{ section.id }} .tst-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--testimonials-text);
+    fill: none;
+    stroke-width: 1.5;
+    transition: stroke 0.3s ease;
+  }
+  #testimonials-{{ section.id }} .tst-btn:hover {
+    background: var(--testimonials-text);
+  }
+  #testimonials-{{ section.id }} .tst-btn:hover svg {
+    stroke: var(--testimonials-bg);
+  }
+  #testimonials-{{ section.id }} .tst-btn.swiper-button-disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  /* ─── Slide Col ──────────────────────────────── */
+  #testimonials-{{ section.id }} .tst-slide-col {
+    margin-inline-start: auto;
+    margin-inline-end: auto;
+  }
+
+  /* ─── Swiper fade fix ────────────────────────── */
+  #testimonials-{{ section.id }} .swiper-slide {
+    opacity: 0 !important;
+    transition: opacity 0.55s ease !important;
+    height: auto;
+  }
+  #testimonials-{{ section.id }} .swiper-slide-active {
+    opacity: 1 !important;
+  }
+
+  /* ─── Slide Inner ────────────────────────────── */
+  #testimonials-{{ section.id }} .tst-slide-inner {
+    padding-block: 0.5rem;
+  }
+
+  /* ─── Quote ──────────────────────────────────── */
+  #testimonials-{{ section.id }} .tst-quote {
+    font-family: {{ section.settings.quote_font | default: "'Barlow Condensed', sans-serif" }};
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    text-align: center;
+    color: var(--testimonials-text);
+    margin-bottom: 2rem;
+    border: none;
+    padding: 0;
+    quotes: none;
+  }
+
+  /* ─── Author ─────────────────────────────────── */
+  #testimonials-{{ section.id }} .tst-author {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--testimonials-text);
+    margin: 0;
+  }
+  #testimonials-{{ section.id }} .tst-author-title {
+    color: var(--testimonials-muted);
+    font-weight: 400;
+  }
+
+  /* ─── Rating ─────────────────────────────────── */
+  #testimonials-{{ section.id }} .tst-rating {
+    margin-top: 0.75rem;
+    text-align: center;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+  }
+  #testimonials-{{ section.id }} .tst-star { color: var(--testimonials-border); }
+  #testimonials-{{ section.id }} .tst-star--filled { color: #111111; }
+
+  /* ─── Pagination ─────────────────────────────── */
+  #testimonials-{{ section.id }} .tst-pagination-wrap {
+    margin-top: 2.25rem;
+    display: flex;
+    justify-content: center;
+  }
+  #testimonials-{{ section.id }} .tst-pagination.swiper-pagination {
+    position: static !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  #testimonials-{{ section.id }} .tst-pagination .swiper-pagination-bullet {
+    width: 2.5rem;
+    height: 2px;
+    border-radius: 0;
+    background: var(--testimonials-border);
+    opacity: 1;
+    margin: 0;
+    transition: background 0.3s ease, width 0.3s ease;
+    display: block;
+  }
+  #testimonials-{{ section.id }} .tst-pagination .swiper-pagination-bullet-active {
+    background: var(--testimonials-text);
+    width: 3.5rem;
+  }
+
+  /* ─── Empty state ────────────────────────────── */
+  #testimonials-{{ section.id }} .tst-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--testimonials-muted);
+    font-size: 0.9rem;
+  }
+</style>
+
+<script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var sectionEl = document.getElementById('testimonials-{{ section.id }}');
+    if (!sectionEl) return;
+
+    var swiperEl = sectionEl.querySelector('.tst-swiper');
+    if (!swiperEl) return;
+
+    new Swiper(swiperEl, {
+      loop: {{ section.settings.loop | default: true }},
+      effect: 'fade',
+      fadeEffect: { crossFade: true },
+      speed: {{ section.settings.transition_speed | default: 600 }},
+      {%- if section.settings.autoplay -%}
+      autoplay: {
+        delay: {{ section.settings.autoplay_delay | default: 5000 }},
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+      {%- endif -%}
+      pagination: {
+        el: sectionEl.querySelector('.tst-pagination'),
+        clickable: true,
+      },
+      navigation: {
+        prevEl: sectionEl.querySelector('.tst-prev'),
+        nextEl: sectionEl.querySelector('.tst-next'),
+      },
+      a11y: {
+        prevSlideMessage: '{{ 'sections.testimonials.prev' | t | default: 'Previous testimonial' | escape }}',
+        nextSlideMessage: '{{ 'sections.testimonials.next' | t | default: 'Next testimonial' | escape }}',
+      },
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "section-testimonials",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Design"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted / subtitle color",
+      "default": "#888888"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Inactive pagination color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quote_icon",
+      "label": "Show quote icon",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show star rating",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Slider"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_delay",
+      "label": "Autoplay delay (ms)",
+      "min": 2000,
+      "max": 10000,
+      "step": 500,
+      "default": 5000
+    },
+    {
+      "type": "range",
+      "id": "transition_speed",
+      "label": "Transition speed (ms)",
+      "min": 200,
+      "max": 1200,
+      "step": 100,
+      "default": 600
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop slides",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "From busy city days to slow weekend walks, these sneakers keep up effortlessly. I don't think about comfort anymore — it's just there."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author name",
+          "default": "Maya R."
+        },
+        {
+          "type": "text",
+          "id": "author_title",
+          "label": "Author title / handle",
+          "default": "Weekend Wanderer"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star rating (0 = hide)",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "From busy city days to slow weekend walks, these sneakers keep up effortlessly. I don't think about comfort anymore — it's just there.",
+            "author": "Maya R.",
+            "author_title": "Weekend Wanderer"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I've tried a dozen brands and nothing comes close. The fit is precise, the cushioning is next level, and they look clean with anything.",
+            "author": "James T.",
+            "author_title": "Daily Commuter"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Six months in and they still look new. Worth every penny — the quality speaks before you even put them on.",
+            "author": "Sofia M.",
+            "author_title": "Style Minimalist"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
