@@ -1,0 +1,317 @@
+<section
+  class="sop-flash-sale-timer"
+  style="--section-pt: {{ section.settings.padding_top }}px; --section-pb: {{ section.settings.padding_bottom }}px; --section-mt: {{ section.settings.margin_top }}px; --section-mb: {{ section.settings.margin_bottom }}px;"
+>
+  <div class="container">
+    <div class="fst-row">
+
+      <div class="fst-left-col">
+        <div class="sop-img-with-timer">
+
+          {% if section.settings.left_image != blank %}
+            <img
+              src="{{ section.settings.left_image | image_url: width: 900 }}"
+              alt="{{ section.settings.flash_label | escape }}"
+              class="sop-left-img sop-img-desktop"
+              loading="lazy"
+              width="{{ section.settings.left_image.width }}"
+              height="{{ section.settings.left_image.height }}"
+            >
+          {% else %}
+            <div class="sop-left-img sop-img-desktop sop-img-placeholder">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+
+          {% if section.settings.left_image_mobile != blank %}
+            <img
+              src="{{ section.settings.left_image_mobile | image_url: width: 600 }}"
+              alt="{{ section.settings.flash_label | escape }}"
+              class="sop-left-img sop-img-mobile"
+              loading="lazy"
+              width="{{ section.settings.left_image_mobile.width }}"
+              height="{{ section.settings.left_image_mobile.height }}"
+            >
+          {% elsif section.settings.left_image != blank %}
+            <img
+              src="{{ section.settings.left_image | image_url: width: 600 }}"
+              alt="{{ section.settings.flash_label | escape }}"
+              class="sop-left-img sop-img-mobile"
+              loading="lazy"
+              width="{{ section.settings.left_image.width }}"
+              height="{{ section.settings.left_image.height }}"
+            >
+          {% endif %}
+
+          {% if section.settings.flash_label != blank %}
+            <p class="sop-flash-label">{{ section.settings.flash_label }}</p>
+          {% endif %}
+
+          <div class="sop-bottom-block">
+            {% if section.settings.tagline != blank %}
+              <p class="sop-tagline">{{ section.settings.tagline }}</p>
+            {% endif %}
+
+            <hr class="sop-divider">
+
+            <div
+              class="sop-timer"
+              data-days="{{ section.settings.timer_days | default: 0 }}"
+              data-hours="{{ section.settings.timer_hours | default: 0 }}"
+              data-minutes="{{ section.settings.timer_minutes | default: 0 }}"
+              data-seconds="{{ section.settings.timer_seconds | default: 0 }}"
+            >
+              <div class="sop-timer-cell">
+                <span class="sop-timer-value sop-timer-days">
+                  {{- section.settings.timer_days | default: 0 -}}
+                </span>
+                <span class="sop-timer-label" aria-hidden="true">
+                  <span class="sop-timer-label-full">
+                    {{- section.settings.timer_label_days | default: 'Days' -}}
+                  </span>
+                  <span class="sop-timer-label-short">D</span>
+                </span>
+              </div>
+              <div class="sop-timer-cell">
+                <span class="sop-timer-value sop-timer-hours">
+                  {{- section.settings.timer_hours | default: 0 -}}
+                </span>
+                <span class="sop-timer-label" aria-hidden="true">
+                  <span class="sop-timer-label-full">
+                    {{- section.settings.timer_label_hours | default: 'Hours' -}}
+                  </span>
+                  <span class="sop-timer-label-short">Hr</span>
+                </span>
+              </div>
+              <div class="sop-timer-cell">
+                <span class="sop-timer-value sop-timer-minutes">
+                  {{- section.settings.timer_minutes | default: 0 -}}
+                </span>
+                <span class="sop-timer-label" aria-hidden="true">
+                  <span class="sop-timer-label-full">
+                    {{- section.settings.timer_label_minutes | default: 'Minutes' -}}
+                  </span>
+                  <span class="sop-timer-label-short">Min</span>
+                </span>
+              </div>
+              <div class="sop-timer-cell">
+                <span class="sop-timer-value sop-timer-seconds">
+                  {{- section.settings.timer_seconds | default: 0 -}}
+                </span>
+                <span class="sop-timer-label" aria-hidden="true">
+                  <span class="sop-timer-label-full">
+                    {{- section.settings.timer_label_seconds | default: 'Seconds' -}}
+                  </span>
+                  <span class="sop-timer-label-short">Sec</span>
+                </span>
+              </div>
+            </div>
+
+            {% if section.settings.cta_label != blank %}
+              <a
+                class="sop-cta-btn"
+                {% if section.settings.cta_url != blank %}
+                  href="{{ section.settings.cta_url }}"
+                {% endif %}
+              >
+                {{ section.settings.cta_label }}
+              </a>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <div class="fst-right-col">
+        <div class="sop-img-plain">
+          {% if section.settings.right_image != blank %}
+            <img
+              src="{{ section.settings.right_image | image_url: width: 900 }}"
+              alt="{{ section.settings.flash_label | escape }}"
+              class="sop-right-img sop-img-desktop"
+              loading="lazy"
+              width="{{ section.settings.right_image.width }}"
+              height="{{ section.settings.right_image.height }}"
+            >
+          {% else %}
+            <div class="sop-right-img sop-img-desktop sop-img-placeholder">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+{{ 'flash-sale-timer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'flash-sale-timer.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Flash Sale Timer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margin top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Left Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image",
+      "label": "Left image — Desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image_mobile",
+      "label": "Left image — Mobile"
+    },
+    {
+      "type": "header",
+      "content": "Right Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image",
+      "label": "Right image — Desktop"
+    },
+    {
+      "type": "header",
+      "content": "Text Content"
+    },
+    {
+      "type": "text",
+      "id": "flash_label",
+      "label": "Flash label",
+      "default": "FLASH SALE"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Limited-time steals. Upgrade your sneaker collection now."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Countdown Timer — Starting Values"
+    },
+    {
+      "type": "number",
+      "id": "timer_days",
+      "label": "Days",
+      "default": 5,
+      "info": "Starting number of days"
+    },
+    {
+      "type": "number",
+      "id": "timer_hours",
+      "label": "Hours",
+      "default": 16,
+      "info": "Starting hours (0 – 23)"
+    },
+    {
+      "type": "number",
+      "id": "timer_minutes",
+      "label": "Minutes",
+      "default": 12,
+      "info": "Starting minutes (0 – 59)"
+    },
+    {
+      "type": "number",
+      "id": "timer_seconds",
+      "label": "Seconds",
+      "default": 49,
+      "info": "Starting seconds (0 – 59)"
+    },
+    {
+      "type": "header",
+      "content": "Countdown Timer — Unit Labels"
+    },
+    {
+      "type": "text",
+      "id": "timer_label_days",
+      "label": "Days label",
+      "default": "Days"
+    },
+    {
+      "type": "text",
+      "id": "timer_label_hours",
+      "label": "Hours label",
+      "default": "Hours"
+    },
+    {
+      "type": "text",
+      "id": "timer_label_minutes",
+      "label": "Minutes label",
+      "default": "Minutes"
+    },
+    {
+      "type": "text",
+      "id": "timer_label_seconds",
+      "label": "Seconds label",
+      "default": "Seconds"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flash Sale Timer"
+    }
+  ]
+}
+{% endschema %}
