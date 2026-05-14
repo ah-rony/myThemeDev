@@ -1,24 +1,24 @@
 <section
-  class="sop-flash-sale-timer"
+  class="flash-sale-timer"
   style="--section-pt: {{ section.settings.padding_top }}px; --section-pb: {{ section.settings.padding_bottom }}px; --section-mt: {{ section.settings.margin_top }}px; --section-mb: {{ section.settings.margin_bottom }}px;"
 >
   <div class="container">
-    <div class="fst-row">
+    <div class="row g-0 align-stretch">
 
-      <div class="fst-left-col">
-        <div class="sop-img-with-timer">
+      <div class="col-12 col-lg-6 flash-sale-timer__left-col">
+        <div class="flash-sale-timer__img-with-overlay">
 
           {% if section.settings.left_image != blank %}
             <img
               src="{{ section.settings.left_image | image_url: width: 900 }}"
               alt="{{ section.settings.flash_label | escape }}"
-              class="sop-left-img sop-img-desktop"
+              class="flash-sale-timer__left-img flash-sale-timer__img-desktop"
               loading="lazy"
               width="{{ section.settings.left_image.width }}"
               height="{{ section.settings.left_image.height }}"
             >
           {% else %}
-            <div class="sop-left-img sop-img-desktop sop-img-placeholder">
+            <div class="flash-sale-timer__left-img flash-sale-timer__img-desktop flash-sale-timer__img-placeholder">
               {{ 'image' | placeholder_svg_tag }}
             </div>
           {% endif %}
@@ -27,7 +27,7 @@
             <img
               src="{{ section.settings.left_image_mobile | image_url: width: 600 }}"
               alt="{{ section.settings.flash_label | escape }}"
-              class="sop-left-img sop-img-mobile"
+              class="flash-sale-timer__left-img flash-sale-timer__img-mobile"
               loading="lazy"
               width="{{ section.settings.left_image_mobile.width }}"
               height="{{ section.settings.left_image_mobile.height }}"
@@ -36,7 +36,7 @@
             <img
               src="{{ section.settings.left_image | image_url: width: 600 }}"
               alt="{{ section.settings.flash_label | escape }}"
-              class="sop-left-img sop-img-mobile"
+              class="flash-sale-timer__left-img flash-sale-timer__img-mobile"
               loading="lazy"
               width="{{ section.settings.left_image.width }}"
               height="{{ section.settings.left_image.height }}"
@@ -44,72 +44,72 @@
           {% endif %}
 
           {% if section.settings.flash_label != blank %}
-            <p class="sop-flash-label">{{ section.settings.flash_label }}</p>
+            <p class="flash-sale-timer__flash-label">{{ section.settings.flash_label }}</p>
           {% endif %}
 
-          <div class="sop-bottom-block">
+          <div class="flash-sale-timer__bottom-block">
             {% if section.settings.tagline != blank %}
-              <p class="sop-tagline">{{ section.settings.tagline }}</p>
+              <p class="flash-sale-timer__tagline">{{ section.settings.tagline }}</p>
             {% endif %}
 
-            <hr class="sop-divider">
+            <hr class="flash-sale-timer__divider">
 
             <div
-              class="sop-timer"
+              class="flash-sale-timer__timer"
               data-days="{{ section.settings.timer_days | default: 0 }}"
               data-hours="{{ section.settings.timer_hours | default: 0 }}"
               data-minutes="{{ section.settings.timer_minutes | default: 0 }}"
               data-seconds="{{ section.settings.timer_seconds | default: 0 }}"
             >
-              <div class="sop-timer-cell">
-                <span class="sop-timer-value sop-timer-days">
+              <div class="flash-sale-timer__timer-cell">
+                <span class="flash-sale-timer__timer-value flash-sale-timer__timer-days">
                   {{- section.settings.timer_days | default: 0 -}}
                 </span>
-                <span class="sop-timer-label" aria-hidden="true">
-                  <span class="sop-timer-label-full">
+                <span class="flash-sale-timer__timer-label" aria-hidden="true">
+                  <span class="flash-sale-timer__timer-label-full">
                     {{- section.settings.timer_label_days | default: 'Days' -}}
                   </span>
-                  <span class="sop-timer-label-short">D</span>
+                  <span class="flash-sale-timer__timer-label-short">D</span>
                 </span>
               </div>
-              <div class="sop-timer-cell">
-                <span class="sop-timer-value sop-timer-hours">
+              <div class="flash-sale-timer__timer-cell">
+                <span class="flash-sale-timer__timer-value flash-sale-timer__timer-hours">
                   {{- section.settings.timer_hours | default: 0 -}}
                 </span>
-                <span class="sop-timer-label" aria-hidden="true">
-                  <span class="sop-timer-label-full">
+                <span class="flash-sale-timer__timer-label" aria-hidden="true">
+                  <span class="flash-sale-timer__timer-label-full">
                     {{- section.settings.timer_label_hours | default: 'Hours' -}}
                   </span>
-                  <span class="sop-timer-label-short">Hr</span>
+                  <span class="flash-sale-timer__timer-label-short">Hr</span>
                 </span>
               </div>
-              <div class="sop-timer-cell">
-                <span class="sop-timer-value sop-timer-minutes">
+              <div class="flash-sale-timer__timer-cell">
+                <span class="flash-sale-timer__timer-value flash-sale-timer__timer-minutes">
                   {{- section.settings.timer_minutes | default: 0 -}}
                 </span>
-                <span class="sop-timer-label" aria-hidden="true">
-                  <span class="sop-timer-label-full">
+                <span class="flash-sale-timer__timer-label" aria-hidden="true">
+                  <span class="flash-sale-timer__timer-label-full">
                     {{- section.settings.timer_label_minutes | default: 'Minutes' -}}
                   </span>
-                  <span class="sop-timer-label-short">Min</span>
+                  <span class="flash-sale-timer__timer-label-short">Min</span>
                 </span>
               </div>
-              <div class="sop-timer-cell">
-                <span class="sop-timer-value sop-timer-seconds">
+              <div class="flash-sale-timer__timer-cell">
+                <span class="flash-sale-timer__timer-value flash-sale-timer__timer-seconds">
                   {{- section.settings.timer_seconds | default: 0 -}}
                 </span>
-                <span class="sop-timer-label" aria-hidden="true">
-                  <span class="sop-timer-label-full">
+                <span class="flash-sale-timer__timer-label" aria-hidden="true">
+                  <span class="flash-sale-timer__timer-label-full">
                     {{- section.settings.timer_label_seconds | default: 'Seconds' -}}
                   </span>
-                  <span class="sop-timer-label-short">Sec</span>
+                  <span class="flash-sale-timer__timer-label-short">Sec</span>
                 </span>
               </div>
             </div>
 
             {% if section.settings.cta_label != blank %}
               <a
-                class="sop-cta-btn"
+                class="flash-sale-timer__cta-btn"
                 {% if section.settings.cta_url != blank %}
                   href="{{ section.settings.cta_url }}"
                 {% endif %}
@@ -122,19 +122,19 @@
         </div>
       </div>
 
-      <div class="fst-right-col">
-        <div class="sop-img-plain">
+      <div class="col-lg-6 flash-sale-timer__right-col">
+        <div class="flash-sale-timer__img-plain">
           {% if section.settings.right_image != blank %}
             <img
               src="{{ section.settings.right_image | image_url: width: 900 }}"
               alt="{{ section.settings.flash_label | escape }}"
-              class="sop-right-img sop-img-desktop"
+              class="flash-sale-timer__right-img flash-sale-timer__img-desktop"
               loading="lazy"
               width="{{ section.settings.right_image.width }}"
               height="{{ section.settings.right_image.height }}"
             >
           {% else %}
-            <div class="sop-right-img sop-img-desktop sop-img-placeholder">
+            <div class="flash-sale-timer__right-img flash-sale-timer__img-desktop flash-sale-timer__img-placeholder">
               {{ 'image' | placeholder_svg_tag }}
             </div>
           {% endif %}
@@ -144,7 +144,6 @@
     </div>
   </div>
 </section>
-
 
 {{ 'flash-sale-timer.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'flash-sale-timer.js' | asset_url }}" defer></script>

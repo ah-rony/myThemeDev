@@ -1,130 +1,104 @@
-(() => {
+class FlashSaleCountdown {
+  constructor(timerEl) {
+    this.el = timerEl;
+    this.daysEl = timerEl.querySelector('.flash-sale-timer__timer-days');
+    this.hoursEl = timerEl.querySelector('.flash-sale-timer__timer-hours');
+    this.minutesEl = timerEl.querySelector('.flash-sale-timer__timer-minutes');
+    this.secondsEl = timerEl.querySelector('.flash-sale-timer__timer-seconds');
 
-  /* ── Countdown timer ── */
-  const timers = document.querySelectorAll(
-    '.sop-flash-sale-timer .sop-timer'
-  );
+    if (!this.daysEl || !this.hoursEl || !this.minutesEl || !this.secondsEl) return;
 
-  timers.forEach((timer) => {
+    this.totalSeconds =
+      (parseInt(timerEl.dataset.days, 10) || 0) * 86400 +
+      (parseInt(timerEl.dataset.hours, 10) || 0) * 3600 +
+      (parseInt(timerEl.dataset.minutes, 10) || 0) * 60 +
+      (parseInt(timerEl.dataset.seconds, 10) || 0);
 
-    const daysEl = timer.querySelector('.sop-timer-days');
-    const hoursEl = timer.querySelector('.sop-timer-hours');
-    const minutesEl = timer.querySelector('.sop-timer-minutes');
-    const secondsEl = timer.querySelector('.sop-timer-seconds');
+    this.render();
+    setTimeout(() => this.tick(), 1000);
+  }
 
-    if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+  pad(n) {
+    return String(n).padStart(2, '0');
+  }
 
-    let totalSeconds =
-      (parseInt(timer.dataset.days, 10) || 0) * 86400 +
-      (parseInt(timer.dataset.hours, 10) || 0) * 3600 +
-      (parseInt(timer.dataset.minutes, 10) || 0) * 60 +
-      (parseInt(timer.dataset.seconds, 10) || 0);
+  render() {
+    const d = Math.floor(this.totalSeconds / 86400);
+    const h = Math.floor((this.totalSeconds % 86400) / 3600);
+    const m = Math.floor((this.totalSeconds % 3600) / 60);
+    const s = this.totalSeconds % 60;
+    this.daysEl.textContent = this.pad(d);
+    this.hoursEl.textContent = this.pad(h);
+    this.minutesEl.textContent = this.pad(m);
+    this.secondsEl.textContent = this.pad(s);
+  }
 
-    const pad = (n) => String(n).padStart(2, '0');
+  tick() {
+    if (this.totalSeconds <= 0) {
+      this.render();
+      return;
+    }
+    this.totalSeconds -= 1;
+    this.render();
+    setTimeout(() => this.tick(), 1000);
+  }
+}
 
-    const updateDisplay = () => {
+class FlashSaleTabletParallax {
+  constructor(sectionEl) {
+    this.section = sectionEl;
+    this.image = sectionEl.querySelector('.flash-sale-timer__right-col .flash-sale-timer__right-img');
+    this.mediaQuery = window.matchMedia('(min-width: 48rem) and (max-width: 79.9375rem)');
 
-      const d = Math.floor(totalSeconds / 86400);
-      const h = Math.floor((totalSeconds % 86400) / 3600);
-      const m = Math.floor((totalSeconds % 3600) / 60);
-      const s = totalSeconds % 60;
+    if (!this.image) return;
 
-      daysEl.textContent = pad(d);
-      hoursEl.textContent = pad(h);
-      minutesEl.textContent = pad(m);
-      secondsEl.textContent = pad(s);
-    };
+    this.supportsScrollTimeline = CSS.supports('animation-timeline', 'scroll()');
 
-    const tick = () => {
+    if (!this.supportsScrollTimeline) {
+      this.update = this.update.bind(this);
+      this.update();
+      window.addEventListener('scroll', this.update, { passive: true });
+      window.addEventListener('resize', this.update);
+    }
+  }
 
-      if (totalSeconds <= 0) {
-        updateDisplay();
-        return;
-      }
-
-      totalSeconds -= 1;
-
-      updateDisplay();
-
-      setTimeout(tick, 1000);
-    };
-
-    updateDisplay();
-
-    setTimeout(tick, 1000);
-
-  });
-
-})();
-
-
-
-(() => {
-
-  const section = document.querySelector(
-    '.sop-flash-sale-timer'
-  );
-
-  if (!section) return;
-
-  const image = section.querySelector(
-    '.fst-right-col .sop-right-img'
-  );
-
-  if (!image) return;
-
-  const mediaQuery = window.matchMedia(
-    '(min-width: 48rem) and (max-width: 79.9375rem)'
-  );
-
-  const updateImagePosition = () => {
-
-    if (!mediaQuery.matches) {
-      image.style.transform = '';
+  update() {
+    if (!this.mediaQuery.matches) {
+      this.image.style.transform = '';
       return;
     }
 
-    const rect = section.getBoundingClientRect();
-
+    const rect = this.section.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
+    const progress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
+    const clamped = Math.max(0, Math.min(progress, 1));
 
-    const start = viewportHeight;
-    const end = -rect.height;
-
-    const progress =
-      (start - rect.top) / (start - end);
-
-    const clamped = Math.max(
-      0,
-      Math.min(progress, 1)
-    );
-
-    let translateX = 50;
-
+    let translateX;
     if (clamped <= 0.5) {
-
-      translateX = 50 - (clamped * 100);
-
+      translateX = 50 - clamped * 100;
     } else {
-
       translateX = (clamped - 0.5) * 100;
     }
 
-    image.style.transform =
-      `translateX(${translateX}%)`;
-  };
+    this.image.style.transform = `translateX(${translateX}%)`;
+  }
+}
 
-  updateImagePosition();
+class FlashSaleTimer {
+  constructor() {
+    this.init();
+  }
 
-  window.addEventListener(
-    'scroll',
-    updateImagePosition,
-    { passive: true }
-  );
+  init() {
+    document.querySelectorAll('.flash-sale-timer__timer').forEach((el) => {
+      new FlashSaleCountdown(el);
+    });
 
-  window.addEventListener(
-    'resize',
-    updateImagePosition
-  );
+    const section = document.querySelector('.flash-sale-timer');
+    if (section) {
+      new FlashSaleTabletParallax(section);
+    }
+  }
+}
 
-})();
+new FlashSaleTimer();
