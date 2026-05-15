@@ -262,8 +262,8 @@
     padding-left: 0;
   }
 
-  .sop-latest-insights-card:last-child .sop-latest-insights-card-image,
-  .sop-latest-insights-card:last-child .sop-latest-insights-card-placeholder {
+  .sop-latest-insights-card:last-child:nth-child(odd) .sop-latest-insights-card-image,
+  .sop-latest-insights-card:last-child:nth-child(odd) .sop-latest-insights-card-placeholder {
     height: 500px;
     margin-top: 24px;
   }
@@ -326,6 +326,10 @@
     height: 60px;
   }
 
+  .sop-latest-insights-card:last-child:nth-child(odd) .sop-latest-insights-card-arrow {
+    top: 30px;
+  }
+
 
 /* .sop-latest-insights-card:hover .sop-latest-insights-card-arrow {
   opacity: 1;
@@ -358,6 +362,27 @@
     row-gap: 24px;
   }
 
+
+  /* Reset the 768px blanket last-child rule */
+.sop-latest-insights-card:last-child {
+  width: 48%;
+  min-width: 48%;
+  flex: 0 0 48%;
+}
+
+/* Odd last card (3rd, 5th, 7th...) → full width */
+.sop-latest-insights-card:last-child:nth-child(odd) {
+  width: 100%;
+  min-width: 100%;
+  flex: 0 0 100%;
+}
+
+/* Even last card (2nd, 4th, 6th...) → stays half width */
+.sop-latest-insights-card:last-child:nth-child(even) {
+  width: 48%;
+  min-width: 48%;
+  flex: 0 0 48%;
+}
 
 
 }
@@ -417,21 +442,29 @@
     padding: 0;
   }
 
-  /* .sop-latest-insights-slider {
-    display: block;
-    overflow: visible;
-    padding: 0;
-    scroll-snap-type: none;
-    flex-wrap: unset;
-  }
+.sop-latest-insights-slider {
+  display: block;
+  overflow: visible;
+  padding: 0;
+  scroll-snap-type: none;
+}
 
-  .sop-latest-insights-card {
-    width: 100%;
-    min-width: 100%;
-    flex: unset;
-    padding-right: 0;
-    padding-left: 0;
-  }
+.sop-latest-insights-card {
+  width: 100%;
+  min-width: 100%;
+  flex: unset;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+/* Reset all last-child width overrides from 768px */
+.sop-latest-insights-card:last-child,
+.sop-latest-insights-card:last-child:nth-child(odd),
+.sop-latest-insights-card:last-child:nth-child(even) {
+  width: 100%;
+  min-width: 100%;
+  flex: unset;
+}
 
   .sop-latest-insights-card:nth-child(odd) {
     padding-right: 0;
@@ -439,52 +472,10 @@
 
   .sop-latest-insights-card:nth-child(even) {
     padding-left: 0;
-  } */
+  }
 
 
  
-
-  .sop-latest-insights-slider {
-    display: flex;
-    flex-wrap: wrap;
-    overflow: visible;
-    padding: 0;
-    scroll-snap-type: none;
-    column-gap: 4%;
-    row-gap: 24px;
-  }
-
-  .sop-latest-insights-card {
-    width: 48%;
-    min-width: 48%;
-    flex: 0 0 48%;
-    padding-right: 0;
-    padding-left: 0;
-  }
-
-/* Reset the 768px blanket last-child rule */
-.sop-latest-insights-card:last-child {
-  width: 48%;
-  min-width: 48%;
-  flex: 0 0 48%;
-}
-
-/* Odd last card (3rd, 5th, 7th...) → full width */
-.sop-latest-insights-card:last-child:nth-child(odd) {
-  width: 100%;
-  min-width: 100%;
-  flex: 0 0 100%;
-}
-
-/* Even last card (2nd, 4th, 6th...) → stays half width */
-.sop-latest-insights-card:last-child:nth-child(even) {
-  width: 48%;
-  min-width: 48%;
-  flex: 0 0 48%;
-}
-
-
-
   .sop-latest-insights-card:last-child:nth-child(odd) {
     width: 100%;
     min-width: 100%;
@@ -509,9 +500,10 @@
 }
 
 
-.sop-latest-insights-card:last-child .sop-latest-insights-card-image, .sop-latest-insights-card:last-child .sop-latest-insights-card-placeholder {
+.sop-latest-insights-card:last-child:nth-child(odd) .sop-latest-insights-card-image, .sop-latest-insights-card:last-child .sop-latest-insights-card-placeholder {
     margin-top: 0;
 }
+
 
   .sop-latest-insights-card:last-child:nth-child(odd)  .sop-latest-insights-card-arrow {
     top: 20px;
