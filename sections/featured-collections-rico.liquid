@@ -1,0 +1,323 @@
+{% style %}
+   .sop-featured-collection {
+
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    margin-top: {{ section.settings.margin_top }}px;
+    margin-bottom: {{ section.settings.margin_bottom }}px;
+  }
+{% endstyle %}
+
+<div class="container">
+    <div class="row gx-4 gy-4 sop-featured-collection__row">
+
+      {% for block in section.blocks %}
+        {% assign collection = collections[block.settings.collection] %}
+        {% assign custom_img = block.settings.collection_image %}
+
+        {% if custom_img != blank %}
+          {% assign hero_img = custom_img %}
+        {% elsif collection != blank and collection.image != blank %}
+          {% assign hero_img = collection.image %}
+        {% else %}
+          {% assign hero_img = nil %}
+        {% endif %}
+
+        {% assign btn_label = block.settings.button_label | default: 'Shop Now' %}
+        {% assign btn_url = block.settings.button_url | default: collection.url | default: '#' %}
+
+        <div
+          class="col-12 col-sm-6 sop-featured-collection__col"
+          {{ block.shopify_attributes }}
+        >
+          <div class="sop-fc-card">
+
+            <div class="sop-fc-card__bg-clip" aria-hidden="true">
+              {% if hero_img %}
+                <img
+                  class="sop-fc-card__bg-img"
+                  src="{{ hero_img | image_url: width: 1200 }}"
+                  alt=""
+                  loading="lazy"
+                  width="1200"
+                  height="1200"
+                >
+              {% endif %}
+            </div>
+
+            <div class="sop-fc-card__frame">
+
+              <div class="sop-fc-card__fg-img">
+                {% if hero_img %}
+                  <img
+                    src="{{ hero_img | image_url: width: 1200 }}"
+                    srcset="
+                      {{ hero_img | image_url: width: 480 }} 480w,
+                      {{ hero_img | image_url: width: 720 }} 720w,
+                      {{ hero_img | image_url: width: 960 }} 960w,
+                      {{ hero_img | image_url: width: 1200 }} 1200w
+                    "
+                    sizes="(max-width: 575px) 100vw, 50vw"
+                    alt="{{ collection.title | escape }}"
+                    loading="lazy"
+                    width="1200"
+                    height="1200"
+                  >
+                {% else %}
+                  {{ 'collection-1' | placeholder_svg_tag: 'sop-fc-card__fg-placeholder' }}
+                {% endif %}
+                <a
+                  href="{{ btn_url }}"
+                  class="sop-fc-card__btn"
+                >
+                  {{ btn_label | escape }}
+                </a>
+              </div>
+
+
+            </div>
+
+          </div>
+        </div>
+
+      {% endfor %}
+
+    </div>
+</div>
+
+
+{% stylesheet %}
+
+.sop-featured-collection {
+  background: #fff;
+}
+
+.sop-featured-collection__col {
+  padding-inline: 0 !important;
+}
+
+.sop-fc-card {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.sop-fc-card__bg-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.sop-fc-card__bg-img {
+  position: relative;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(2px) brightness(0.75);
+  transform: scale(1.08);
+}
+
+
+.sop-fc-card__frame {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 20px;
+}
+
+.sop-fc-card__fg-img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.sop-fc-card__fg-img img,
+.sop-fc-card__fg-placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform .4s ease;
+}
+
+.sop-fc-card:hover .sop-fc-card__fg-img img,
+.sop-fc-card:hover .sop-fc-card__fg-placeholder {
+  transform: scale(1.03);
+}
+
+
+.sop-fc-card__btn {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 10px 0;
+  font-size: 12px;
+
+  background: #f4f4f4;
+  color: #111;
+  text-decoration: none;
+}
+
+
+@media (min-width: 576px) {
+    .sop-fc-card {
+    height: 600px;
+  }
+
+  .sop-fc-card__frame {
+    padding: 30px;
+  }
+
+   .sop-fc-card__btn {
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    padding: 12px 0;
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 768px) {
+    .sop-fc-card {
+    height: 720px;
+  }
+
+  .sop-fc-card__frame {
+    padding: 40px;
+  }
+    
+   .sop-fc-card__btn {
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    padding: 14px 0;
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 992px) {
+    .sop-fc-card {
+    height: 920px;
+  }
+
+  .sop-fc-card__frame {
+    padding: 70px;
+  }
+
+  .sop-fc-card__btn {
+    padding: 16px 0;
+    font-size: 14px;
+  }
+}
+
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "tag": "section",
+  "class": "sop-featured-collection",
+  "max_blocks": 2,
+  "settings": [
+     {
+        "type": "color_scheme",
+        "id": "color_schemes",
+        "label": "Color Schemes",
+        "default": "default"
+      },
+      {
+        "type": "range",
+        "id": "padding_top",
+        "label": "Padding Top",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "default": 60
+      },
+      {
+        "type": "range",
+        "id": "padding_bottom",
+        "label": "Padding Bottom",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "default": 60
+      },
+      {
+        "type": "range",
+        "id": "margin_top",
+        "label": "Margin Top",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "default": 0
+      }, {
+        "type": "range",
+        "id": "margin_bottom",
+        "label": "Margin Bottom",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "default": 0
+      }
+  ],
+  "blocks": [
+    {
+      "type": "collection_card",
+      "name": "Collection Card",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "collection_image",
+          "label": "Custom Card Image"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection",
+      "blocks": [
+        {
+          "type": "collection_card"
+        },
+        {
+          "type": "collection_card"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
