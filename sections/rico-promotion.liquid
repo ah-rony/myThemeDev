@@ -1,0 +1,492 @@
+{% liquid
+  assign media_type = section.settings.media_type
+
+  assign marquee_blocks = section.blocks | where: 'type', 'marquee_item'
+  assign items_size     = marquee_blocks | size
+  assign repeat         = 10
+  if items_size > 0
+    assign repeat = 16 | divided_by: items_size
+  endif
+  if repeat < 4
+    assign repeat = 4
+  endif
+
+  assign marquee_duration_value = 501 | minus: section.settings.marque_duration
+  assign marquee_duration       = marquee_duration_value | append: 's' | default: '30s'
+  assign marquee_gap            = section.settings.marque_gap | times: 0.25 | append: 'rem' | default: '1rem'
+  assign marquee_padding_v      = section.settings.marque_padding_vertical | times: 0.25 | append: 'rem'
+
+  assign marque_overlay_color = section.settings.marque_overlay_color
+  assign alpha_start          = section.settings.marque_overlay_gradient_start | divided_by: 100.0
+  assign alpha_end            = section.settings.marque_overlay_gradient_end   | divided_by: 100.0
+%}
+
+<div class="sop-promo shopify-section-{{ section.id }} color-{{ section.settings.color_scheme }}">
+
+  <div class="sop-promo__media-wrap">
+
+    {%- if media_type == 'image' -%}
+
+      {%- if section.settings.mobile_image != blank -%}
+        <div class="sop-promo__media sop-promo__media--mobile">
+          {{
+            section.settings.mobile_image
+            | image_url: width: 800
+            | image_tag:
+              loading: 'lazy',
+              widths: '400, 600, 800',
+              sizes: '100vw',
+              class: 'sop-promo__img'
+          }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.desktop_image != blank -%}
+        <div class="sop-promo__media sop-promo__media--desktop">
+          {{
+            section.settings.desktop_image
+            | image_url: width: 2000
+            | image_tag:
+              loading: 'lazy',
+              widths: '800, 1200, 1600, 2000',
+              sizes: '100vw',
+              class: 'sop-promo__img'
+          }}
+        </div>
+      {%- elsif section.settings.mobile_image != blank -%}
+        <div class="sop-promo__media sop-promo__media--desktop">
+          {{
+            section.settings.mobile_image
+            | image_url: width: 2000
+            | image_tag:
+              loading: 'lazy',
+              widths: '800, 1200, 1600, 2000',
+              sizes: '100vw',
+              class: 'sop-promo__img'
+          }}
+        </div>
+      {%- else -%}
+        <div class="sop-promo__media sop-promo__media--placeholder">
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'sop-promo__img sop-promo__img--placeholder' }}
+        </div>
+      {%- endif -%}
+
+    {%- elsif media_type == 'video' -%}
+
+      {%- if section.settings.mobile_video != blank -%}
+        <div class="sop-promo__media sop-promo__media--mobile">
+          {{
+            section.settings.mobile_video
+            | video_tag:
+              autoplay: true,
+              loop: true,
+              muted: true,
+              playsinline: true,
+              class: 'sop-promo__video'
+          }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.desktop_video != blank -%}
+        <div class="sop-promo__media sop-promo__media--desktop">
+          {{
+            section.settings.desktop_video
+            | video_tag:
+              autoplay: true,
+              loop: true,
+              muted: true,
+              playsinline: true,
+              class: 'sop-promo__video'
+          }}
+        </div>
+      {%- elsif section.settings.mobile_video != blank -%}
+        <div class="sop-promo__media sop-promo__media--desktop">
+          {{
+            section.settings.mobile_video
+            | video_tag:
+              autoplay: true,
+              loop: true,
+              muted: true,
+              playsinline: true,
+              class: 'sop-promo__video'
+          }}
+        </div>
+      {%- else -%}
+        <div class="sop-promo__media sop-promo__media--placeholder">
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'sop-promo__img sop-promo__img--placeholder' }}
+        </div>
+      {%- endif -%}
+
+    {%- endif -%}
+
+    {%- if marquee_blocks.size > 0 -%}
+      <div class="sop-promo__marquee-wrap">
+        <div class="sop-promo__marque-track">
+          {%- for i in (1..2) -%}
+            <div class="sop-promo__marque-content" {% if i != 1 %}aria-hidden="true"{% endif %}>
+              {%- for r in (1..repeat) -%}
+                {%- for block in marquee_blocks -%}
+                  <span class="sop-promo__marque-item" {{ block.shopify_attributes }}>
+                    {{ block.settings.content | strip_newlines | truncatewords: 10 }}
+                  </span>
+                  <span class="sop-promo__marque-sep" aria-hidden="true">•</span>
+                {%- endfor -%}
+              {%- endfor -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+  </div>
+
+</div>
+
+{% style %}
+.sop-promo {
+  position: relative;
+  width: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+ .sop-promo__media-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 49.5rem;
+  overflow: hidden;
+}
+
+ .sop-promo__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+ .sop-promo__media--mobile      { display: block; }
+ .sop-promo__media--desktop     { display: none;  }
+ .sop-promo__media--placeholder { display: block; }
+
+@media (min-width: 768px) {
+   .sop-promo__media--mobile  { display: none;  }
+   .sop-promo__media--desktop { display: block; }
+}
+
+ .sop-promo__img,
+ .sop-promo__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+ .sop-promo__img--placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Marquee pinned to bottom of media ── */
+ .sop-promo__marquee-wrap {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  overflow: hidden;
+  padding: {{ marquee_padding_v }} 0;
+  z-index: 2;
+  {% if section.settings.marque_overlay_style == 'solid' %}
+    background: {{ marque_overlay_color }};
+  {% elsif section.settings.marque_overlay_style == 'gradient' %}
+    background: linear-gradient(
+      to top,
+      {{ marque_overlay_color | color_modify: 'alpha', alpha_start }} 0%,
+      {{ marque_overlay_color | color_modify: 'alpha', alpha_end }} 60%,
+      transparent 100%
+    );
+  {% else %}
+    background: transparent;
+  {% endif %}
+}
+
+ .sop-promo__marque-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  {% if section.settings.marque_direction == 'both' %}
+    animation: sop-scroll-{{ section.id }} {{ marquee_duration }} linear infinite alternate;
+  {% elsif section.settings.marque_direction == 'scroll_reverse' %}
+    animation: sop-scroll-reverse-{{ section.id }} {{ marquee_duration }} linear infinite;
+  {% else %}
+    animation: sop-scroll-{{ section.id }} {{ marquee_duration }} linear infinite;
+  {% endif %}
+}
+
+ .sop-promo__marquee-wrap:hover .sop-promo__marque-track {
+  animation-play-state: paused;
+}
+
+ .sop-promo__marque-content {
+  display: flex;
+  align-items: center;
+  gap: {{ marquee_gap }};
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding-right: {{ marquee_gap }};
+}
+
+ .sop-promo__marque-item {
+  display: inline-flex;
+  align-items: center;
+  font-size:2rem;
+  text-transform: uppercase;
+  line-height: 140%;
+  color: {{ section.settings.marque_text_color }};
+}
+
+ .sop-promo__marque-sep {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  flex-shrink: 0;
+  font-size: 28px;
+  line-height: 140%;
+  color: {{ section.settings.marque_text_color }};
+}
+
+@keyframes sop-scroll-{{ section.id }} {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes sop-scroll-reverse-{{ section.id }} {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+
+
+@media (min-width: 992px) {
+   .sop-promo__marque-item {
+    font-size: 2.75rem;
+  }
+
+   .sop-promo__marque-sep {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 1400px) {
+   .sop-promo__marque-item {
+    font-size: 3.25rem;
+  }
+
+   .sop-promo__marque-sep {
+    font-size: 2.5rem;
+  }
+}
+
+
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Promotion Hero",
+  "tag": "section",
+  "class": "sop-promo-section",
+
+  "blocks": [
+    {
+      "type": "marquee_item",
+      "name": "Marquee Item",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Text",
+          "default": "<p>BREATHABLE MESH</p>"
+        }
+      ]
+    }
+  ],
+
+  "max_blocks": 20,
+
+  "settings": [
+    {
+      "type": "header",
+      "content": "Color scheme"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ],
+      "default": "image",
+      "info": "Switch between Image and Video — only the relevant pickers below will be used."
+    },
+
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop image",
+      "info": "Landscape recommended · 2000 × 800 px."
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image",
+      "info": "Portrait crop recommended · 800 × 1000 px"
+    },
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video",
+      "label": "Desktop video",
+      "info": "Landscape MP4."
+    },
+    {
+      "type": "video",
+      "id": "mobile_video",
+      "label": "Mobile video",
+      "info": "Portrait MP4 · autoplay, loop, muted"
+    },
+    {
+      "type": "header",
+      "content": "Marquee"
+    },
+    {
+      "type": "range",
+      "id": "marque_padding_vertical",
+      "label": "Vertical padding",
+      "info": "In units of 0.25 rem",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "marque_overlay_style",
+      "label": "Overlay style",
+      "options": [
+        { "value": "none",     "label": "None" },
+        { "value": "solid",    "label": "Solid" },
+        { "value": "gradient", "label": "Gradient (bottom to top)" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "color",
+      "id": "marque_overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "marque_overlay_gradient_start",
+      "label": "Gradient opacity — bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 85
+    },
+    {
+      "type": "range",
+      "id": "marque_overlay_gradient_end",
+      "label": "Gradient opacity — middle",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "marque_text_color",
+      "label": "Text color",
+      "default": "#FFFFFFCC"
+    },
+    {
+      "type": "select",
+      "id": "marque_direction",
+      "label": "Scroll direction",
+      "options": [
+        { "value": "scroll",         "label": "Right → Left" },
+        { "value": "scroll_reverse", "label": "Left → Right" },
+        { "value": "both",           "label": "Bounce (auto-reverse)" }
+      ],
+      "default": "scroll"
+    },
+    {
+      "type": "range",
+      "id": "marque_duration",
+      "label": "Scroll speed",
+      "info": "Higher = faster",
+      "min": 10,
+      "max": 500,
+      "step": 10,
+      "default": 470
+    },
+    {
+      "type": "range",
+      "id": "marque_gap",
+      "label": "Item gap",
+      "info": "In units of 0.25 rem",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 8
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Promotion-rico",
+      "blocks": [
+        {
+          "type": "marquee_item",
+          "settings": { "content": "<p>BREATHABLE MESH</p>" }
+        },
+        {
+          "type": "marquee_item",
+          "settings": { "content": "<p>ALL-DAY COMFORT</p>" }
+        },
+        {
+          "type": "marquee_item",
+          "settings": { "content": "<p>LIGHTWEIGHT SOLE</p>" }
+        }
+      ]
+    }
+  ],
+
+  "disabled_on": {
+    "groups": ["footer", "header", "aside"]
+  }
+}
+{% endschema %}
